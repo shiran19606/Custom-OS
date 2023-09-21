@@ -1,4 +1,4 @@
-# BeerSheva-04-CustomOS
+# OS_Project
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/AdarMhadipor1/beersheva-04-customos.git
+git remote add origin https://gitlab.com/magshimimadarmhadipor/os_project.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/AdarMhadipor1/beersheva-04-customos/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/magshimimadarmhadipor/os_project/-/settings/integrations)
 
 ## Collaborate with your team
 
