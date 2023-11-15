@@ -26,8 +26,8 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 $(BUILD_DIR)/%.bin: $(SRC_DIR)/%.s
 	nasm $< -f bin -o $@
 
-$(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o
-	${LD} -T $(SRC_DIR)/linker.ld -melf_i386 $^ -o $@
+$(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o
+	${LD} -T $(SRC_DIR)/linker.ld -m elf_i386 $^ -o $@
 
 run: prebuild $(BUILD_DIR)/kernel.elf
 	mkdir -p iso/boot/grub
@@ -44,9 +44,13 @@ run: prebuild $(BUILD_DIR)/kernel.elf
             -boot-info-table                \
             -o os.iso                       \
             iso
+
 # qemu-img create disk.img 1G
 	qemu-system-i386 -cdrom os.iso
 # -hda disk.img
+
+debug:
+	qemu-system-i386 -s -S -cdrom os.iso
 prebuild:
 	clear
 	make clean
