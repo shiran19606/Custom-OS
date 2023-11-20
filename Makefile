@@ -26,7 +26,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 $(BUILD_DIR)/%.bin: $(SRC_DIR)/%.s
 	nasm $< -f bin -o $@
 
-$(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o
+$(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o
 	${LD} -T $(SRC_DIR)/linker.ld -m elf_i386 $^ -o $@
 
 run: prebuild $(BUILD_DIR)/kernel.elf
