@@ -2,14 +2,10 @@
 # $< = first dependency
 # $^ = all dependencies
 
-GDB = /home/linuxbrew/.linuxbrew/bin/i386-elf-gdb
 CC=/usr/local/i386elfgcc/bin/i386-elf-gcc
 
-OBJCP=/usr/local/i386elfgcc/bin/i386-elf-objcopy
 ## Linker
 LD=/usr/local/i386elfgcc/bin/i386-elf-ld
-
-AS=/usr/local/i386elfgcc/bin/i386-elf-as
 
 SRC_DIR = ./Src
 BUILD_DIR = ./Build
@@ -23,13 +19,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.s
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	${CC} -m32 --no-pie -ggdb -std=gnu99 -ffreestanding -O2 -Wall -Wextra -c $< -o $@
 
-$(BUILD_DIR)/%.bin: $(SRC_DIR)/%.s
-	nasm $< -f bin -o $@
-
 $(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o
 	${LD} -T $(SRC_DIR)/linker.ld -m elf_i386 $^ -o $@
 
-run: prebuild $(BUILD_DIR)/kernel.elf
+
+build: prebuild $(BUILD_DIR)/kernel.elf
 	mkdir -p iso/boot/grub
 	cp $(SRC_DIR)/stage2_eltorito iso/boot/grub
 	cp $(BUILD_DIR)/kernel.elf iso/boot/
@@ -45,12 +39,12 @@ run: prebuild $(BUILD_DIR)/kernel.elf
             -o os.iso                       \
             iso
 
-# qemu-img create disk.img 1G
+run: prebuild build
 	qemu-system-i386 -cdrom os.iso
-# -hda disk.img
-
-debug:
+	
+debug: prebuild build
 	qemu-system-i386 -s -S -cdrom os.iso
+	
 prebuild:
 	clear
 	make clean
