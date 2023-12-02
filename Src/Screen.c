@@ -123,3 +123,16 @@ void printNumber(uint32_t number)
     }
     printString(c);
 }
+
+void printNumberHex(uint32_t intNumber)
+{
+    printString("0x");
+    char c[9] = {0};
+    int i = 0;
+    int32_t temp = intNumber;
+    for (i = 7; i >= 0; i--) {
+        int hexDigit = (temp >> (i * 4)) & 0xF;
+        c[7 - i] = (hexDigit < 10) ? ('0' + hexDigit) : ('A' + hexDigit - 10);
+    }
+    printString(c);
+}
