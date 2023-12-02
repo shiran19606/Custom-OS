@@ -1,12 +1,17 @@
 #include "gdt.h"
 #include "idt.h"
+#include "Screen.h"
+
+extern char end;
 
 void kernel_main(void) 
 {
+    //initialize the descriptor tables
     init_gdt();
     init_idt();
-    unsigned char* ptr = (unsigned char*)0xB8000;
-    *ptr = 'S';
-    asm volatile ("int $0x3");
+    //clear the monitor from things that were written by GRUB.
+    clearScreen();
+
+    printString("Hello World!");
     while(1);
 }

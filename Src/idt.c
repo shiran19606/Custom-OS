@@ -29,6 +29,5 @@ void init_idt(void)
 
     for (int i = 0;i < 32;i++)
         idt_set_gate(i, (uint32_t)(isrFunctions[i]), 0x08, 0x8E);
-    
     idt_flush((uint32_t)&ptr);
 }
