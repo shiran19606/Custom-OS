@@ -1,4 +1,5 @@
 [EXTERN isr_handler] ;our C handler function we will call on each interrupt.
+[EXTERN irq_handler] ;our c irq_handler function
 
 ;we will write a macro handler for a case where no error code is pushed, and a macro handler for a case where an error code is pushed.
 ;to see on what cases the error code is pushed, we used the intel manual on interrupts: https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf.
@@ -80,3 +81,56 @@ isr_common_case: ;we jump to this common case no matter if we had an error code 
     add esp, 8     ; Cleans up the pushed error code and pushed ISR number
     sti            ; re-enable interrupts after we disabled them in the macros
     iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+
+
+%macro IRQ 1
+    global irq%1
+    irq%1:
+        cli
+        push byte %1 ;if the ISR doesnt push an error code, we push a dummy error code before calling the isr_handler function
+        push byte %1 + 32 ; push the interrupt number
+        jmp irq_common_case
+%endmacro
+
+IRQ 0
+IRQ 1
+IRQ 2
+IRQ 3
+IRQ 4
+IRQ 5
+IRQ 6
+IRQ 7
+IRQ 8
+IRQ 9
+IRQ 10
+IRQ 11
+IRQ 12
+IRQ 13
+IRQ 14
+IRQ 15
+
+irq_common_case:
+    pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+
+    mov ax, ds               ; Lower 16-bits of eax = ds.
+    push eax                 ; save the data segment descriptor
+
+    mov ax, 0x10  ; load the kernel data segment descriptor
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    call irq_handler
+
+    pop eax        ; reload the original data segment descriptor
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    popa                     ; Pops edi,esi,ebp...
+    add esp, 8     ; Cleans up the pushed error code and pushed ISR number
+    sti            ; re-enable interrupts after we disabled them in the macros
+    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+

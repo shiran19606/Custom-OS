@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "Screen.h"
 
+typedef void (*isr_t)(struct registers*);
 struct registers
 {
    uint32_t ds;                  // Data segment selector

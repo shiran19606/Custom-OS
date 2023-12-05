@@ -39,10 +39,10 @@ build: prebuild $(BUILD_DIR)/kernel.elf
             -o os.iso                       \
             iso
 
-run: prebuild build
+run: build
 	qemu-system-i386 -cdrom os.iso
 	
-debug: prebuild build
+debug: build
 	qemu-system-i386 -s -S -cdrom os.iso
 	
 prebuild:
