@@ -13,5 +13,4 @@ void kernel_main(void)
     printString("Hello World!");
     asm volatile("sti");
     init_keyboard();
-    while(1);
 }

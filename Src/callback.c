@@ -1,4 +1,7 @@
 #include "callback.h"
+#include "Screen.h"
+#include "ports.h"
+#include "isr.h"
 
 char buffer[257] = {0};
 

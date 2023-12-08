@@ -19,7 +19,7 @@ struct idt_ptr {
 
 // Function to initialize GDT
 void init_idt(void);
-static void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
+void set_idt_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
 
 extern void idt_flush(uint32_t ptr);
 

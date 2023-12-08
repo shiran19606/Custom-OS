@@ -110,27 +110,28 @@ IRQ 14
 IRQ 15
 
 irq_common_case:
-    pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
-
-    mov ax, ds               ; Lower 16-bits of eax = ds.
-    push eax                 ; save the data segment descriptor
-
-    mov ax, 0x10  ; load the kernel data segment descriptor
+    ; 1. Save CPU state
+    pusha
+    mov ax, ds
+    push eax
+    mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
 
-    call irq_handler
+    ; 2. Call C handler
+    push esp
+    call irq_handler ; Different than the ISR code
+    pop ebx  ; Different than the ISR code
 
-    pop eax        ; reload the original data segment descriptor
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-
-    popa                     ; Pops edi,esi,ebp...
-    add esp, 8     ; Cleans up the pushed error code and pushed ISR number
-    sti            ; re-enable interrupts after we disabled them in the macros
-    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+    ; 3. Restore state
+    pop ebx
+    mov ds, bx
+    mov es, bx
+    mov fs, bx
+    mov gs, bx
+    popa
+    add esp, 8
+    iret
 

@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include "Screen.h"
 
-typedef void (*isr_t)(struct registers*);
 struct registers
 {
    uint32_t ds;                  // Data segment selector
@@ -10,3 +9,10 @@ struct registers
    uint32_t int_no, err_code;    // Interrupt number and error code (if applicable)
    uint32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
 };
+
+typedef void (*isr_t)(struct registers*);
+
+void isr_handler(struct registers* regs);
+void register_handler(uint8_t num, isr_t handler);
+void irq_handler(struct registers* regs);
+
