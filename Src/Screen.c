@@ -127,12 +127,19 @@ void printNumber(uint32_t number)
 void printNumberHex(uint32_t intNumber)
 {
     printString("0x");
-    char c[9] = {0};
+    if (intNumber == 0)
+        put_char('0');
+    char c;
+    int significant = 0; 
     int i = 0;
     int32_t temp = intNumber;
     for (i = 7; i >= 0; i--) {
         int hexDigit = (temp >> (i * 4)) & 0xF;
-        c[7 - i] = (hexDigit < 10) ? ('0' + hexDigit) : ('A' + hexDigit - 10);
+        if(hexDigit != 0 || significant) 
+        {
+            c = (hexDigit < 10) ? ('0' + hexDigit) : ('A' + hexDigit - 10);
+            put_char(c);
+            significant = 1;
+        }
     }
-    printString(c);
 }
