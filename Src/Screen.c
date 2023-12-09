@@ -55,6 +55,11 @@ void put_char(uint8_t charToPrint)
     {
         cur_x--;
     }
+    else if (charToPrint == BACKSPACE && !cur_x && cur_y)
+    {
+        cur_x = 79;
+        cur_y--;
+    }
     else if (charToPrint == TAB)
     {
         cur_x = (cur_x+8) & ~(8-1); //advance x to the next location divisable by 8.
