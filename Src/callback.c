@@ -159,9 +159,11 @@ void printLetter(uint8_t scancode) {
 
         // special keys
         case 0x1C: // enter
+            put_char('\n');
             printString(buffer);
             for(int i = 0; i < 256; i++)
                 buffer[i] = 0; // cleaning buffer
+            put_char(' ');
             buffer_index = 0;
             break;
         case 0x3A: // capslock
