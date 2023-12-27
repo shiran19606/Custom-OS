@@ -148,3 +148,60 @@ void printNumberHex(uint32_t intNumber)
         }
     }
 }
+
+void kprintf(const char* format, ...) {
+    // Pointer to traverse the format string
+    const char* ptr = format;
+
+    // Pointer to the first argument (after format)
+    // Here, we're assuming that arguments start immediately after the format string
+    // in memory. You'll need to ensure the correct memory layout in your OS.
+    void* arg_ptr = (void*)&format + sizeof(format);
+
+    while (*ptr != '\0') {
+        if (*ptr == '%') {
+            ptr++; // Move to the character after '%'
+
+            // Check format specifiers
+            switch (*ptr) {
+                case 'c': {
+                    char ch = *((char*)arg_ptr);
+                    put_char(ch);
+                    arg_ptr += sizeof(char);
+                    break;
+                }
+                case 's': {
+                    const char* str = *((const char**)arg_ptr);
+                    printString(str);
+                    arg_ptr += sizeof(const char*);
+                    break;
+                }
+                case 'd':
+                case 'i': {
+                    uint32_t num = *((uint32_t*)arg_ptr);
+                    printNumber(num);
+                    arg_ptr += sizeof(uint32_t);
+                    break;
+                }
+                case 'x': {
+                    uint32_t hex_num = *((uint32_t*)arg_ptr);
+                    printNumberHex(hex_num);
+                    arg_ptr += sizeof(uint32_t);
+                    break;
+                }
+                case '%':
+                {
+                    put_char('%');
+                }
+                default:
+                    // Unsupported format specifier
+                    break;
+            }
+        } else {
+            // If not a format specifier, just print the character
+            put_char(*ptr);
+        }
+
+        ptr++; // Move to the next character in the format string
+    }
+}

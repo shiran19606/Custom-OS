@@ -19,6 +19,7 @@ void printString(char* str);
 void printNumber(uint32_t number);
 void put_char(uint8_t charToPrint);
 void printNumberHex(uint32_t intNumber);
+void kprintf(const char* format, ...);
 
 
 #endif /* SCREEN_H */

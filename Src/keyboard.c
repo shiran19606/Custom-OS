@@ -1,4 +1,4 @@
-#include "callback.h"
+#include "keyboard.h"
 
 char buffer[257] = {0};
 int caps = 0;
@@ -222,7 +222,7 @@ void printLetter(uint8_t scancode) {
     }
 }
 
-static void keyboard_callback(struct registers *regs) {
+static void keyboard_callback(struct registers regs) {
     uint8_t scancode = port_byte_in(0x60);
     printLetter(scancode);
 }
