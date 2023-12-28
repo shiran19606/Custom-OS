@@ -17,7 +17,4 @@ struct gdt_ptr {
     uint32_t base;
 } __attribute__((packed));
 
-// Function to initialize GDT
-void init_gdt(void);
-
-extern void gdt_flush(uint32_t ptr);
+void init_gdt();

@@ -1,6 +1,9 @@
 // gdt.c
 #include "gdt.h"
 
+extern void gdt_flush(uint32_t ptr);
+
+static void gdt_set_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran);
 // Global GDT array
 struct gdt_entry gdt_entries[3];
 struct gdt_ptr gp;
@@ -22,7 +25,8 @@ static void gdt_set_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t ac
 
 
 // Function to initialize GDT
-void init_gdt(void) {
+void init_gdt()
+{
     // Null descriptor
     gp.limit = (sizeof(struct gdt_entry) * 3) - 1;
     gp.base  = (uint32_t)&gdt_entries;
