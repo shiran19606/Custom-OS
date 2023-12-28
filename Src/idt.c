@@ -54,6 +54,10 @@ void init_idt(void)
     set_idt_gate(30, (uint32_t)isr30, 0x08, 0x8E);
     set_idt_gate(31, (uint32_t)isr31, 0x08, 0x8E);
     
+    unsigned char a1, a2;
+    a1 = port_byte_in(0x21);
+    a2 = port_byte_in(0xA1);
+
     port_byte_out(0x20, 0x11);
     port_byte_out(0xA0, 0x11);
     port_byte_out(0x21, 0x20);
@@ -62,8 +66,8 @@ void init_idt(void)
     port_byte_out(0xA1, 0x02);
     port_byte_out(0x21, 0x01);
     port_byte_out(0xA1, 0x01);
-    port_byte_out(0x21, 0x0);
-    port_byte_out(0xA1, 0x0);
+    port_byte_out(0x21, a1);
+    port_byte_out(0xA1, a2);
 
     set_idt_gate(32, (uint32_t)irq0, 0x08, 0x8E);
     set_idt_gate(33, (uint32_t)irq1, 0x08, 0x8E);

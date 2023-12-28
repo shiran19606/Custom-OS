@@ -10,18 +10,17 @@ void kernel_main(void)
     init_gdt();
     init_idt();
     //clear the monitor from things that were written by GRUB.
-    clearScreen();
     asm volatile("sti");
+    clearScreen();
     kprintf("Hello World!\n");
     init_keyboard(); //initialize the keyboard driver
     initialize_allocator(); //start heap allocation.
-    uint32_t ptr = kmalloc(4);
-    uint32_t ptr2 = kmalloc(10);
-    kprintf("ptr is %x and ptr2 is %x\n", ptr, ptr2);
+    uint32_t ptr = kmalloc(10);
+    uint32_t ptr2 = kmalloc(100);
+    kprintf("ptr is %x and ptr2 is %x", ptr, ptr2);
     kfree((void*)ptr);
     kfree((void*)ptr2);
-    ptr = kmalloc(4);
-    ptr2 = kmalloc(0x1000);
-    int* ptr3 = ptr;
-    *ptr3 = 3;
+    uint32_t ptr3 = kmalloc(1000);
+    kprintf("\nptr3 is %x", ptr3);
+    kfree((void*)ptr3);
 }
