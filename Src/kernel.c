@@ -17,8 +17,8 @@ void kernel_main(void)
     uint32_t ptr1 = kmalloc(10);
     uint32_t ptr2 = kmalloc(100);
     kprintf("ptr1 is %x and ptr2 is %x\n", ptr1, ptr2);
-    kfree((void*)ptr1);
-    kfree((void*)ptr2);
+    kfree(ptr1);
+    kfree(ptr2);
     ptr1 = kmalloc(4);
     int* ptr = ptr1;
     *ptr = 10;

@@ -64,7 +64,6 @@ void* kmalloc(uint32_t size) {
             else {
                 prev_block->next = block->next;
             }
-
             return ((char*)block + sizeof(block_header));
         }
 
@@ -74,7 +73,6 @@ void* kmalloc(uint32_t size) {
 
     block->size = size;
     block->next = NULL;
-
     return ((char*)block + sizeof(block_header));
 }
 
@@ -86,8 +84,7 @@ void kfree(void* ptr) {
     }
 
     // Get the block header by moving back the pointer
-    block_header* block_to_free = ((block_header*)ptr) - 1;
-
+    block_header* block_to_free = (block_header*)(((uint32_t)ptr) - sizeof(block_header));
     // Insert the block back into the free list
     block_to_free->next = free_list;
     free_list = block_to_free;
