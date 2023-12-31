@@ -13,6 +13,9 @@ void initialize_allocator() {
     free_list = initial_block;
 }
 
+//this function takes the head of a linked list and two nodes. it will swap the locations of the nodes
+//for example, a list a->b->c->d->null called with parameters b, c will look like this after the run:
+//a->c->b->d
 void swapNodes(block_header** head_ref, block_header* nodeX, block_header* nodeY) {
     if (!nodeX || !nodeY || nodeX == nodeY || *head_ref == NULL || (*head_ref)->next == NULL) {
         return;
@@ -39,7 +42,7 @@ void swapNodes(block_header** head_ref, block_header* nodeX, block_header* nodeY
     }
 }
 
-// Custom malloc function
+// Custom malloc function, that takes the size of the wanted memory and returns a pointer to the block allocated.
 void* kmalloc(uint32_t size) {
 
     block_header* block = free_list;
@@ -70,10 +73,16 @@ void* kmalloc(uint32_t size) {
         prev_block = block;
         block = block->next;
     }
-
-    block->size = size;
-    block->next = NULL;
-    return ((char*)block + sizeof(block_header));
+    if (block) //if a block found
+    {
+        block->size = size;
+        block->next = NULL;
+        return ((char*)block + sizeof(block_header));
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 

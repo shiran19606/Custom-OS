@@ -16,10 +16,20 @@ void kernel_main(void)
     kprintf("Hello World\n");
     uint32_t ptr1 = kmalloc(10);
     uint32_t ptr2 = kmalloc(100);
+    if (!ptr1 || !ptr2)
+    {    
+        kprintf("Error allocating memory");
+        return;
+    }
     kprintf("ptr1 is %x and ptr2 is %x\n", ptr1, ptr2);
     kfree(ptr1);
     kfree(ptr2);
     ptr1 = kmalloc(4);
+    if (!ptr1)
+    {    
+        kprintf("Error allocating memory");
+        return;
+    }
     int* ptr = ptr1;
     *ptr = 10;
     kprintf("ptr1 is %x and its value is %d", ptr, *ptr);
