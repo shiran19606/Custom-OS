@@ -3,9 +3,11 @@
 #include "Screen.h"
 #include "keyboard.h"
 #include "heap.h"
+#include "utils.h"
 
 void kernel_main(void) 
 {
+    const char* str = "Hello World";
     //initialize the descriptor tables
     init_gdt();
     init_idt();
@@ -32,6 +34,14 @@ void kernel_main(void)
     }
     int* ptr = ptr1;
     *ptr = 10;
-    kprintf("ptr1 is %x and its value is %d", ptr, *ptr);
+    kprintf("ptr1 is %x and its value is %d\n", ptr, *ptr);
+    ptr2 = kmalloc(strlen(str));
+    if (!ptr2)
+    {    
+        kprintf("Error allocating memory");
+        return;
+    }
+    memcpy((void*)ptr2, str, strlen(str)+1);
+    kprintf("The string in ptr2 is: %s\n", (char*)ptr2);
     asm volatile("sti");
 }
