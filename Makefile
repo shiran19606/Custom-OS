@@ -10,6 +10,8 @@ LD=/usr/local/i386elfgcc/bin/i386-elf-ld
 SRC_DIR = ./Src
 BUILD_DIR = ./Build
 
+OBJECTS = $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o $(BUILD_DIR)/Screen.o $(BUILD_DIR)/ports.o $(BUILD_DIR)/keyboard.o	$(BUILD_DIR)/heap.o $(BUILD_DIR)/utils.o
+
 # First rule is the one executed when no parameters are fed to the Makefile
 all: run
 
@@ -19,7 +21,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.s
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	${CC} -m32 --no-pie -ggdb -std=gnu99 -ffreestanding -O2 -Wall -Wextra -c $< -o $@
 
-$(BUILD_DIR)/kernel.elf: $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o $(BUILD_DIR)/Screen.o $(BUILD_DIR)/ports.o $(BUILD_DIR)/keyboard.o	$(BUILD_DIR)/heap.o $(BUILD_DIR)/utils.o
+$(BUILD_DIR)/kernel.elf: $(OBJECTS)
 	${LD} -T $(SRC_DIR)/linker.ld -m elf_i386 $^ -o $@
 
 

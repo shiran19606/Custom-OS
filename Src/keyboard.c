@@ -159,7 +159,7 @@ void printLetter(uint8_t scancode) {
 
         // special keys
         case 0x1C: // enter
-            kprintf("\n%s ", buffer);
+            kprintf("\n%s\n", buffer);
             for(int i = 0; i < 256; i++)
                 buffer[i] = 0; // cleaning buffer
             buffer_index = 0;
@@ -183,9 +183,13 @@ void printLetter(uint8_t scancode) {
             ch = ' ';
             break;
         case 0x0E: // backspace
-            kprintf("%c %c", 0x08, 0x08);
             if(buffer_index)
+            {
+                put_char(0x08);
+                put_char(' ');
+                put_char(0x08);
                 buffer[--buffer_index] = 0; // removing letter from buffer
+            }              
             break;
         case 0x0F: // tab
             put_char(0x09);
