@@ -2,8 +2,7 @@
 #include "idt.h"
 #include "Screen.h"
 #include "keyboard.h"
-#include "heap.h"
-#include "utils.h"
+#include "fs.h"
 
 void kernel_main(void) 
 {
@@ -15,9 +14,11 @@ void kernel_main(void)
     clearScreen();
     init_keyboard();
     initialize_allocator();
+    //initializing fs
+    init_fs(32, 64);
 
     //testing kprintf
-    kprintf("Hello World\n");
+    kprintf("Hello World!\n");
 
     //testing memory allocation
     uint32_t ptr1 = kmalloc(10);
@@ -61,5 +62,31 @@ void kernel_main(void)
 
     kfree(ptr1);
     kfree(ptr2);
+
+	createFile("/File1");
+	createFile("File1");
+	createDirectory("/dir1");
+	createFile("/dir1/File3");
+	createDirectory("dir1/dir1");
+	createFile("/dir1/dir1/File4");
+	MyFile* file1 = openFile("/File1");
+	if (file1 == NULL)
+	{
+		kprintf("Error opening file1");
+		return;
+	}
+	writeToFile(file1, "My World!");
+	MyFile* file2 = openFile("/dir1/dir1/File4");
+	if (file2 == NULL)
+	{
+		kprintf("Error opening file4");
+		return;
+	}
+	writeToFile(file2, "My World Is File4!");
+	kprintf("%s %s\n", readFromFile(file1), readFromFile(file2));
+	listDirectory("/dir1/dir2");
+	closeFile(file1);
+	closeFile(file2);
+
     asm volatile("sti");
 }
