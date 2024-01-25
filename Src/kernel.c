@@ -3,8 +3,9 @@
 #include "Screen.h"
 #include "keyboard.h"
 #include "fs.h"
+#include "multiboot.h"
 
-void kernel_main(void) 
+void kernel_main(multiboot_info_t* mboot_ptr) 
 {
     const char* str = "Hello World";
     //initialize the descriptor tables
@@ -14,9 +15,21 @@ void kernel_main(void)
     clearScreen();
     init_keyboard();
     initialize_allocator();
+
+    kprintf("\nmemory map:\n");
+    memory_map_t * memory_map = (memory_map_t *)(mboot_ptr->mmap_addr);
+    uint32_t num_entries = mboot_ptr->mmap_length / sizeof(memory_map_t);
+
+    for (uint32_t i = 0; i < num_entries; i++) {
+        kprintf("base_low: %x ", memory_map[i].base_addr_low);
+        kprintf("base_high: %x ", memory_map[i].base_addr_high);
+        kprintf("len_low: %x ", memory_map[i].length_low);
+        kprintf("len_high: %x ", memory_map[i].length_high);
+        kprintf("type: %x\n", memory_map[i].type);
+    }
+
     //initializing fs
     init_fs(32, 64);
-
     //testing kprintf
     kprintf("Hello World!\n");
 

@@ -1,33 +1,45 @@
-/* Link.ld -- Linker script for the kernel - ensure everything goes in the */
-/*            Correct place.  */
-/*            Original file taken from Bran's Kernel Development */
-/*            tutorials: http://www.osdever.net/bkerndev/index.php. */
-
+/* The bootloader will look at this image and start execution at the symbol
+   designated at the entry point. */
 ENTRY(start)
+
+/* Tell where the various sections of the object files will be put in the final
+   kernel image. */
 SECTIONS
 {
+   /* The kernel is situated at 1 MiB */
+   . = 1M;
 
-    .text 0x100000 :
-    {
-        code = .; _code = .; __code = .;
-        *(.text)
-        . = ALIGN(4096);
-    }
+   kernel_start = .;
 
-    .data :
-    {
-        data = .; _data = .; __data = .;
-        *(.data)
-        *(.rodata)
-        . = ALIGN(4096);
-    }
+   /* First put the multiboot header, as it is required to be put very early
+      early in the image or the bootloader won't recognize the file format.
+      Next we'll put the .text section. */
+   .text BLOCK(4K) : ALIGN(4K)
+   {
+      code = .;
+      *(.multiboot)
+      *(.text)
+   }
 
-    .bss :
-    {
-        bss = .; _bss = .; __bss = .;
-        *(.bss)
-        . = ALIGN(4096);
-    }
+   /* Read-only data */
+   .rodata BLOCK(4K) : ALIGN(4K)
+   {
+      *(.rodata)
+   }
 
-    end = .; _end = .; __end = .;
+   /* Read-write data (initialized) */
+   .data BLOCK(4K) : ALIGN(4K)
+   {
+      *(.data)
+   }
+
+   /* Read-write data (uninitialized) and stack */
+   .bss BLOCK(4K) : ALIGN(4K)
+   {
+      bss = .;
+      *(.bss)
+      *(.stack)
+   }
+
+   kernel_end = .;end = .;
 }
