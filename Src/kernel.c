@@ -5,6 +5,9 @@
 #include "fs.h"
 #include "multiboot.h"
 
+extern uint32_t kernel_start;
+extern uint32_t kernel_end;
+
 void kernel_main(multiboot_info_t* mboot_ptr) 
 {
     const char* str = "Hello World";
@@ -15,13 +18,13 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     clearScreen();
     init_keyboard();
     initialize_allocator();
-
+    kprintf("The mboot header is in %x, kernel start %x, kernel end %x", (uint32_t)mboot_ptr, &kernel_start, &kernel_end);
     kprintf("\nmemory map:\n");
     memory_map_t * memory_map = (memory_map_t *)(mboot_ptr->mmap_addr);
     uint32_t num_entries = mboot_ptr->mmap_length / sizeof(memory_map_t);
 
     for (uint32_t i = 0; i < num_entries; i++) {
-        kprintf("base_low: %x ", memory_map[i].base_addr_low);
+        kprintf("basec_low: %x ", memory_map[i].base_addr_low);
         kprintf("base_high: %x ", memory_map[i].base_addr_high);
         kprintf("len_low: %x ", memory_map[i].length_low);
         kprintf("len_high: %x ", memory_map[i].length_high);
