@@ -20,8 +20,8 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     initialize_allocator();
     kprintf("The mboot header is in %x, kernel start %x, kernel end %x", (uint32_t)mboot_ptr, &kernel_start, &kernel_end);
     kprintf("\nmemory map:\n");
-    memory_map_t * memory_map = (memory_map_t *)(mboot_ptr->mmap_addr);
-    uint32_t num_entries = mboot_ptr->mmap_length / sizeof(memory_map_t);
+    multiboot_memory_map_t * memory_map = (multiboot_memory_map_t *)(mboot_ptr->mmap_addr);
+    uint32_t num_entries = mboot_ptr->mmap_length / sizeof(multiboot_memory_map_t);
 
     for (uint32_t i = 0; i < num_entries; i++) {
         kprintf("basec_low: %x ", memory_map[i].base_addr_low);
