@@ -18,9 +18,10 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     clearScreen();
     init_keyboard();
     initialize_allocator();
-    kprintf("The mboot header is in %x, kernel start %x, kernel end %x", (uint32_t)mboot_ptr, &kernel_start, &kernel_end);
-    kprintf("\nmemory map:\n");
+    kprintf("The mboot header is in %x, kernel start %x, kernel end %x\n", (uint32_t)mboot_ptr, &kernel_start, &kernel_end);
+    kprintf ("Lower memory: %x Upper memory: %x\n", mboot_ptr->mem_lower, mboot_ptr->mem_upper);
     multiboot_memory_map_t * memory_map = (multiboot_memory_map_t *)(mboot_ptr->mmap_addr);
+    kprintf("memory map: %x\n", (uint32_t)mboot_ptr->mmap_addr);
     uint32_t num_entries = mboot_ptr->mmap_length / sizeof(multiboot_memory_map_t);
 
     for (uint32_t i = 0; i < num_entries; i++) {
