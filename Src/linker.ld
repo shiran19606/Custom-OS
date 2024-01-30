@@ -7,14 +7,14 @@ ENTRY(start)
 SECTIONS
 {
    /* The kernel is situated at 1 MiB */
-   . = 1M;
+   . = 0x00100000;
 
    kernel_start = .;
 
    /* First put the multiboot header, as it is required to be put very early
       early in the image or the bootloader won't recognize the file format.
       Next we'll put the .text section. */
-   .text BLOCK(4K) : ALIGN(4K)
+   .text ALIGN(0x1000) :
    {
       code = .;
       *(.multiboot)
@@ -22,19 +22,19 @@ SECTIONS
    }
 
    /* Read-only data */
-   .rodata BLOCK(4K) : ALIGN(4K)
+   .rodata ALIGN(0x1000) :
    {
       *(.rodata)
    }
 
    /* Read-write data (initialized) */
-   .data BLOCK(4K) : ALIGN(4K)
+   .data ALIGN(0x1000) :
    {
       *(.data)
    }
 
    /* Read-write data (uninitialized) and stack */
-   .bss BLOCK(4K) : ALIGN(4K)
+   .bss ALIGN(0x1000) :
    {
       bss = .;
       *(.bss)
