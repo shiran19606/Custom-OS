@@ -4,9 +4,13 @@
 #include "keyboard.h"
 #include "fs.h"
 #include "multiboot.h"
+#include "pmm.h"
 
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
+
+extern uint32_t* pmm_bitmap;
+extern uint32_t* bitmap_end;
 
 void kernel_main(multiboot_info_t* mboot_ptr) 
 {
@@ -17,21 +21,45 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     //clear the monitor from things that were written by GRUB.
     clearScreen();
     init_keyboard();
-    initialize_allocator();
-    kprintf("The mboot header is in %x, kernel start %x, kernel end %x\n", (uint32_t)mboot_ptr, &kernel_start, &kernel_end);
-    kprintf ("Lower memory: %x Upper memory: c%x\n", mboot_ptr->mem_lower, mboot_ptr->mem_upper);
+    //initialize_allocator();
     multiboot_memory_map_t * memory_map = (multiboot_memory_map_t *)(mboot_ptr->mmap_addr);
-    kprintf("memory map: %x\n", (uint32_t)mboot_ptr->mmap_addr);
     uint32_t num_entries = mboot_ptr->mmap_length / sizeof(multiboot_memory_map_t);
-
+    uint32_t memorySize = 0;
     for (uint32_t i = 0; i < num_entries; i++) {
         kprintf("base_low: %x ", memory_map[i].base_addr_low);
         kprintf("base_high: %x ", memory_map[i].base_addr_high);
         kprintf("len_low: %x ", memory_map[i].length_low);
         kprintf("len_high: %x ", memory_map[i].length_high);
         kprintf("type: %x\n", memory_map[i].type);
+        memorySize = memory_map[i].base_addr_low + (memory_map[i].length_low-1);
+    }
+    init_physical_memory(memorySize);
+    uint32_t i = START_BELOW_1MB == 0 ? 1 : 0; //if START_BELOW_1MB is 0 (false) this means that we dont start below 1 MB, so we ignore the first item in the memory map.
+    
+    //set regions of memory as free if they are free on the memory map
+    for (uint32_t i = 1; i < num_entries; i++) {
+        if (memory_map[i].type == MEMORY_MAP_REGION_FREE)
+            init_region_free(memory_map[i].base_addr_low, memory_map[i].base_addr_low + memory_map[i].length_low);
     }
 
+    //set memory used by the kernel and the bitmap as used.
+    init_region_used(&kernel_start, &kernel_end);
+    init_region_used((uint32_t)pmm_bitmap, (uint32_t)bitmap_end);
+
+    uint32_t addressAllocated = allocate_block();
+    kprintf("Allocated block at address: %x\n", addressAllocated);
+    uint32_t secondAddrss = allocate_block();
+    kprintf("Allocated block at address: %x\n", secondAddrss);
+    free_block(addressAllocated);
+    addressAllocated = allocate_blocks(3);
+    kprintf("Allocated three blocks at address: %x\n", addressAllocated);
+
+    free_block(secondAddrss);
+    free_blocks(addressAllocated, 3);
+    addressAllocated = allocate_blocks(7);
+    kprintf("Allocated seven blocks at address: %x\n", addressAllocated);
+
+    /*
     //initializing fs
     init_fs(32, 64);
     //testing kprintf
@@ -104,6 +132,6 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 	listDirectory("/dir1/dir2");
 	closeFile(file1);
 	closeFile(file2);
-
+    */
     asm volatile("sti");
 }
