@@ -46,19 +46,12 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     init_region_used(&kernel_start, &kernel_end);
     init_region_used((uint32_t)pmm_bitmap, (uint32_t)bitmap_end);
 
-    uint32_t addressAllocated = allocate_block();
-    kprintf("Allocated block at address: %x\n", addressAllocated);
-    uint32_t secondAddrss = allocate_block();
-    kprintf("Allocated block at address: %x\n", secondAddrss);
-    free_block(addressAllocated);
-    addressAllocated = allocate_blocks(3);
-    kprintf("Allocated three blocks at address: %x\n", addressAllocated);
-
-    free_block(secondAddrss);
-    free_blocks(addressAllocated, 3);
-    addressAllocated = allocate_blocks(7);
-    kprintf("Allocated seven blocks at address: %x\n", addressAllocated);
-
+    uint32_t add1 = allocate_block();
+    kprintf("Allocated block at address: %x\n", add1);
+    uint32_t add2 = allocate_blocks(26);
+    kprintf("Allocated 65 blocks at address: %x\n", add2);
+    uint32_t add3 = allocate_block();
+    kprintf("Allocated block at address: %x\n", add3);
     /*
     //initializing fs
     init_fs(32, 64);

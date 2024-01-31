@@ -74,7 +74,7 @@ void init_physical_memory(const uint32_t size)
 
 uint32_t allocate_block()
 {
-    allocate_blocks(1);
+    return allocate_blocks(1);
 }
 
 void free_block(const uint32_t address)
@@ -132,6 +132,5 @@ void free_blocks(const uint32_t address, const uint32_t num_blocks)
 
     for (uint32_t i = 0; i < num_blocks; i++) 
         init_block_free(BLOCK_TO_ADDRESS((uint32_t)(starting_block + i)));    // Unset bits/blocks in memory map, to free
-
     usedBlocks -= num_blocks;  // Decrease used block count
 }
