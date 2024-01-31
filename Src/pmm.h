@@ -24,3 +24,5 @@ uint32_t allocate_block();
 void free_block(const uint32_t address);
 uint32_t allocate_blocks(const uint32_t num_blocks);
 void free_blocks(const uint32_t address, const uint32_t num_blocks);
+
+void print_bitmap();
