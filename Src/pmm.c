@@ -15,7 +15,7 @@ void init_block_used(const uint32_t add)
     uint32_t word = index / (sizeof(uint32_t) * 8); // Calculate which word (integer) in the bitmap
 	uint32_t bit = index % (sizeof(uint32_t) * 8); // Calculate which bit within the word
 
-	pmm_bitmap[word] |= 1 << bit; // Set the bit by ORing with a mask
+	pmm_bitmap[word] |= (1 << bit); // Set the bit by ORing with a mask
 }
 
 void init_block_free(const uint32_t add)
@@ -33,11 +33,11 @@ void init_region_used(const uint32_t start_add, const uint32_t end_add)
 {
     if (end_add <= start_add)
         return;
-    uint32_t startIndex = start_add % 0x1000 == 0 ? ADDRESS_TO_BLOCK(start_add) : ADDRESS_TO_BLOCK(ALIGN_4KB_DOWN(start_add));
-    uint32_t endIndex = end_add % 0x1000 == 0 ? ADDRESS_TO_BLOCK(end_add) : ADDRESS_TO_BLOCK(ALIGN_4KB_UP(end_add));
-    for (uint32_t i = startIndex;i < endIndex;i++)
+    uint32_t startBlock = start_add % BLOCK_SIZE == 0 ? start_add : ALIGN_4KB_DOWN(start_add);
+    uint32_t endBlock = end_add % BLOCK_SIZE == 0 ? end_add : (ALIGN_4KB_UP(end_add));
+    for (uint32_t i = startBlock;i < endBlock;i+=BLOCK_SIZE)
     {
-        init_block_used(BLOCK_TO_ADDRESS(i));
+        init_block_used(i);
         usedBlocks++;
     }
 }
@@ -46,30 +46,29 @@ void init_region_free(const uint32_t start_add, const uint32_t end_add)
 {
     if (end_add <= start_add)
         return;
-    uint32_t startIndex = start_add % 0x1000 == 0 ? ADDRESS_TO_BLOCK(start_add) : ADDRESS_TO_BLOCK(ALIGN_4KB_DOWN(start_add));
-    uint32_t endIndex = end_add % 0x1000 == 0 ? ADDRESS_TO_BLOCK(end_add) : ADDRESS_TO_BLOCK(ALIGN_4KB_UP(end_add));
-    for (uint32_t i = startIndex;i < endIndex;i++)
+    uint32_t startBlock = start_add % BLOCK_SIZE == 0 ? start_add : ALIGN_4KB_DOWN(start_add);
+    uint32_t endBlock = end_add % BLOCK_SIZE == 0 ? end_add : (ALIGN_4KB_UP(end_add));
+    for (uint32_t i = startBlock;i < endBlock;i+=BLOCK_SIZE)
     {
-        init_block_free(BLOCK_TO_ADDRESS(i));
+        init_block_free(i);
         usedBlocks--;
     }
-    init_block_used(0x00000000);
+    init_block_used(0x00000000); //set the first block of memory as used to not cause problems later.
 }
 
 void init_physical_memory(const uint32_t size)
 {
     uint32_t kernel_end_address = &end;
-    if (kernel_end_address % 0x1000 != 0)
+    if (kernel_end_address % BLOCK_SIZE != 0)
         kernel_end_address = ALIGN_4KB_UP(kernel_end_address);
     pmm_bitmap = (uint32_t*) kernel_end_address;
     maxBlocks = size / BLOCK_SIZE;
     usedBlocks = maxBlocks;
     memset(pmm_bitmap, 0xFF, maxBlocks / BLOCKS_PER_BYTE);        // set all blocks used.
     bitmap_end = (uint32_t)(pmm_bitmap + (maxBlocks/32));
-    if ((uint32_t)bitmap_end % 0x1000 != 0)
+    if ((uint32_t)bitmap_end % BLOCK_SIZE != 0)
         bitmap_end = ALIGN_4KB_UP((uint32_t)bitmap_end);
-    kprintf("pmm_bitmap at %x, bitmap_end at %x\n", (uint32_t)pmm_bitmap, (uint32_t)bitmap_end);
-    kprintf("Initializing physical memory of %x bytes at bitmap address %x\n", size, kernel_end_address);
+    kprintf("Initializing physical memory of size %x bytes\n", size);
 }
 
 uint32_t allocate_block()
@@ -117,9 +116,7 @@ uint32_t allocate_blocks(const uint32_t num_blocks)
     {
         uint32_t tempBlock = BLOCK_TO_ADDRESS(block);
         for (uint32_t n = 0; n < num_blocks; n++ ,tempBlock+=BLOCK_SIZE)
-        {
             init_block_used(tempBlock); // setting the blocks allocated to used in bitmap
-        }
         usedBlocks += num_blocks;
         return BLOCK_TO_ADDRESS(block);
     }
@@ -129,15 +126,8 @@ uint32_t allocate_blocks(const uint32_t num_blocks)
 
 void free_blocks(const uint32_t address, const uint32_t num_blocks)
 {
-    uint32_t starting_block = ADDRESS_TO_BLOCK(address);
 
     for (uint32_t i = 0; i < num_blocks; i++) 
-        init_block_free(BLOCK_TO_ADDRESS((uint32_t)(starting_block + i)));    // Unset bits/blocks in memory map, to free
+        init_block_free((uint32_t)(address + (i * BLOCK_SIZE)));    // Unset bits/blocks in memory map, to free
     usedBlocks -= num_blocks;  // Decrease used block count
-}
-
-void print_bitmap()
-{
-    for(uint32_t i = 0; i < 18; i++)
-        kprintf("%x\t", pmm_bitmap[i]);
 }

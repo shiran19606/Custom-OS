@@ -20,24 +20,17 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     init_idt();
     //clear the monitor from things that were written by GRUB.
     clearScreen();
+    kprintf("Initialized GDT and IDT\n");
     init_keyboard();
+    kprintf("Initialized Keyboard\n");
     //initialize_allocator();
     multiboot_memory_map_t * memory_map = (multiboot_memory_map_t *)(mboot_ptr->mmap_addr);
     uint32_t num_entries = mboot_ptr->mmap_length / sizeof(multiboot_memory_map_t);
-    uint32_t memorySize = 0;
-    for (uint32_t i = 0; i < num_entries; i++) {
-        kprintf("base_low: %x ", memory_map[i].base_addr_low);
-        kprintf("base_high: %x ", memory_map[i].base_addr_high);
-        kprintf("len_low: %x ", memory_map[i].length_low);
-        kprintf("len_high: %x ", memory_map[i].length_high);
-        kprintf("type: %x\n", memory_map[i].type);
-        memorySize = memory_map[i].base_addr_low + (memory_map[i].length_low-1);
-    }
+    uint32_t memorySize = memory_map[num_entries-1].base_addr_low + (memory_map[num_entries-1].length_low-1);;
     init_physical_memory(memorySize);
-    uint32_t i = START_BELOW_1MB == 0 ? 1 : 0; //if START_BELOW_1MB is 0 (false) this means that we dont start below 1 MB, so we ignore the first item in the memory map.
     
     //set regions of memory as free if they are free on the memory map
-    for (uint32_t i = 1; i < num_entries; i++) {
+    for (uint32_t i = RESERVE_MEMORY_BELOW_1MB; i < num_entries; i++) {
         if (memory_map[i].type == MEMORY_MAP_REGION_FREE)
             init_region_free(memory_map[i].base_addr_low, memory_map[i].base_addr_low + memory_map[i].length_low);
     }
@@ -46,16 +39,14 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     init_region_used(&kernel_start, &kernel_end);
     init_region_used((uint32_t)pmm_bitmap, (uint32_t)bitmap_end);
 
-    print_bitmap();
-    uint32_t add1 = allocate_blocks(65);
-    kprintf("\nAllocated block at address: %x\n", add1);
-    print_bitmap();
-    uint32_t add2 = allocate_blocks(26);
-    kprintf("\nAllocated 65 blocks at address: %x\n", add2);
-    print_bitmap();
+    kprintf("Initialized physical memory\n");
+
+    uint32_t add1 = allocate_block();
+    kprintf("Allocated block at address: %x\n", add1);
+    uint32_t add2 = allocate_blocks(65);
+    kprintf("Allocated 65 blocks at address: %x\n", add2);
     uint32_t add3 = allocate_block();
-    kprintf("\nAllocated block at address: %x\n", add3);
-    print_bitmap();
+    kprintf("Allocated block at address: %x\n", add3);
 
 
     /*
