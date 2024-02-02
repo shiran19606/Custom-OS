@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "pmm.h"
 
 #define ENTRIES_IN_PAGE_TABLE 1024
 #define ENTRIES_IN_PAGE_DIR 1024
