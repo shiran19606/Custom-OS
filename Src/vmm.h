@@ -75,7 +75,7 @@ typedef struct page_directory
     page_dir_entry_t pages[ENTRIES_IN_PAGE_DIR];
 } page_directory_t;
 
-page_directory_t* current_page_dir = 0; //physical address of the current page directory
+page_directory_t* current_page_dir; //physical address of the current page directory
 
 //macros refering to Pages (Page table entry is a page)
 #define PTE_PRESENT(addr) (addr & PTE_PRESENT)
@@ -168,3 +168,10 @@ virtual_address: the virtual address to flush.
 return value: None.
 */
 void flush_tlb_address(const void* virtual_address);
+
+/*
+this function takes a virtual address and returns the physical address it represents.
+for example, a virtual address 0xC879F345. to convert it to physical address:
+find the page using getPage(0xC879F345 & 0xFFFFF000), and then get the index in the page using PAGE_INDEX, and then do page->frame | PAGE_INDEX and return the result.
+*/
+void* virtual_to_physical(const void* virtual_address);
