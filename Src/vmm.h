@@ -157,7 +157,7 @@ void free_block(page_table_entry_t* page);
 this function takes a pointer to a page directory, and sets the page directory to be the current page directory.
 edit the current_page_dir pointer, and modify cr3 register.
 dir: the directory to set as current
-return value: 1 of succsessful, otherwise 0.
+return value: 1 if succsessful, otherwise 0.
 */
 uint32_t set_page_directory(page_directory_t* dir);
 
