@@ -6,6 +6,7 @@ uint32_t* pmm_bitmap = 0;
 uint32_t* bitmap_end = 0;
 uint32_t maxBlocks = 0;
 uint32_t usedBlocks = 0;
+uint32_t lastBlock = 0;
 
 void init_block_used(const uint32_t add)
 {
@@ -87,7 +88,7 @@ uint32_t allocate_blocks(const uint32_t num_blocks)
     uint32_t block = 0;
 
     // Test 32 blocks at a time
-    for (uint32_t i = 0; i < maxBlocks / 32 && !block;  i++) {
+    for (uint32_t i = lastBlock; i < maxBlocks / 32 && !block;  i++) {
         if (pmm_bitmap[i] != 0xFFFFFFFF) {
             // At least 1 bit is not set within this 32bit chunk of memory,
             //   find that bit by testing each bit
@@ -117,6 +118,7 @@ uint32_t allocate_blocks(const uint32_t num_blocks)
         uint32_t tempBlock = BLOCK_TO_ADDRESS(block);
         for (uint32_t n = 0; n < num_blocks; n++ ,tempBlock+=BLOCK_SIZE)
             init_block_used(tempBlock); // setting the blocks allocated to used in bitmap
+        lastBlock = ADDRESS_TO_BLOCK(tempBlock) / 32;
         usedBlocks += num_blocks;
         return BLOCK_TO_ADDRESS(block);
     }
@@ -130,4 +132,7 @@ void free_blocks(const uint32_t address, const uint32_t num_blocks)
     for (uint32_t i = 0; i < num_blocks; i++) 
         init_block_free((uint32_t)(address + (i * BLOCK_SIZE)));    // Unset bits/blocks in memory map, to free
     usedBlocks -= num_blocks;  // Decrease used block count
+    uint32_t tempLastBlock = ADDRESS_TO_BLOCK(address) / 32;
+    if (lastBlock > tempLastBlock)
+        lastBlock = tempLastBlock;
 }

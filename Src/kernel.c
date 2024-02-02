@@ -22,7 +22,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     clearScreen();
     kprintf("Initialized GDT and IDT\n");
     init_keyboard();
-    kprintf("Initialized Keyboard\n");
+    kprintf("Initialized Keyboard Input\n");
     //initialize_allocator();
     multiboot_memory_map_t * memory_map = (multiboot_memory_map_t *)(mboot_ptr->mmap_addr);
     uint32_t num_entries = mboot_ptr->mmap_length / sizeof(multiboot_memory_map_t);
@@ -45,15 +45,21 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Allocated block at address: %x\n", add1);
     uint32_t add2 = allocate_blocks(65);
     kprintf("Allocated 65 blocks at address: %x\n", add2);
+    free_block(add1);
+    add1 = allocate_block();
+    kprintf("Allocated block at address: %x\n", add1);
     uint32_t add3 = allocate_block();
     kprintf("Allocated block at address: %x\n", add3);
-
+    free_blocks(add2, 65);
+    add2 = allocate_block();
+    kprintf("Allocated block at address: %x\n", add2);
+    free_block(add3);
+    add3 = allocate_block();
+    kprintf("Allocated block at address: %x\n", add3);
 
     /*
     //initializing fs
     init_fs(32, 64);
-    //testing kprintf
-    kprintf("Hello World!\n");
 
     //testing memory allocation
     uint32_t ptr1 = kmalloc(10);
