@@ -1,11 +1,14 @@
-#include <stdint.h>
 #include "pmm.h"
+#include "isr.h"
 
 #define ENTRIES_IN_PAGE_TABLE 1024
 #define ENTRIES_IN_PAGE_DIR 1024
 
 #define PAGE_OFFSET_BITS 12
 #define PAGE_TABLE_ENTRY_BITS 10
+
+//Paging releated:
+//these structs and enums releate to paging structures and macros. they work with pages, page tables and page directories
 
 enum PAGE_PTE_FLAGS {
 
@@ -101,6 +104,23 @@ page_directory_t* current_page_dir; //physical address of the current page direc
 #define CLEAR_ATTRIBUTE(addr, attr) (*(uint32_t*)addr &= ~(attr))
 
 /*
+this function handles a page fault interrupt. it should read the cr2 register to found out information about the faulting address, and the error code pushed by
+the CPU can tell us what caused page fault (access rights, page not present etc.)
+regs: a struct representing the cpu state when the interrupt happend.
+return value: None.
+*/
+static void page_fault(registers_t* regs);
+
+
+//virtual memory manager:
+//these function releate to actions that are done by the virtual memory manager
+//1. mapping or unmapping pages
+//2. allocating and freeing pages.
+//3. accessing pages and page tables.
+//4. converting virtual addresses to physical ones.
+//5. changing current_page_dir and flushing tlb addresses.
+
+/*
 this function initializes the virtual memory manager.
 creating a page directory and assigning it to cr3 register.
 setting the Paging bit in cr0 register
@@ -168,6 +188,13 @@ virtual_address: the virtual address to flush.
 return value: None.
 */
 void flush_tlb_address(const void* virtual_address);
+
+/*
+this function is used to flush the entire tlb, not a specific address.
+this is done by resetting the cr3 register
+implementation is basically moving him to some other register (eax for example), and then moving that register back to cr3.
+*/
+void flush_all_tlb();
 
 /*
 this function takes a virtual address and returns the physical address it represents.
