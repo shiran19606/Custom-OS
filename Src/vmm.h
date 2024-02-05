@@ -10,6 +10,8 @@
 //Paging releated:
 //these structs and enums releate to paging structures and macros. they work with pages, page tables and page directories
 
+#define PAGE_FAULT 14
+
 enum PAGE_PTE_FLAGS {
 
     PTE_PRESENT = 1,		    //00000000000000000000000000000001
@@ -91,9 +93,9 @@ page_directory_t* current_page_dir; //physical address of the current page direc
 #define PDE_PRESENT(addr) (addr & PDE_PRESENT)
 #define PDE_READ_WRITE(addr) (adrr & PDE_WRITEABLE)
 #define PDE_USER(addr) (addr & PDE_USER)
-#define PDE_GET_FRAME(addr) (addr & PDE_FRAME)
 #define PDE_IS_4MB(addr) (addr & PDE_4MB)
-#define PDE_SET_FRAME(addrOfPtEntry, frame) (*(uint32_t*)addrOfPtEntry) = ((*(uint32_t*)addrOfPtEntry) & ~PDE_FRAME) | ((uint32_t)frame)
+#define PDE_GET_FRAME(addr) (addr & PDE_FRAME)
+#define PDE_SET_FRAME(addrOfPdEntry, frame) (*(uint32_t*)addrOfPtEntry) = ((*(uint32_t*)addrOfPtEntry) & ~PDE_FRAME) | ((uint32_t)frame)
 
 //These macros are used to break down a virtual address into its physical parts. according to little os book section 9.2
 #define PD_INDEX(virtual_address) (virtual_address >> PAGE_TABLE_ENTRY_BITS >> PAGE_OFFSET_BITS) //takes a virtual address and finds the PDE of the virtual address
@@ -103,6 +105,11 @@ page_directory_t* current_page_dir; //physical address of the current page direc
 #define SET_ATTRIBUTE(addr, attr) (*(uint32_t*)addr |= attr)
 #define CLEAR_ATTRIBUTE(addr, attr) (*(uint32_t*)addr &= ~(attr))
 
+
+/*
+this function is responsible to initialize paging by setting the paging bit in cr0 register. it is also responsible to set up the page fault handler.
+*/
+void init_paging();
 /*
 this function handles a page fault interrupt. it should read the cr2 register to found out information about the faulting address, and the error code pushed by
 the CPU can tell us what caused page fault (access rights, page not present etc.)
@@ -122,8 +129,7 @@ static void page_fault(registers_t* regs);
 
 /*
 this function initializes the virtual memory manager.
-creating a page directory and assigning it to cr3 register.
-setting the Paging bit in cr0 register
+creating a page directory and calling init_paging with it as parameter. the page directory should identity map the first 4MB of memory, to continue execution.
 return value: 1 if successful, otherwise 0.
 */
 uint32_t initialize_vmm();
@@ -160,7 +166,7 @@ this function takes a page, and unmaps it from a frame. it will free the frame, 
 page: the page to unmap from its frame.
 return value: None
 */
-void unmap_page(page_table_entry_t* page);
+void unmap_page(void* virtual_address);
 
 /*
 this function takes a page and allocates a frame to it.
@@ -168,14 +174,14 @@ page: the page we allocate a frame for.
 flags: the flags to set for the page taken.
 return value: the address of the frame we allocated.
 */
-void* allocate_block(page_table_entry_t* page, uint32_t flags);
+void* allocate_page(page_table_entry_t* page, uint32_t flags);
 
 /*
 this function takes a page and frees the frame in it.
 page: the page we free its frame
 return value: None.
 */
-void free_block(page_table_entry_t* page);
+void free_page(page_table_entry_t* page);
 
 /*
 this function takes a pointer to a page directory, and sets the page directory to be the current page directory.
