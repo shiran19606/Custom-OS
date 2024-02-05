@@ -76,8 +76,8 @@ void unmap_page(void* virtual_address)
     page_table_entry_t* page = get_page((uint32_t)virtual_address);
     if (PTE_PRESENT(page))
     {
-        PTE_GET_FRAME(page);
-        free_block(block);
+        void* block = PTE_GET_FRAME(page);
+        free_block((uint32_t)block);
         PTE_SET_FRAME(page, 0);
         CLEAR_ATTRIBUTE(page, PTE_PRESENT);
     }
