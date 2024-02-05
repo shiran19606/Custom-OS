@@ -147,11 +147,13 @@ page_dir_entry_t* get_page_table(const void* virtual_address);
 
 /*
 this function takes a virtual address, and will assaign the physical address physical_address as the physical frame of the page.
+if the page at virtual_address is not present, it will create it. if the page table of virtual_address is not present it will create it.
 virtual_address: the virtual address that gets asigned a page.
 physical_address: the address of the page to assaign, assuming 0x1000 alligned.
+flags: the flags to use on the page in virtual_address
 return value: 1 if success, else 0
 */
-uint32_t map_page(const void* virtual_address, const void* physical_address);
+uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags);
 
 /*
 this function takes a page, and unmaps it from a frame. it will free the frame, set the 20 bits of the frame as clear, and will clear the PRESENT bit.
@@ -163,9 +165,10 @@ void unmap_page(page_table_entry_t* page);
 /*
 this function takes a page and allocates a frame to it.
 page: the page we allocate a frame for.
+flags: the flags to set for the page taken.
 return value: the address of the frame we allocated.
 */
-void* allocate_block(page_table_entry_t* page);
+void* allocate_block(page_table_entry_t* page, uint32_t flags);
 
 /*
 this function takes a page and frees the frame in it.
