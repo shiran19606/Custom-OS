@@ -42,33 +42,8 @@ enum PAGE_PDE_FLAGS {
     PDE_FRAME = 0xFFFFF000 	    //11111111111111111111000000000000
 };
 
-//a struct representing an entry in the page directory - a page table
-typedef struct page_dir_entry {
-    uint32_t present : 1;
-    uint32_t rw : 1;
-    uint32_t user : 1;
-    uint32_t w_through : 1;
-    uint32_t cache : 1;
-    uint32_t access : 1;
-    uint32_t reserved : 1;
-    uint32_t page_size : 1;
-    uint32_t global : 1;
-    uint32_t available : 3;
-    uint32_t frame : 20;
-} page_dir_entry_t;
-
-//a struct representing an entry in the page table - a page 
-typedef struct page_table_entry {
-    uint32_t present : 1;
-    uint32_t rw : 1;
-    uint32_t user : 1;
-    uint32_t reserved : 2;
-    uint32_t accessed : 1;
-    uint32_t dirty : 1;
-    uint32_t reserved2 : 2;
-    uint32_t available : 3;
-    uint32_t frame : 20;
-} page_table_entry_t;
+typedef uint32_t page_dir_entry_t;
+typedef uint32_t page_table_entry_t;
 
 typedef struct page_table
 {
@@ -80,27 +55,25 @@ typedef struct page_directory
     page_dir_entry_t pages[ENTRIES_IN_PAGE_DIR];
 } page_directory_t;
 
-page_directory_t* current_page_dir; //physical address of the current page directory
-
 //macros refering to Pages (Page table entry is a page)
-#define PTE_PRESENT(addr) (addr & PTE_PRESENT)
-#define PTE_READ_WRITE(addr) (adrr & PTE_WRITEABLE)
-#define PTE_USER(addr) (addr & PTE_USER)
-#define PTE_GET_FRAME(addr) (addr & PTE_FRAME)
+#define PTE_PRESENT(addr) ((uint32_t)addr & PTE_PRESENT)
+#define PTE_READ_WRITE(addr) ((uint32_t)adrr & PTE_WRITEABLE)
+#define PTE_USER(addr) ((uint32_t)addr & PTE_USER)
+#define PTE_GET_FRAME(addr) ((uint32_t)addr & PTE_FRAME)
 #define PTE_SET_FRAME(addrOfPtEntry, frame) (*(uint32_t*)addrOfPtEntry) = ((*(uint32_t*)addrOfPtEntry) & ~PTE_FRAME) | ((uint32_t)frame)
 
 //macros refering to Page tables (Page Directory entry is a page table)
-#define PDE_PRESENT(addr) (addr & PDE_PRESENT)
-#define PDE_READ_WRITE(addr) (adrr & PDE_WRITEABLE)
-#define PDE_USER(addr) (addr & PDE_USER)
-#define PDE_IS_4MB(addr) (addr & PDE_4MB)
-#define PDE_GET_FRAME(addr) (addr & PDE_FRAME)
-#define PDE_SET_FRAME(addrOfPdEntry, frame) (*(uint32_t*)addrOfPtEntry) = ((*(uint32_t*)addrOfPtEntry) & ~PDE_FRAME) | ((uint32_t)frame)
+#define PDE_PRESENT(addr) ((uint32_t)addr & PDE_PRESENT)
+#define PDE_READ_WRITE(addr) ((uint32_t)adrr & PDE_WRITEABLE)
+#define PDE_USER(addr) ((uint32_t)addr & PDE_USER)
+#define PDE_IS_4MB(addr) ((uint32_t)addr & PDE_4MB)
+#define PDE_GET_FRAME(addr) ((uint32_t)addr & PDE_FRAME)
+#define PDE_SET_FRAME(addrOfPdEntry, frame) (*(uint32_t*)addrOfPdEntry) = ((*(uint32_t*)addrOfPdEntry) & ~PDE_FRAME) | ((uint32_t)frame)
 
 //These macros are used to break down a virtual address into its physical parts. according to little os book section 9.2
-#define PD_INDEX(virtual_address) (virtual_address >> PAGE_TABLE_ENTRY_BITS >> PAGE_OFFSET_BITS) //takes a virtual address and finds the PDE of the virtual address
-#define PT_INDEX(virtual_address) (virtual_address >> PAGE_OFFSET_BITS) & 0x3FF //we need the bits from 12 to 21. so we move them to start, and then end & removes the bits used by the PDE
-#define PAGE_INDEX(virtual_address) (virtual_address & 0xFFF) //takes only the 12 bits on the right of the virtual address, which specify the index in the page.
+#define PD_INDEX(virtual_address) ((uint32_t)virtual_address >> PAGE_TABLE_ENTRY_BITS >> PAGE_OFFSET_BITS) //takes a virtual address and finds the PDE of the virtual address
+#define PT_INDEX(virtual_address) ((uint32_t)virtual_address >> PAGE_OFFSET_BITS) & 0x3FF //we need the bits from 12 to 21. so we move them to start, and then end & removes the bits used by the PDE
+#define PAGE_INDEX(virtual_address) ((uint32_t)virtual_address & 0xFFF) //takes only the 12 bits on the right of the virtual address, which specify the index in the page.
 
 #define SET_ATTRIBUTE(addr, attr) (*(uint32_t*)addr |= attr)
 #define CLEAR_ATTRIBUTE(addr, attr) (*(uint32_t*)addr &= ~(attr))
