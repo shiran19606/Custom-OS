@@ -4,7 +4,6 @@ extern void load_page_directory(uint32_t base_reg);
 extern void flush_tlb(void);
 
 page_directory_t* current_page_dir = 0; //physical address of the current page directory
-uint32_t current_dir_base_reg = 0;
 
 void init_paging(page_directory_t* dir_physical_address)
 {
@@ -135,8 +134,7 @@ uint32_t set_page_directory(page_directory_t* dir)
     if(!dir) return 0;
 
     current_page_dir = dir;
-    current_dir_base_reg = (uint32_t) &dir->pages;
-    load_page_directory(current_dir_base_reg); 
+    load_page_directory(current_page_dir); 
     return 1;
 }
 
@@ -158,7 +156,6 @@ void* virtual_to_physical(const void* virtual_address)
     page_table_entry_t* page = get_page((uint32_t)virtual_address);
     uint32_t frame = PTE_GET_FRAME(page);
     return (void*)(frame | PAGE_INDEX(virtual_address));
-
 }
 
 
@@ -168,7 +165,7 @@ uint32_t initialize_vmm()
     if (!pd) return 0;
     page_table_t* pt = (page_table_t*) allocate_block();
     if (!pt) return 0;
-    uint32_t flags = !PTE_PRESENT | PTE_WRITEABLE | !PTE_USER;
+    uint32_t flags = (PDE_PRESENT & 0x0) | PDE_WRITEABLE | (PDE_USER & 0x0);
 
     for(uint32_t i = 0; i < ENTRIES_IN_PAGE_DIR; i++)
         pd->pages[i] = flags;
@@ -178,11 +175,15 @@ uint32_t initialize_vmm()
     for(uint32_t i = 0; i < ENTRIES_IN_PAGE_TABLE; ++i) {
         page_table_entry_t *page = &pt->pages[i];
         PTE_SET_FRAME(page, phys_addr);
-        SET_ATTRIBUTE(page, flags);
-
+        SET_ATTRIBUTE(page, PDE_PRESENT);
+        SET_ATTRIBUTE(page, PDE_WRITEABLE);
         phys_addr += PAGE_SIZE;
     }
 
+    page_dir_entry_t* first_page_table = &(pd->pages[0]);
+    SET_ATTRIBUTE(first_page_table, PDE_PRESENT);
+    SET_ATTRIBUTE(first_page_table, PDE_WRITEABLE);
+    PDE_SET_FRAME(first_page_table, (uint32_t)pt);
     init_paging(pd);
     return 1;
 }

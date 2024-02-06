@@ -12,3 +12,4 @@ load_page_directory:
 flush_tlb:
    mov cr3, eax
    mov eax, cr3
+   ret
