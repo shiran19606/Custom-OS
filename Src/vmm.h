@@ -11,6 +11,7 @@
 //these structs and enums releate to paging structures and macros. they work with pages, page tables and page directories
 
 #define PAGE_FAULT 14
+#define PAGE_SIZE 4096
 
 enum PAGE_PTE_FLAGS {
 

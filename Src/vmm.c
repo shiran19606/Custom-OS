@@ -1,6 +1,10 @@
 #include "vmm.h"
 
+extern void load_page_directory(uint32_t base_reg);
+extern void flush_tlb(void);
+
 page_directory_t* current_page_dir = 0; //physical address of the current page directory
+uint32_t current_dir_base_reg = 0;
 
 void init_paging(page_directory_t* dir_physical_address)
 {
@@ -14,9 +18,9 @@ void init_paging(page_directory_t* dir_physical_address)
     // Use inline assembly to perform bitwise OR with CR0 register
     uint32_t value = 0x80000001;
     asm volatile (
-        "mov %%cr0, %%eax;"
-        "or %0, %%eax;"
-        "mov %%eax, %%cr0;"
+        "movl %%cr0, %%eax;"
+        "orl %0, %%eax;"
+        "movl %%eax, %%cr0;"
         : // no outputs
         : "r" (value)
         : "eax"
@@ -27,7 +31,7 @@ void init_paging(page_directory_t* dir_physical_address)
 static void page_fault(registers_t* regs)
 {
     uint32_t address;
-    asm volatile("mov %%cr2, %0" :"r=" (address)); //cr2 register stores the address that caused the page fault.
+    asm volatile("movl %%cr2, %0" :"r=" (address)); //cr2 register stores the address that caused the page fault.
     uint32_t present = regs->err_code & PTE_PRESENT;
     uint32_t read_write = regs->err_code & PTE_WRITEABLE;
     uint32_t user = regs->err_code & PTE_USER;
@@ -103,4 +107,82 @@ void unmap_page(void* virtual_address)
     //if we reached here, it means that the page table is empty.
     free_block((uint32_t)page_table_physical); //free the frame used by the page table.
     CLEAR_ATTRIBUTE(pd_entry, PDE_PRESENT);
+}
+
+
+void* allocate_page(page_table_entry_t* page, uint32_t flags)
+{
+    void* block = allocate_block();
+    if(block != -1)
+    {
+        PTE_SET_FRAME(page, (uint32_t*)block);
+        SET_ATTRIBUTE(page, flags);
+    }
+    return block;
+}
+
+
+void free_page(page_table_entry_t* page)
+{
+    if(page)
+        free_block(PTE_GET_FRAME(page));
+    CLEAR_ATTRIBUTE(page, PTE_PRESENT);
+}
+
+
+uint32_t set_page_directory(page_directory_t* dir)
+{
+    if(!dir) return 0;
+
+    current_page_dir = dir;
+    current_dir_base_reg = (uint32_t) &dir->pages;
+    load_page_directory(current_dir_base_reg); 
+    return 1;
+}
+
+
+void flush_tlb_address(const void* virtual_address)
+{
+    asm volatile ("invlpg (%0)" : : "r"(virtual_address) : "memory");
+}
+
+
+void flush_all_tlb()
+{
+    flush_tlb();
+}
+
+
+void* virtual_to_physical(const void* virtual_address)
+{
+    page_table_entry_t* page = get_page((uint32_t)virtual_address);
+    uint32_t frame = PTE_GET_FRAME(page);
+    return (void*)(frame | PAGE_INDEX(virtual_address));
+
+}
+
+
+uint32_t initialize_vmm()
+{
+    page_directory_t* pd = (page_directory_t*) allocate_block();
+    if (!pd) return 0;
+    page_table_t* pt = (page_table_t*) allocate_block();
+    if (!pt) return 0;
+    uint32_t flags = !PTE_PRESENT | PTE_WRITEABLE | !PTE_USER;
+
+    for(uint32_t i = 0; i < ENTRIES_IN_PAGE_DIR; i++)
+        pd->pages[i] = flags;
+
+    uint32_t phys_addr = 0x0;
+    // identity mapping the first 4mb 
+    for(uint32_t i = 0; i < ENTRIES_IN_PAGE_TABLE; ++i) {
+        page_table_entry_t *page = &pt->pages[i];
+        PTE_SET_FRAME(page, phys_addr);
+        SET_ATTRIBUTE(page, flags);
+
+        phys_addr += PAGE_SIZE;
+    }
+
+    init_paging(pd);
+    return 1;
 }
