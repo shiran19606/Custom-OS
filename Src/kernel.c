@@ -50,7 +50,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     *ptr1 = 9;
     kprintf("Accessing mapped memory at %x gives: %d\n", ptr1, *ptr1);
     char* ptr = 0xA0000000;
-    kprintf("%x", *ptr);
+    kprintf("Value at address %x is %x", ptr, *ptr);
     /*
     //initializing fs
     init_fs(32, 64);

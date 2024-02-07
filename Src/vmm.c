@@ -21,14 +21,15 @@ static void page_fault(registers_t* regs)
     uint8_t user = regs->err_code & PTE_USER;
     uint8_t reserved = regs->err_code & PTE_WRITETHOUGH;
     if (present)
-        kprintf("page fault present at address %x", address);
+        kprintf("page fault present at address %x\n", address);
     if (read_write)
-        kprintf("page fault read-only at address %x", address);
+        kprintf("page fault read-only at address %x\n", address);
     if (user)
-        kprintf("page fault user-mode at address %x", address);
+        kprintf("page fault user-mode at address %x\n", address);
     if (reserved)
-        kprintf("page fault reserved page at address %x", address);
-    asm volatile("cli;hlt"); //right now, a page fault will simply stop the process.
+        kprintf("page fault reserved page at address %x\n", address);
+    
+    map_page(address, allocate_block(), PTE_PRESENT | read_write | user, get_page_dir());
 }
 
 void init_paging(page_directory_t* dir_physical_address)
@@ -61,8 +62,8 @@ page_dir_entry_t* get_page_table(const void* virtual_address)
 uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags, page_directory_t* dir)
 {
     page_dir_entry_t* pd_entry = &(dir->pages[PD_INDEX(virtual_address)]);
-    page_table_t* pt = (page_table_t*)(PDE_GET_FRAME(*pd_entry));
-    if ((uint32_t)(*pd_entry) & PDE_PRESENT != PDE_PRESENT)
+    uint32_t flags1 = *pd_entry & ~(PDE_FRAME);
+    if ((flags1 & PDE_PRESENT) != PDE_PRESENT)
     {
         void* block = allocate_block();
         if (!block) return 0;
@@ -70,6 +71,7 @@ uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t 
         SET_ATTRIBUTE(pd_entry, PDE_PRESENT);
         SET_ATTRIBUTE(pd_entry, PDE_WRITEABLE);
     }
+    page_table_t* pt = (page_table_t*)(PDE_GET_FRAME(*pd_entry));
     page_table_entry_t* pt_entry = &(pt->pages[PT_INDEX(virtual_address)]);
     PTE_SET_FRAME(pt_entry, (uint32_t)(physical_address));
     SET_ATTRIBUTE(pt_entry, (flags & (~PTE_FRAME)));
