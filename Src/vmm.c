@@ -21,15 +21,16 @@ static void page_fault(registers_t* regs)
     uint8_t user = regs->err_code & PTE_USER;
     uint8_t reserved = regs->err_code & PTE_WRITETHOUGH;
     if (present)
+    {
         kprintf("page fault present at address %x\n", address);
+        map_page(address, allocate_block(), PTE_PRESENT | PTE_WRITEABLE, get_page_dir());
+    }
     if (read_write)
         kprintf("page fault read-only at address %x\n", address);
     if (user)
         kprintf("page fault user-mode at address %x\n", address);
     if (reserved)
         kprintf("page fault reserved page at address %x\n", address);
-    
-    map_page(address, allocate_block(), PTE_PRESENT | read_write | user, get_page_dir());
 }
 
 void init_paging(page_directory_t* dir_physical_address)
@@ -47,8 +48,12 @@ page_table_entry_t* get_page(const void* virtual_address)
 {
     page_directory_t* dir = current_page_dir;
     page_dir_entry_t* pd_entry = &(dir->pages[PD_INDEX(virtual_address)]); //get pd_entry which is the page table
-    page_table_t* pt = (page_table_t*)(PDE_GET_FRAME((*pd_entry))); //get the physical page table from pd_entry
-    return &(pt->pages[PT_INDEX(virtual_address)]);
+    if (PDE_IS_PRESENT(*pd_entry))
+    {
+        page_table_t* pt = (page_table_t*)(PDE_GET_FRAME((*pd_entry))); //get the physical page table from pd_entry
+        return &(pt->pages[PT_INDEX(virtual_address)]);
+    }
+    return 0;
 }
 
 
@@ -67,7 +72,7 @@ uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t 
     {
         void* block = allocate_block();
         if (!block) return 0;
-        PDE_SET_FRAME(pd_entry, block);
+        PDE_SET_FRAME(pd_entry, (uint32_t)block);
         SET_ATTRIBUTE(pd_entry, PDE_PRESENT);
         SET_ATTRIBUTE(pd_entry, PDE_WRITEABLE);
     }
@@ -151,6 +156,7 @@ void flush_all_tlb()
 void* virtual_to_physical(const void* virtual_address)
 {
     page_table_entry_t* page = get_page((uint32_t)virtual_address);
+    if ((uint32_t)page == 0) return 0;
     uint32_t frame = PTE_GET_FRAME(page);
     return (void*)(frame | PAGE_INDEX(virtual_address));
 }
