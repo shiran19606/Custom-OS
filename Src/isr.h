@@ -1,3 +1,6 @@
+#ifndef ISR_H
+#define ISR_H
+
 //isr.h and isr.c files will implement a common handler function for an interrupt, that will be called when an interrupt happens and will take care of it to make sure the OS can continue running.
 #include <stdint.h>
 #include "Screen.h"
@@ -12,3 +15,5 @@ typedef struct registers
 
 typedef void (*isr_t)(registers_t*);
 void register_handler(uint8_t num, isr_t handler);
+
+#endif

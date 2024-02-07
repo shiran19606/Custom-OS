@@ -5,6 +5,7 @@
 #include "fs.h"
 #include "multiboot.h"
 #include "pmm.h"
+#include "vmm.h"
 
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
@@ -41,22 +42,15 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 
     kprintf("Initialized physical memory\n");
 
-    uint32_t add1 = allocate_block();
-    kprintf("Allocated block at address: %x\n", add1);
-    uint32_t add2 = allocate_blocks(65);
-    kprintf("Allocated 65 blocks at address: %x\n", add2);
-    free_block(add1);
-    add1 = allocate_block();
-    kprintf("Allocated block at address: %x\n", add1);
-    uint32_t add3 = allocate_block();
-    kprintf("Allocated block at address: %x\n", add3);
-    free_blocks(add2, 65);
-    add2 = allocate_block();
-    kprintf("Allocated block at address: %x\n", add2);
-    free_block(add3);
-    add3 = allocate_block();
-    kprintf("Allocated block at address: %x\n", add3);
+    initialize_vmm();
+    
+    kprintf("Initialized virtual memory\n");
 
+    char* ptr1 = 0x00200000;
+    *ptr1 = 9;
+    kprintf("Accessing mapped memory at %x gives: %d\n", ptr1, *ptr1);
+    char* ptr = 0xA0000000;
+    kprintf("%x", *ptr);
     /*
     //initializing fs
     init_fs(32, 64);

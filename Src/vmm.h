@@ -57,16 +57,16 @@ typedef struct page_directory
 } page_directory_t;
 
 //macros refering to Pages (Page table entry is a page)
-#define PTE_PRESENT(addr) ((uint32_t)addr & PTE_PRESENT)
-#define PTE_READ_WRITE(addr) ((uint32_t)adrr & PTE_WRITEABLE)
-#define PTE_USER(addr) ((uint32_t)addr & PTE_USER)
+#define PTE_IS_PRESENT(addr) ((uint32_t)addr & PTE_PRESENT)
+#define PTE_IS_READ_WRITE(addr) ((uint32_t)adrr & PTE_WRITEABLE)
+#define PTE_IS_USER(addr) ((uint32_t)addr & PTE_USER)
 #define PTE_GET_FRAME(addr) ((uint32_t)addr & PTE_FRAME)
 #define PTE_SET_FRAME(addrOfPtEntry, frame) (*(uint32_t*)addrOfPtEntry) = ((*(uint32_t*)addrOfPtEntry) & ~PTE_FRAME) | ((uint32_t)frame)
 
 //macros refering to Page tables (Page Directory entry is a page table)
-#define PDE_PRESENT(addr) ((uint32_t)addr & PDE_PRESENT)
-#define PDE_READ_WRITE(addr) ((uint32_t)adrr & PDE_WRITEABLE)
-#define PDE_USER(addr) ((uint32_t)addr & PDE_USER)
+#define PDE_IS_PRESENT(addr) ((uint32_t)addr & PDE_PRESENT)
+#define PDE_IS_READ_WRITE(addr) ((uint32_t)adrr & PDE_WRITEABLE)
+#define PDE_IS_USER(addr) ((uint32_t)addr & PDE_USER)
 #define PDE_IS_4MB(addr) ((uint32_t)addr & PDE_4MB)
 #define PDE_GET_FRAME(addr) ((uint32_t)addr & PDE_FRAME)
 #define PDE_SET_FRAME(addrOfPdEntry, frame) (*(uint32_t*)addrOfPdEntry) = ((*(uint32_t*)addrOfPdEntry) & ~PDE_FRAME) | ((uint32_t)frame)
@@ -84,14 +84,6 @@ typedef struct page_directory
 this function is responsible to initialize paging by setting the paging bit in cr0 register. it is also responsible to set up the page fault handler.
 */
 void init_paging();
-/*
-this function handles a page fault interrupt. it should read the cr2 register to found out information about the faulting address, and the error code pushed by
-the CPU can tell us what caused page fault (access rights, page not present etc.)
-regs: a struct representing the cpu state when the interrupt happend.
-return value: None.
-*/
-static void page_fault(registers_t* regs);
-
 
 //virtual memory manager:
 //these function releate to actions that are done by the virtual memory manager
@@ -133,7 +125,7 @@ physical_address: the address of the page to assaign, assuming 0x1000 alligned.
 flags: the flags to use on the page in virtual_address
 return value: 1 if success, else 0
 */
-uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags);
+uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags, page_directory_t* dir);
 
 /*
 this function takes a page, and unmaps it from a frame. it will free the frame, set the 20 bits of the frame as clear, and will clear the PRESENT bit.

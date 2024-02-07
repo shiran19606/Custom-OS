@@ -2,8 +2,34 @@
 
 extern void load_page_directory(uint32_t base_reg);
 extern void flush_tlb(void);
+extern void enable_paging(void);
 
 page_directory_t* current_page_dir = 0; //physical address of the current page directory
+
+/*
+this function handles a page fault interrupt. it should read the cr2 register to found out information about the faulting address, and the error code pushed by
+the CPU can tell us what caused page fault (access rights, page not present etc.)
+regs: a struct representing the cpu state when the interrupt happend.
+return value: None.
+*/
+static void page_fault(registers_t* regs)
+{
+    uint32_t address;
+    asm volatile("movl %%cr2, %0" :"r=" (address)); //cr2 register stores the address that caused the page fault.
+    uint8_t present = !(regs->err_code & PTE_PRESENT);
+    uint8_t read_write = regs->err_code & PTE_WRITEABLE;
+    uint8_t user = regs->err_code & PTE_USER;
+    uint8_t reserved = regs->err_code & PTE_WRITETHOUGH;
+    if (present)
+        kprintf("page fault present at address %x", address);
+    if (read_write)
+        kprintf("page fault read-only at address %x", address);
+    if (user)
+        kprintf("page fault user-mode at address %x", address);
+    if (reserved)
+        kprintf("page fault reserved page at address %x", address);
+    asm volatile("cli;hlt"); //right now, a page fault will simply stop the process.
+}
 
 void init_paging(page_directory_t* dir_physical_address)
 {
@@ -13,38 +39,8 @@ void init_paging(page_directory_t* dir_physical_address)
     //register interrupt handler for page fault
     register_handler(PAGE_FAULT, page_fault);
 
-    //read current cr0 register, set paging bit and put new cr0 register.
-    // Use inline assembly to perform bitwise OR with CR0 register
-    uint32_t value = 0x80000001;
-    asm volatile (
-        "movl %%cr0, %%eax;"
-        "orl %0, %%eax;"
-        "movl %%eax, %%cr0;"
-        : // no outputs
-        : "r" (value)
-        : "eax"
-    );
+    enable_paging();
 }
-
-
-static void page_fault(registers_t* regs)
-{
-    uint32_t address;
-    asm volatile("movl %%cr2, %0" :"r=" (address)); //cr2 register stores the address that caused the page fault.
-    uint32_t present = regs->err_code & PTE_PRESENT;
-    uint32_t read_write = regs->err_code & PTE_WRITEABLE;
-    uint32_t user = regs->err_code & PTE_USER;
-    uint32_t reserved = regs->err_code & PTE_WRITETHOUGH;
-    if (present)
-        kprintf("page fault present at address %x", address);
-    else if (read_write)
-        kprintf("page fault read-only at address %x", address);
-    else if (user)
-        kprintf("page fault user-mode at address %x", address);
-    else if (reserved)
-        kprintf("page fault reserved page at address %x", address);
-}
-
 
 page_table_entry_t* get_page(const void* virtual_address)
 {
@@ -62,9 +58,8 @@ page_dir_entry_t* get_page_table(const void* virtual_address)
 }
 
 
-uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags)
+uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags, page_directory_t* dir)
 {
-    page_directory_t* dir = current_page_dir;
     page_dir_entry_t* pd_entry = &(dir->pages[PD_INDEX(virtual_address)]);
     page_table_t* pt = (page_table_t*)(PDE_GET_FRAME(*pd_entry));
     if ((uint32_t)(*pd_entry) & PDE_PRESENT != PDE_PRESENT)
@@ -86,7 +81,7 @@ uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t 
 void unmap_page(void* virtual_address)
 {
     page_table_entry_t* page = get_page((uint32_t)virtual_address);
-    if (PTE_PRESENT(page))
+    if (PTE_IS_PRESENT(page))
     {
         void* block = (void*)PTE_GET_FRAME(page);
         free_block((uint32_t)block);
@@ -100,7 +95,7 @@ void unmap_page(void* virtual_address)
 
     //if the unmaped page is the only page in the page table, we can free the page table aswell.
     for (int i = 0;i<ENTRIES_IN_PAGE_TABLE;i++)
-        if ((PTE_PRESENT((page_table_physical->pages[i])))) //if we found another page present, it means we cant delete the entire page table, wo we can stop the function.
+        if ((PTE_IS_PRESENT((page_table_physical->pages[i])))) //if we found another page present, it means we cant delete the entire page table, wo we can stop the function.
             return;
 
     //if we reached here, it means that the page table is empty.
@@ -165,25 +160,26 @@ uint32_t initialize_vmm()
     if (!pd) return 0;
     page_table_t* pt = (page_table_t*) allocate_block();
     if (!pt) return 0;
-    uint32_t flags = (PDE_PRESENT & 0x0) | PDE_WRITEABLE | (PDE_USER & 0x0);
-
+    
     for(uint32_t i = 0; i < ENTRIES_IN_PAGE_DIR; i++)
-        pd->pages[i] = flags;
-
-    uint32_t phys_addr = 0x0;
-    // identity mapping the first 4mb 
-    for(uint32_t i = 0; i < ENTRIES_IN_PAGE_TABLE; ++i) {
-        page_table_entry_t *page = &pt->pages[i];
-        PTE_SET_FRAME(page, phys_addr);
-        SET_ATTRIBUTE(page, PDE_PRESENT);
-        SET_ATTRIBUTE(page, PDE_WRITEABLE);
-        phys_addr += PAGE_SIZE;
-    }
+        pd->pages[i] = 0x2;
 
     page_dir_entry_t* first_page_table = &(pd->pages[0]);
     SET_ATTRIBUTE(first_page_table, PDE_PRESENT);
     SET_ATTRIBUTE(first_page_table, PDE_WRITEABLE);
     PDE_SET_FRAME(first_page_table, (uint32_t)pt);
+
+    uint32_t phys_addr = 0x0;
+    // identity mapping the first 4mb 
+    for(uint32_t i = 0; i < ENTRIES_IN_PAGE_TABLE; ++i) {
+        map_page(phys_addr, phys_addr, PTE_PRESENT | PTE_WRITEABLE, pd);
+        phys_addr += PAGE_SIZE;
+    }
     init_paging(pd);
     return 1;
+}
+
+page_directory_t* get_page_dir()
+{
+    return current_page_dir;
 }
