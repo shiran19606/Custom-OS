@@ -88,7 +88,7 @@ uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t 
 void unmap_page(void* virtual_address)
 {
     page_table_entry_t* page = get_page((uint32_t)virtual_address);
-    if (PTE_IS_PRESENT(page))
+    if ((*page & PTE_PRESENT) == PTE_PRESENT)
     {
         void* block = (void*)PTE_GET_FRAME(page);
         free_block((uint32_t)block);

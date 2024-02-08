@@ -50,7 +50,16 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     *ptr1 = 9;
     kprintf("Accessing mapped memory at %x gives: %d\n", ptr1, *ptr1);
     char* ptr = 0xA0000000;
-    kprintf("Value at address %x is %x", ptr, *ptr);
+    kprintf("Value at address %x is %x\n", ptr, *ptr);
+    kprintf("frame is %x\n", virtual_to_physical(ptr));
+
+
+    unmap_page(ptr);
+    kprintf("Unmaped page at address %x\n", ptr);
+    
+    
+    kprintf("Value at address %x is %x\n", ptr, *ptr);
+    kprintf("frame is %x\n", virtual_to_physical(ptr));
     /*
     //initializing fs
     init_fs(32, 64);
