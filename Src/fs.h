@@ -12,7 +12,7 @@
 
 #define SUPERBLOCK_SIZE sizeof(SuperBlock)
 #define INODE_SIZE sizeof(Inode)
-#define BLOCK_SIZE sizeof(Block)
+#define FS_BLOCK_SIZE sizeof(Block)
 
 #define INDEX_FROM_INODE(addr) (addr - sb->inodesAddress) / INODE_SIZE
 #define INODE_FROM_INDEX(idx) (sb->inodesAddress + INODE_SIZE * (idx));

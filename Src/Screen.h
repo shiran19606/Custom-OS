@@ -15,7 +15,7 @@
 
 void setCursorLocation();
 void clearScreen();
-void printString(char* str);
+void printString(const char* str);
 void printNumber(uint32_t number);
 void put_char(uint8_t charToPrint);
 void printNumberHex(uint32_t intNumber);

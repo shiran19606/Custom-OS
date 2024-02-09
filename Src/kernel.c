@@ -37,19 +37,21 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     }
 
     //set memory used by the kernel and the bitmap as used.
-    init_region_used(&kernel_start, &kernel_end);
-    init_region_used((uint32_t)pmm_bitmap, (uint32_t)bitmap_end);
+    init_region_used((const uint32_t)&kernel_start, (const uint32_t)&kernel_end);
+    init_region_used((const uint32_t)pmm_bitmap, (const uint32_t)bitmap_end);
 
     kprintf("Initialized physical memory\n");
 
-    initialize_vmm();
+    uint8_t result = initialize_vmm();
     
+    if (!result)
+        asm volatile("cli;hlt");
     kprintf("Initialized virtual memory\n");
 
-    char* ptr1 = 0x00200000;
+    char* ptr1 = (char*)0x00200000;
     *ptr1 = 9;
     kprintf("Accessing mapped memory at %x gives: %d\n", ptr1, *ptr1);
-    char* ptr = 0xA0000000;
+    char* ptr = (char*)0xA0000000;
     kprintf("Value at address %x is %x\n", ptr, *ptr);
     kprintf("frame is %x\n", virtual_to_physical(ptr));
 

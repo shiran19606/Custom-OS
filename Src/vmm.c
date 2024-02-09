@@ -23,7 +23,7 @@ static void page_fault(registers_t* regs)
     if (present)
     {
         kprintf("page fault present at address %x\n", address);
-        map_page(address, allocate_block(), PTE_PRESENT | PTE_WRITEABLE, get_page_dir());
+        map_page((void*)address, (void*)(allocate_block()), PTE_PRESENT | PTE_WRITEABLE, get_page_dir());
     }
     if (read_write)
         kprintf("page fault read-only at address %x\n", address);
@@ -64,12 +64,12 @@ page_dir_entry_t* get_page_table(const void* virtual_address)
 }
 
 
-uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags, page_directory_t* dir)
+uint32_t map_page(const void* virtual_address , const void* physical_address, const uint32_t flags, page_directory_t* dir)
 {
     page_dir_entry_t* pd_entry = &(dir->pages[PD_INDEX(virtual_address)]);
     if (pd_entry && (((*pd_entry & ~(PDE_FRAME)) & PDE_PRESENT) != PDE_PRESENT))
     {
-        void* block = allocate_block();
+        void* block = (void*)allocate_block();
         if (!block) return 0;
         PDE_SET_FRAME(pd_entry, (uint32_t)block);
         SET_ATTRIBUTE(pd_entry, PDE_PRESENT);
@@ -84,9 +84,9 @@ uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t 
     return 1;
 }
 
-void unmap_page(void* virtual_address)
+void unmap_page(const void* virtual_address)
 {
-    page_table_entry_t* page = get_page((uint32_t)virtual_address);
+    page_table_entry_t* page = get_page(virtual_address);
     if (page && ((*page & PTE_PRESENT) == PTE_PRESENT))
     {
         void* block = (void*)PTE_GET_FRAME(*page);
@@ -112,8 +112,8 @@ void unmap_page(void* virtual_address)
 
 void* allocate_page(page_table_entry_t* page, uint32_t flags)
 {
-    void* block = allocate_block();
-    if(block != -1)
+    void* block = (void*)allocate_block();
+    if((int32_t)block != (int32_t)(-1))
     {
         PTE_SET_FRAME(page, (uint32_t*)block);
         SET_ATTRIBUTE(page, flags);
@@ -135,7 +135,7 @@ uint32_t set_page_directory(page_directory_t* dir)
     if(!dir) return 0;
 
     current_page_dir = dir;
-    load_page_directory(current_page_dir); 
+    load_page_directory((uint32_t)current_page_dir); 
     return 1;
 }
 
@@ -154,7 +154,7 @@ void flush_all_tlb()
 
 void* virtual_to_physical(const void* virtual_address)
 {
-    page_table_entry_t* page = get_page((uint32_t)virtual_address);
+    page_table_entry_t* page = get_page(virtual_address);
     if ((uint32_t)page == 0) return 0;
     uint32_t frame = PTE_GET_FRAME(*page);
     return (void*)(frame | PAGE_INDEX(virtual_address));
@@ -178,7 +178,7 @@ uint32_t initialize_vmm()
 
     // identity mapping the first 4mb 
     for(uint32_t i = 0, virt_addr = 0, phys_addr = 0; i < ENTRIES_IN_PAGE_TABLE; ++i, virt_addr += PAGE_SIZE, phys_addr += PAGE_SIZE)
-        map_page(virt_addr, phys_addr, PTE_PRESENT | PTE_WRITEABLE, pd);
+        map_page((void*)virt_addr, (void*)phys_addr, PTE_PRESENT | PTE_WRITEABLE, pd);
     init_paging(pd);
     return 1;
 }

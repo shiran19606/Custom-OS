@@ -1,13 +1,13 @@
 #include "heap.h"
 
-extern uint32_t end;
+extern uint32_t kernel_end;
 // Define your free_list
 block_header* free_list = NULL;
 
 void initialize_allocator() {
     // Initialize the free list with the entire memory space
-    block_header* initial_block = (block_header*)&end;
-    initial_block->size = MEMORY_SIZE - sizeof(block_header);
+    block_header* initial_block = (block_header*)&kernel_end;
+    initial_block->size = (MEMORY_SIZE - sizeof(block_header));
     initial_block->next = NULL;
 
     free_list = initial_block;

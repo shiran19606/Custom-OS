@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "Screen.h"
+
 // Define the block header structure
 typedef struct block_header {
     uint32_t size;

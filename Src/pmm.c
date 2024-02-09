@@ -59,16 +59,16 @@ void init_region_free(const uint32_t start_add, const uint32_t end_add)
 
 void init_physical_memory(const uint32_t size)
 {
-    uint32_t kernel_end_address = &kernel_end;
+    uint32_t kernel_end_address = (uint32_t)(&kernel_end);
     if (kernel_end_address % BLOCK_SIZE != 0)
         kernel_end_address = ALIGN_4KB_UP(kernel_end_address);
     pmm_bitmap = (uint32_t*) kernel_end_address;
     maxBlocks = size / BLOCK_SIZE;
     usedBlocks = maxBlocks;
     memset(pmm_bitmap, 0xFF, maxBlocks / BLOCKS_PER_BYTE);        // set all blocks used.
-    bitmap_end = (uint32_t)(pmm_bitmap + (maxBlocks/32));
+    bitmap_end = (uint32_t*)(pmm_bitmap + (maxBlocks/32));
     if ((uint32_t)bitmap_end % BLOCK_SIZE != 0)
-        bitmap_end = ALIGN_4KB_UP((uint32_t)bitmap_end);
+        bitmap_end = (uint32_t*)ALIGN_4KB_UP((uint32_t)bitmap_end);
     kprintf("Initializing physical memory of size %x bytes\n", size);
 }
 
@@ -119,7 +119,7 @@ uint32_t allocate_blocks(const uint32_t num_blocks)
         for (uint32_t n = 0; n < num_blocks; n++ ,tempBlock+=BLOCK_SIZE)
         {
             init_block_used(tempBlock); // setting the blocks allocated to used in bitmap
-            memset(tempBlock, 0, BLOCK_SIZE);
+            memset((void*)tempBlock, 0, BLOCK_SIZE);
         }
         lastBlock = ADDRESS_TO_BLOCK(tempBlock) / 32;
         usedBlocks += num_blocks;

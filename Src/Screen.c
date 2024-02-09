@@ -88,7 +88,7 @@ void put_char(uint8_t charToPrint)
     setCursorLocation();
 }
 
-void printString(char* str)
+void printString(const char* str)
 {
     while (*str)
     {

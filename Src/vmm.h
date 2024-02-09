@@ -125,14 +125,14 @@ physical_address: the address of the page to assaign, assuming 0x1000 alligned.
 flags: the flags to use on the page in virtual_address
 return value: 1 if success, else 0
 */
-uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags, page_directory_t* dir);
+uint32_t map_page(const void* virtual_address , const void* physical_address, const uint32_t flags, page_directory_t* dir);
 
 /*
 this function takes a page, and unmaps it from a frame. it will free the frame, set the 20 bits of the frame as clear, and will clear the PRESENT bit.
 page: the page to unmap from its frame.
 return value: None
 */
-void unmap_page(void* virtual_address);
+void unmap_page(const void* virtual_address);
 
 /*
 this function takes a page and allocates a frame to it.

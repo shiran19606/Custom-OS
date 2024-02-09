@@ -31,14 +31,14 @@ void clearBit(uint32_t* bitmap, uint32_t index) {
 
 // Function to allocate an inode
 Inode* allocateInode(SuperBlock* sb) {
-	int index = findFirstClearIndex((int*)sb->inodeBitmap, (int)sb->inodesCount);
+	int index = findFirstClearIndex((uint32_t*)sb->inodeBitmap, (int)sb->inodesCount);
 	if (index == -1) {
 		kprintf("No kfree inodes available.\n");
 		return NULL;
 	}
 
-	setBit((int*)sb->inodeBitmap, index);
-	Inode* newInode = (sb->inodesAddress + sizeof(Inode) * index);
+	setBit((uint32_t*)sb->inodeBitmap, index);
+	Inode* newInode = (Inode*)(sb->inodesAddress + sizeof(Inode) * index);
 	newInode->fileSize = 0;
 	newInode->isDir = 0;
 	newInode->numOfBlocksUsed = 0;
@@ -50,13 +50,13 @@ void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 	// Clear existing blocks assigned to the inode
 	for (int i = 0; i < inode->numOfBlocksUsed; ++i) {
 		// Clear block by clearing the corresponding bit in the block bitmap
-		int index = ((uint32_t)inode->blocks[i] - sb->blocksAddress) / BLOCK_SIZE;
-		clearBit(sb->blockBitmap, index);
+		int index = ((uint32_t)inode->blocks[i] - sb->blocksAddress) / FS_BLOCK_SIZE;
+		clearBit((uint32_t*)sb->blockBitmap, index);
 		inode->blocks[i] = 0; // Reset block reference in inode
 	}
 
 	// Calculate required blocks to store data
-	int requiredBlocks = (dataSize + BLOCK_SIZE - 1) / BLOCK_SIZE;
+	int requiredBlocks = (dataSize + FS_BLOCK_SIZE - 1) / FS_BLOCK_SIZE;
 
 	// Check if data exceeds the capacity of the inode's three blocks
 	if (requiredBlocks > POINTERS_PER_INODE) {
@@ -66,18 +66,18 @@ void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 
 	// Allocate new blocks to the inode for data storage
 	for (int i = 0; i < requiredBlocks; ++i) {
-		int kfreeBlockIndex = findFirstClearIndex((int*)sb->blockBitmap, (int)sb->blocksCount);
+		int kfreeBlockIndex = findFirstClearIndex((uint32_t*)sb->blockBitmap, (int)sb->blocksCount);
 		if (kfreeBlockIndex == -1) {
 			kprintf("No kfree blocks available for writing data.\n");
 			return;
 		}
-		setBit((int*)sb->blockBitmap, kfreeBlockIndex); // Set the bit in the block bitmap
-		inode->blocks[i] = (uint32_t)sb->blocksAddress + kfreeBlockIndex * BLOCK_SIZE; // Assign block number to the inode
+		setBit((uint32_t*)sb->blockBitmap, (uint32_t)kfreeBlockIndex); // Set the bit in the block bitmap
+		inode->blocks[i] = (uint32_t)sb->blocksAddress + kfreeBlockIndex * FS_BLOCK_SIZE; // Assign block number to the inode
 	}
 
 	int blockIndex = 0;
-	for (int i = 0; i < dataSize; i += BLOCK_SIZE) {
-		memcpy(inode->blocks[blockIndex], data + i, BLOCK_SIZE);
+	for (uint32_t i = 0; i < dataSize; i += FS_BLOCK_SIZE) {
+		memcpy((void*)(inode->blocks[blockIndex]), (const void*)(data + i), FS_BLOCK_SIZE);
 		blockIndex++;
 	}
 	// Update inode details
@@ -86,11 +86,11 @@ void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 }
 
 int doesFileExist(const char* filepath) {
-	Inode* root = ROOT_INODE(); // Get the root inode
+	Inode* root = (Inode*)ROOT_INODE(); // Get the root inode
 	char pathBuffer[256] = {0}; // Create a buffer to extract the path
 	extractPath(filepath, pathBuffer); // Function that extracts the path before the last '/'
 	if (strlen(pathBuffer) == 1 && pathBuffer[0] == '/')
-		memcpy(pathBuffer, filepath, strlen(filepath));
+		memcpy((void*)pathBuffer, (const void*)filepath, strlen(filepath));
 	// Break down the path to reach the directory where the file is supposed to be
 	Inode* directory = breakDownPath(root, pathBuffer);
 
@@ -104,8 +104,8 @@ int doesFileExist(const char* filepath) {
 	const char* filename = filepath + strlen(pathBuffer) + 1;
 
 	// Search for the file in the directory
-	directoryEntry* entries = getInodeContent(directory);
-	uint8_t* ptr = entries;
+	uint8_t* ptr = getInodeContent(directory);
+	directoryEntry* entries = (directoryEntry*)ptr;
 	while (ptr && ((directoryEntry*)ptr)->inodeNumber) {
 		if (strcmp(((directoryEntry*)ptr)->filename, filename) == 0) {
 			kfree(entries);
@@ -121,15 +121,15 @@ int doesFileExist(const char* filepath) {
 //in this function, the caller is responsible to kfree the memory allocated by kmalloc.
 uint8_t* getInodeContent(Inode* inode)
 {
-	uint8_t* blocks = kmalloc(sizeof(Block) * POINTERS_PER_INODE); //3 blocks in each inode
-	memset(blocks, 0, sizeof(Block) * POINTERS_PER_INODE);
+	uint8_t* blocks = (uint8_t*)kmalloc(sizeof(Block) * POINTERS_PER_INODE); //3 blocks in each inode
+	memset((void*)blocks, 0, sizeof(Block) * POINTERS_PER_INODE);
 	int j = 0;
 	for (int i = 0; i < POINTERS_PER_INODE; i++)
 	{
-		unsigned char* ptr = inode->blocks[i];
+		unsigned char* ptr = (unsigned char*)inode->blocks[i];
 		if (ptr)
 		{
-			for (int i = 0; i < BLOCK_SIZE; i++)
+			for (int i = 0; i < FS_BLOCK_SIZE; i++)
 			{
 				blocks[j] = *ptr;
 				j++;
@@ -156,7 +156,7 @@ void createFileOrDirectory(const char* filename, int isDir)
 		filename++;
 	char buff[MAX_FILENAME_LENGTH] = { 0 };
 	//get the parent directory of the new file.
-	Inode* root = ROOT_INODE();
+	Inode* root = (Inode*)ROOT_INODE();
 	char* path = filename;
 	char* tmp = filename;
 	while (filename && *filename)
@@ -167,10 +167,8 @@ void createFileOrDirectory(const char* filename, int isDir)
 	}
 	int j = 0;
 	Inode* parent = root;
-	for (int i = path; i < tmp - 1; i++)
-	{
-		buff[j++] = *((int*)i);
-	}
+	for (const char* i = path; i < tmp - 1; i++)
+		buff[j++] = *i;
 	if (!checkPathLegit(parent, buff)) {
 		kprintf("Path To create file %s in is not valid\n", path);
 		return;
@@ -189,8 +187,8 @@ void createFileOrDirectory(const char* filename, int isDir)
 
 	//add to parent directory.
 	uint32_t inodeIndex = INDEX_FROM_INODE((uint32_t)inodeForNewFile);
-	directoryEntry* newEntry = getInodeContent(parent);
-	uint8_t* ptr = newEntry;
+	uint8_t* ptr = getInodeContent(parent); 
+	directoryEntry* newEntry = (directoryEntry*)ptr;
 	uint32_t numEntries = 0;
 	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
 	{
@@ -209,15 +207,11 @@ void createFileOrDirectory(const char* filename, int isDir)
 
 Inode* getInodeFromName(Inode* current, const char* name)
 {
-	directoryEntry* entries = getInodeContent(current);
-	uint8_t* ptr = entries;
+	uint8_t* ptr = getInodeContent(current);
 	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
 	{
-		Inode* entry = INODE_FROM_INDEX((((directoryEntry*)ptr))->inodeNumber)
 		if (strcmp(((directoryEntry*)ptr)->filename, name) == 0)
-		{
-			return INODE_FROM_INDEX(((directoryEntry*)ptr)->inodeNumber);
-		}
+			return (Inode*)INODE_FROM_INDEX(((directoryEntry*)ptr)->inodeNumber);
 		ptr += sizeof(directoryEntry);
 	}
 	return NULL;
@@ -255,7 +249,7 @@ int checkPathLegit(Inode* parent, const char* path) {
 		return 0;
 	}
 	int flag = 1;
-	char* temp = path;
+	const char* temp = path;
 	while (*temp)
 	{
 		if (*temp == '/')
@@ -273,21 +267,21 @@ int checkPathLegit(Inode* parent, const char* path) {
 
 void writeToFile(MyFile* fileToWrite, const char* data)
 {
-	Inode* inode = INODE_FROM_INDEX((uint32_t)fileToWrite->inodeNumber);
+	Inode* inode = (Inode*)INODE_FROM_INDEX((uint32_t)fileToWrite->inodeNumber);
 	writeData(inode, data, strlen(data));
 }
 
 char* readFromFile(MyFile* fileToRead)
 {
-	Inode* inode = INODE_FROM_INDEX((uint32_t)fileToRead->inodeNumber);
-	return getInodeContent(inode);
+	Inode* inode = (Inode*)INODE_FROM_INDEX((uint32_t)fileToRead->inodeNumber);
+	return (char*)getInodeContent(inode);
 }
 
 MyFile* openFile(const char* filepath)
 {
 	if (filepath[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		filepath++;
-	Inode* root = ROOT_INODE();
+	Inode* root = (Inode*)ROOT_INODE();
 	if (!checkPathLegit(root, filepath) || !doesFileExist(filepath)) {
 		kprintf("Cant open file %s\n");
 		return NULL;
@@ -311,7 +305,7 @@ void listDirectory(const char* path) {
 		path++;
 
 
-	Inode* root = ROOT_INODE();
+	Inode* root = (Inode*)ROOT_INODE();
 	if (!checkPathLegit(root, path)) {
 		kprintf("The directory %s cant be listed\n", path);
 		return;
@@ -323,16 +317,16 @@ void listDirectory(const char* path) {
 	// Check if the given path exists and points to a directory
 	if (!currentDir || !currentDir->isDir) {
 		kprintf("Path doesn't exist or is not a directory.\n");
-		return NULL;
+		return;
 	}
 
 	// Get the content of the directory (assuming it's an array of directoryEntry structs)
 	directoryEntry* dirContent = (directoryEntry*)getInodeContent(currentDir);
 	if (!dirContent) {
 		kprintf("Failed to retrieve directory content.\n");
-		return NULL;
+		return;
 	}
-	uint8_t* ptr = dirContent;
+	uint8_t* ptr = (uint8_t*)dirContent;
 	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
 	{
 		kprintf("%s ", ((directoryEntry*)ptr)->filename);
@@ -367,7 +361,7 @@ void extractPath(const char* inputString, char* outputBuffer) {
 
 void init_fs(uint32_t num_of_inodes, uint32_t num_of_blocks)
 {
-	sb = MEMSTART;
+	sb = (SuperBlock*)MEMSTART;
 	sb->inodesCount = num_of_inodes;
 	sb->blocksCount = num_of_blocks;
 	sb->magicNumber = FS_MAGIC_NUMBER;
