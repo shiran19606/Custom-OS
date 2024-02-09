@@ -48,7 +48,7 @@ page_table_entry_t* get_page(const void* virtual_address)
 {
     page_directory_t* dir = current_page_dir;
     page_dir_entry_t* pd_entry = &(dir->pages[PD_INDEX(virtual_address)]); //get pd_entry which is the page table
-    if (PDE_IS_PRESENT(*pd_entry))
+    if (pd_entry && PDE_IS_PRESENT(*pd_entry))
     {
         page_table_t* pt = (page_table_t*)(PDE_GET_FRAME((*pd_entry))); //get the physical page table from pd_entry
         return &(pt->pages[PT_INDEX(virtual_address)]);
@@ -67,8 +67,7 @@ page_dir_entry_t* get_page_table(const void* virtual_address)
 uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t flags, page_directory_t* dir)
 {
     page_dir_entry_t* pd_entry = &(dir->pages[PD_INDEX(virtual_address)]);
-    uint32_t flags1 = *pd_entry & ~(PDE_FRAME);
-    if ((flags1 & PDE_PRESENT) != PDE_PRESENT)
+    if (pd_entry && (((*pd_entry & ~(PDE_FRAME)) & PDE_PRESENT) != PDE_PRESENT))
     {
         void* block = allocate_block();
         if (!block) return 0;
@@ -88,9 +87,9 @@ uint32_t map_page(void* virtual_address ,void* physical_address, const uint32_t 
 void unmap_page(void* virtual_address)
 {
     page_table_entry_t* page = get_page((uint32_t)virtual_address);
-    if ((*page & PTE_PRESENT) == PTE_PRESENT)
+    if (page && ((*page & PTE_PRESENT) == PTE_PRESENT))
     {
-        void* block = (void*)PTE_GET_FRAME(page);
+        void* block = (void*)PTE_GET_FRAME(*page);
         free_block((uint32_t)block);
         PTE_SET_FRAME(page, 0);
         CLEAR_ATTRIBUTE(page, PTE_PRESENT);
@@ -101,7 +100,7 @@ void unmap_page(void* virtual_address)
     page_table_t* page_table_physical = (page_table_t*)(PDE_GET_FRAME(*pd_entry));
 
     //if the unmaped page is the only page in the page table, we can free the page table aswell.
-    for (int i = 0;i<ENTRIES_IN_PAGE_TABLE;i++)
+    for (int i = 0; i < ENTRIES_IN_PAGE_TABLE ;i++)
         if ((PTE_IS_PRESENT((page_table_physical->pages[i])))) //if we found another page present, it means we cant delete the entire page table, wo we can stop the function.
             return;
 
@@ -126,7 +125,7 @@ void* allocate_page(page_table_entry_t* page, uint32_t flags)
 void free_page(page_table_entry_t* page)
 {
     if(page)
-        free_block(PTE_GET_FRAME(page));
+        free_block(PTE_GET_FRAME(*page));
     CLEAR_ATTRIBUTE(page, PTE_PRESENT);
 }
 
@@ -157,7 +156,7 @@ void* virtual_to_physical(const void* virtual_address)
 {
     page_table_entry_t* page = get_page((uint32_t)virtual_address);
     if ((uint32_t)page == 0) return 0;
-    uint32_t frame = PTE_GET_FRAME(page);
+    uint32_t frame = PTE_GET_FRAME(*page);
     return (void*)(frame | PAGE_INDEX(virtual_address));
 }
 
@@ -177,12 +176,9 @@ uint32_t initialize_vmm()
     SET_ATTRIBUTE(first_page_table, PDE_WRITEABLE);
     PDE_SET_FRAME(first_page_table, (uint32_t)pt);
 
-    uint32_t phys_addr = 0x0;
     // identity mapping the first 4mb 
-    for(uint32_t i = 0; i < ENTRIES_IN_PAGE_TABLE; ++i) {
-        map_page(phys_addr, phys_addr, PTE_PRESENT | PTE_WRITEABLE, pd);
-        phys_addr += PAGE_SIZE;
-    }
+    for(uint32_t i = 0, virt_addr = 0, phys_addr = 0; i < ENTRIES_IN_PAGE_TABLE; ++i, virt_addr += PAGE_SIZE, phys_addr += PAGE_SIZE)
+        map_page(virt_addr, phys_addr, PTE_PRESENT | PTE_WRITEABLE, pd);
     init_paging(pd);
     return 1;
 }
