@@ -5,6 +5,7 @@ extern void flush_tlb(void);
 extern void enable_paging(void);
 
 page_directory_t* current_page_dir = 0; //physical address of the current page directory
+page_directory_t* current_page_dir_virtual = 0; //physical address of the current page directory
 
 /*
 this function handles a page fault interrupt. it should read the cr2 register to found out information about the faulting address, and the error code pushed by
@@ -23,7 +24,10 @@ static void page_fault(registers_t* regs)
     if (present)
     {
         kprintf("page fault present at address %x\n", address);
-        map_page((void*)address, (void*)(allocate_block()), PTE_PRESENT | PTE_WRITEABLE, get_page_dir());
+        if (map_page((void*)address, (void*)(allocate_block()), PTE_PRESENT | PTE_WRITEABLE, get_page_dir())) //if we were able to map the page to a frame, set the frame to 0. otherwise hlt the system
+            memset((void*)address, 0, BLOCK_SIZE);
+        else
+            asm volatile("cli;hlt");
     }
     if (read_write)
         kprintf("page fault read-only at address %x\n", address);
@@ -64,12 +68,14 @@ page_dir_entry_t* get_page_table(const void* virtual_address)
 }
 
 
-uint32_t map_page(const void* virtual_address , const void* physical_address, const uint32_t flags, page_directory_t* dir)
+//temp function to map a page when paging is off, used to identity map at the start before paging is enabled.
+uint32_t map_page_no_paging(const void* virtual_address , const void* physical_address, const uint32_t flags, page_directory_t* dir)
 {
     page_dir_entry_t* pd_entry = &(dir->pages[PD_INDEX(virtual_address)]);
     if (pd_entry && (((*pd_entry & ~(PDE_FRAME)) & PDE_PRESENT) != PDE_PRESENT))
     {
         void* block = (void*)allocate_block();
+        memset((void*)block, 0, BLOCK_SIZE); //paging is off so we can set the block to 0.
         if (!block) return 0;
         PDE_SET_FRAME(pd_entry, (uint32_t)block);
         SET_ATTRIBUTE(pd_entry, PDE_PRESENT);
@@ -84,7 +90,30 @@ uint32_t map_page(const void* virtual_address , const void* physical_address, co
     return 1;
 }
 
-void unmap_page(const void* virtual_address)
+
+uint32_t map_page(const void* virtual_address , const void* physical_address, const uint32_t flags, page_directory_t* dir)
+{
+    page_dir_entry_t* pd_entry = &(current_page_dir_virtual->pages[PD_INDEX(virtual_address)]);  
+    page_table_t* pt = (page_table_t*)get_page_table_virtual_address(PD_INDEX(virtual_address));
+    if (pd_entry && (((*pd_entry & ~(PDE_FRAME)) & PDE_PRESENT) != PDE_PRESENT))
+    {
+        void* block = (void*)allocate_block();
+        if (!block) return 0;
+        PDE_SET_FRAME(pd_entry, (uint32_t)block);
+        SET_ATTRIBUTE(pd_entry, PDE_PRESENT);
+        SET_ATTRIBUTE(pd_entry, PDE_WRITEABLE);
+        memset((void*)pt, 0, BLOCK_SIZE); //paging is off so we can set the block to 0.
+    }
+    page_table_entry_t* pt_entry = &(pt->pages[PT_INDEX(virtual_address)]);
+    PTE_SET_FRAME(pt_entry, (uint32_t)(physical_address));
+    SET_ATTRIBUTE(pt_entry, (flags & (~PTE_FRAME)));
+    SET_ATTRIBUTE(pt_entry, PTE_PRESENT);
+    flush_tlb_address(virtual_address); //flush the tlb entry of the virtual address mapped.
+    return 1;
+}
+
+//a temp function to unmap a page when paging is off (modify the physical pd)
+void unmap_page_no_paging(const void* virtual_address)
 {
     page_table_entry_t* page = get_page(virtual_address);
     if (page && ((*page & PTE_PRESENT) == PTE_PRESENT))
@@ -104,6 +133,32 @@ void unmap_page(const void* virtual_address)
         if ((PTE_IS_PRESENT((page_table_physical->pages[i])))) //if we found another page present, it means we cant delete the entire page table, wo we can stop the function.
             return;
 
+    //if we reached here, it means that the page table is empty.
+    free_block((uint32_t)page_table_physical); //free the frame used by the page table.
+    CLEAR_ATTRIBUTE(pd_entry, PDE_PRESENT);
+}
+
+void unmap_page(const void* virtual_address)
+{
+    page_dir_entry_t* pd_entry = &(current_page_dir_virtual->pages[PD_INDEX(virtual_address)]);  
+    page_table_t* pt = (page_table_t*)get_page_table_virtual_address(PD_INDEX(virtual_address));
+    page_table_entry_t* page = &(pt->pages[PT_INDEX(virtual_address)]);
+
+    if (page && ((*page & PTE_PRESENT) == PTE_PRESENT))
+    {
+        void* block = (void*)PTE_GET_FRAME(*page);
+        free_block((uint32_t)block);
+        PTE_SET_FRAME(page, 0);
+        CLEAR_ATTRIBUTE(page, PTE_PRESENT);
+    }
+    flush_tlb_address(virtual_address);
+
+    //if the unmaped page is the only page in the page table, we can free the page table aswell.
+    for (int i = 0; i < ENTRIES_IN_PAGE_TABLE ;i++)
+        if ((PTE_IS_PRESENT((pt->pages[i])))) //if we found another page present, it means we cant delete the entire page table, wo we can stop the function.
+            return;
+
+    page_table_t* page_table_physical = PDE_GET_FRAME(*pd_entry);
     //if we reached here, it means that the page table is empty.
     free_block((uint32_t)page_table_physical); //free the frame used by the page table.
     CLEAR_ATTRIBUTE(pd_entry, PDE_PRESENT);
@@ -136,6 +191,7 @@ uint32_t set_page_directory(page_directory_t* dir)
 
     current_page_dir = dir;
     load_page_directory((uint32_t)current_page_dir); 
+    current_page_dir_virtual = 0xFFFFF000;
     return 1;
 }
 
@@ -176,14 +232,25 @@ uint32_t initialize_vmm()
     SET_ATTRIBUTE(first_page_table, PDE_WRITEABLE);
     PDE_SET_FRAME(first_page_table, (uint32_t)pt);
 
+    page_dir_entry_t* last_page_table = &(pd->pages[ENTRIES_IN_PAGE_DIR-1]);
+    SET_ATTRIBUTE(last_page_table, PDE_PRESENT);
+    SET_ATTRIBUTE(last_page_table, PDE_WRITEABLE);
+    PDE_SET_FRAME(last_page_table, (uint32_t)pd);
+
     // identity mapping the first 4mb 
     for(uint32_t i = 0, virt_addr = 0, phys_addr = 0; i < ENTRIES_IN_PAGE_TABLE; ++i, virt_addr += PAGE_SIZE, phys_addr += PAGE_SIZE)
-        map_page((void*)virt_addr, (void*)phys_addr, PTE_PRESENT | PTE_WRITEABLE, pd);
+        map_page_no_paging((void*)virt_addr, (void*)phys_addr, PTE_PRESENT | PTE_WRITEABLE, pd);
     init_paging(pd);
     return 1;
 }
 
 page_directory_t* get_page_dir()
 {
-    return current_page_dir;
+    return current_page_dir_virtual;
+}
+
+
+page_dir_entry_t* get_page_table_virtual_address(uint16_t page_table_num)
+{
+    return 0xFFC00000 | (page_table_num << PAGE_OFFSET_BITS);
 }

@@ -183,3 +183,9 @@ void* virtual_to_physical(const void* virtual_address);
 this function returns the current page directory
 */
 page_directory_t* get_page_dir();
+
+
+/*
+this function assumes that recursive paging is on the get the virtual addres of a page table.
+*/
+page_dir_entry_t* get_page_table_virtual_address(uint16_t page_table_num);

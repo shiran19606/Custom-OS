@@ -55,10 +55,8 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Value at address %x is %x\n", ptr, *ptr);
     kprintf("frame is %x\n", virtual_to_physical(ptr));
 
-
     unmap_page(ptr);
     kprintf("Unmaped page at address %x\n", ptr);
-    
     
     kprintf("Value at address %x is %x\n", ptr, *ptr);
     kprintf("frame is %x\n", virtual_to_physical(ptr));

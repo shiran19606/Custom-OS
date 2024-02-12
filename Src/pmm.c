@@ -117,10 +117,7 @@ uint32_t allocate_blocks(const uint32_t num_blocks)
     {
         uint32_t tempBlock = BLOCK_TO_ADDRESS(block);
         for (uint32_t n = 0; n < num_blocks; n++ ,tempBlock+=BLOCK_SIZE)
-        {
             init_block_used(tempBlock); // setting the blocks allocated to used in bitmap
-            memset((void*)tempBlock, 0, BLOCK_SIZE);
-        }
         lastBlock = ADDRESS_TO_BLOCK(tempBlock) / 32;
         usedBlocks += num_blocks;
         return BLOCK_TO_ADDRESS(block);
