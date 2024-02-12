@@ -75,6 +75,7 @@ typedef struct page_directory
 #define PD_INDEX(virtual_address) ((uint32_t)virtual_address >> PAGE_TABLE_ENTRY_BITS >> PAGE_OFFSET_BITS) //takes a virtual address and finds the PDE of the virtual address
 #define PT_INDEX(virtual_address) ((uint32_t)virtual_address >> PAGE_OFFSET_BITS) & 0x3FF //we need the bits from 12 to 21. so we move them to start, and then end & removes the bits used by the PDE
 #define PAGE_INDEX(virtual_address) ((uint32_t)virtual_address & 0xFFF) //takes only the 12 bits on the right of the virtual address, which specify the index in the page.
+#define GET_PT_VIRTUAL_ADDRESS(pt_num) (0xFFC00000 | ((uint32_t)pt_num << PAGE_OFFSET_BITS))
 
 #define SET_ATTRIBUTE(addr, attr) (*(uint32_t*)addr |= attr)
 #define CLEAR_ATTRIBUTE(addr, attr) (*(uint32_t*)addr &= ~(attr))
