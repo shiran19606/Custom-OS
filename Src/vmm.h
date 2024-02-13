@@ -75,8 +75,9 @@ typedef struct page_directory
 #define PD_INDEX(virtual_address) ((uint32_t)virtual_address >> PAGE_TABLE_ENTRY_BITS >> PAGE_OFFSET_BITS) //takes a virtual address and finds the PDE of the virtual address
 #define PT_INDEX(virtual_address) ((uint32_t)virtual_address >> PAGE_OFFSET_BITS) & 0x3FF //we need the bits from 12 to 21. so we move them to start, and then end & removes the bits used by the PDE
 #define PAGE_INDEX(virtual_address) ((uint32_t)virtual_address & 0xFFF) //takes only the 12 bits on the right of the virtual address, which specify the index in the page.
-#define GET_PT_VIRTUAL_ADDRESS(pt_num) (0xFFC00000 | ((uint32_t)pt_num << PAGE_OFFSET_BITS))
+#define GET_PT_VIRTUAL_ADDRESS(pt_num) (0xFFC00000 | ((uint32_t)pt_num << PAGE_OFFSET_BITS)) //this macro assumes that recursive paging is on.
 
+//macros that are used to set an attribute in a page or page table.
 #define SET_ATTRIBUTE(addr, attr) (*(uint32_t*)addr |= attr)
 #define CLEAR_ATTRIBUTE(addr, attr) (*(uint32_t*)addr &= ~(attr))
 
@@ -99,7 +100,7 @@ this function initializes the virtual memory manager.
 creating a page directory and calling init_paging with it as parameter. the page directory should identity map the first 4MB of memory, to continue execution.
 return value: 1 if successful, otherwise 0.
 */
-uint32_t initialize_vmm();
+uint8_t initialize_vmm();
 
 /*
 this function takes a virtual address and returns its page.
@@ -108,7 +109,6 @@ virtual_address: the address of the page
 return value: the page as a pointer to a page_table_entry_t struct.
 */
 page_table_entry_t* get_page(const void* virtual_address);
-
 
 /*
 this function takes a virtual address and returns the page table (PDE) the virtual address resides in.
@@ -126,7 +126,7 @@ physical_address: the address of the page to assaign, assuming 0x1000 alligned.
 flags: the flags to use on the page in virtual_address
 return value: 1 if success, else 0
 */
-uint32_t map_page(const void* virtual_address , const void* physical_address, const uint32_t flags, page_directory_t* dir);
+uint32_t map_page(const void* virtual_address , const void* physical_address, const uint32_t flags);
 
 /*
 this function takes a page, and unmaps it from a frame. it will free the frame, set the 20 bits of the frame as clear, and will clear the PRESENT bit.
@@ -181,12 +181,6 @@ void* virtual_to_physical(const void* virtual_address);
 
 
 /*
-this function returns the current page directory
+this function returns the current page directory's virtual address.
 */
 page_directory_t* get_page_dir();
-
-
-/*
-this function assumes that recursive paging is on the get the virtual addres of a page table.
-*/
-page_dir_entry_t* get_page_table_virtual_address(uint16_t page_table_num);
