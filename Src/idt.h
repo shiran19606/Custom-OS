@@ -1,6 +1,6 @@
 // idt.h
 #include <stdint.h>
-#include "ports.h"
+#include "utils.h"
 
 // GDT entry structure
 struct idt_entry {
