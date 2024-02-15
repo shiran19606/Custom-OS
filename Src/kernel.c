@@ -47,7 +47,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     if (!result)
         asm volatile("cli;hlt");
     kprintf("Initialized virtual memory\n");
-
+    
     char* ptr1 = (char*)0x00200000;
     *ptr1 = 9;
     kprintf("Accessing mapped memory at %x gives: %d\n", ptr1, *ptr1);

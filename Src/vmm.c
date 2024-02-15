@@ -24,7 +24,8 @@ static void page_fault(registers_t* regs)
     if (present)
     {
         kprintf("page fault present at address %x\n", address);
-        if (map_page((void*)address, (void*)(allocate_block()), PTE_PRESENT | PTE_WRITEABLE)) //if we were able to map the page to a frame, set the frame to 0. otherwise hlt the system
+        void* block = (void*)allocate_block();
+        if (block == 0xFFFFFFFF || map_page((void*)address, block, PTE_PRESENT | PTE_WRITEABLE)) //if we were able to map the page to a frame, set the frame to 0. otherwise hlt the system
             memset((void*)address, 0, BLOCK_SIZE);
         else
             asm volatile("cli;hlt");
@@ -55,7 +56,6 @@ page_table_entry_t* get_page(const void* virtual_address)
     {
         pd_entry = &(current_page_dir_virtual->pages[PD_INDEX(virtual_address)]);
         pt = (page_table_t*)GET_PT_VIRTUAL_ADDRESS(PD_INDEX(virtual_address));
-
     }
     else
     {
@@ -71,7 +71,9 @@ page_table_entry_t* get_page(const void* virtual_address)
 page_dir_entry_t* get_page_table(const void* virtual_address)
 {
     page_directory_t* dir = (current_page_dir_virtual == 0) ? current_page_dir : current_page_dir_virtual;
-    return &(dir->pages[PD_INDEX(virtual_address)]);
+    if (dir)
+        return &(dir->pages[PD_INDEX(virtual_address)]);
+    return 0;
 }
 
 
@@ -83,7 +85,7 @@ uint32_t map_page(const void* virtual_address , const void* physical_address, co
     {  
         //if pt is not present, we create it using allocate_block, and set pd_entry as present.
         void* block = (void*)allocate_block();
-        if (!block) return 0;
+        if (block == 0xFFFFFFFF) return 0;
         PDE_SET_FRAME(pd_entry, (uint32_t)block);
         SET_ATTRIBUTE(pd_entry, PDE_PRESENT);
         SET_ATTRIBUTE(pd_entry, PDE_WRITEABLE);
@@ -129,7 +131,7 @@ void unmap_page(const void* virtual_address)
 void* allocate_page(page_table_entry_t* page, uint32_t flags)
 {
     void* block = (void*)allocate_block();
-    if((int32_t)block != (int32_t)(-1))
+    if(block == 0xFFFFFFFF)
     {
         PTE_SET_FRAME(page, (uint32_t*)block);
         SET_ATTRIBUTE(page, flags);
@@ -181,9 +183,8 @@ void* virtual_to_physical(const void* virtual_address)
 uint8_t initialize_vmm()
 {
     page_directory_t* pd = (page_directory_t*) allocate_block();
-    if (!pd) return 0;
     page_table_t* pt = (page_table_t*) allocate_block();
-    if (!pt) return 0;
+    if (pd == 0xFFFFFFFF || pt == 0xFFFFFFFF) return 0;
 
     memset((void*)pd, 0, BLOCK_SIZE); //paging is off so we can access the physical blocks
     memset((void*)pt, 0, BLOCK_SIZE);
@@ -203,16 +204,10 @@ uint8_t initialize_vmm()
     PDE_SET_FRAME(last_page_table, (uint32_t)pd);
 
     current_page_dir = pd; //set the current page directory before mapping.
-    uint32_t phys_addr = 0;
     // identity mapping the first 4MiB
-    for(uint32_t i = 0, virt_addr = 0; i < ENTRIES_IN_PAGE_TABLE; ++i, virt_addr += PAGE_SIZE, phys_addr += PAGE_SIZE)
+    for(uint32_t i = 0, virt_addr = 0, phys_addr = 0; i < ENTRIES_IN_PAGE_TABLE; ++i, virt_addr += PAGE_SIZE, phys_addr += PAGE_SIZE)
         map_page((void*)virt_addr, (void*)phys_addr, PTE_PRESENT | PTE_WRITEABLE);
     
     init_paging(pd);
     return 1;
-}
-
-page_directory_t* get_page_dir()
-{
-    return current_page_dir_virtual;
 }
