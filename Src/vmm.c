@@ -25,7 +25,7 @@ static void page_fault(registers_t* regs)
     {
         kprintf("page fault present at address %x\n", address);
         void* block = (void*)allocate_block();
-        if (block == 0xFFFFFFFF || map_page((void*)address, block, PTE_PRESENT | PTE_WRITEABLE)) //if we were able to map the page to a frame, set the frame to 0. otherwise hlt the system
+        if (block != 0xFFFFFFFF && map_page((void*)address, block, (PTE_PRESENT | PTE_WRITEABLE))) //if we were able to map the page to a frame, set the frame to 0. otherwise hlt the system
             memset((void*)address, 0, BLOCK_SIZE);
         else
             asm volatile("cli;hlt");
@@ -131,7 +131,7 @@ void unmap_page(const void* virtual_address)
 void* allocate_page(page_table_entry_t* page, uint32_t flags)
 {
     void* block = (void*)allocate_block();
-    if(block == 0xFFFFFFFF)
+    if(block != 0xFFFFFFFF)
     {
         PTE_SET_FRAME(page, (uint32_t*)block);
         SET_ATTRIBUTE(page, flags);
