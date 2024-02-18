@@ -362,6 +362,21 @@ void extractPath(const char* inputString, char* outputBuffer) {
 void init_fs(uint32_t num_of_inodes, uint32_t num_of_blocks)
 {
 	sb = (SuperBlock*)MEMSTART;
+	uint32_t num_pages = FS_SIZE(num_of_inodes, num_of_blocks) / PAGE_SIZE;
+	for (uint32_t i = 0, start_addr = MEMSTART;i<num_pages;i++, start_addr += PAGE_SIZE)
+	{
+		void* block = (void*)allocate_block();
+		if ((uint32_t)block != 0xFFFFFFFF)
+		{
+			if (map_page((void*)start_addr, block, (PTE_PRESENT | PTE_WRITEABLE)))
+				memset((void*)start_addr, 0, PAGE_SIZE);
+		}
+		else
+		{
+			kprintf("No memory for fs");
+			asm volatile("cli;hlt"); //if we have no memory, stop the machine.
+		}
+	}
 	sb->inodesCount = num_of_inodes;
 	sb->blocksCount = num_of_blocks;
 	sb->magicNumber = FS_MAGIC_NUMBER;

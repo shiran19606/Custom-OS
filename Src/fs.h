@@ -2,9 +2,10 @@
 #define FS_H
 
 #include "utils.h"
+#include "vmm.h"
 #include "heap.h"
 
-#define MEMSTART 0x02FFFFFF
+#define MEMSTART 0x40000000
 
 #define MAX_FILENAME_LENGTH 28
 
@@ -20,6 +21,8 @@
 #define INDEX_FROM_INODE(addr) (addr - sb->inodesAddress) / INODE_SIZE
 #define INODE_FROM_INDEX(idx) (sb->inodesAddress + INODE_SIZE * (idx));
 #define ROOT_INODE() INODE_FROM_INDEX(1)
+
+#define FS_SIZE(num_inodes, num_blocks) ALIGN_4KB_UP(SUPERBLOCK_SIZE + (INODE_SIZE * num_inodes) + (BLOCK_SIZE * num_blocks))
 
 typedef struct SuperBlock
 {

@@ -56,8 +56,7 @@ _start:
     PAGE_DIR_PHYSICAL equ (page_directory_boot - KERNEL_VIRTUAL)
     start equ (_start - KERNEL_VIRTUAL)
     mov ecx, 1024
-    mov edi, page_table_boot
-    sub edi, KERNEL_VIRTUAL
+    lea edi, [page_table_boot - KERNEL_VIRTUAL]
 
     mov esi, 0
     lbl:
@@ -69,8 +68,8 @@ _start:
         loop lbl
 
     mov edi, PAGE_DIR_PHYSICAL
-    mov edx, page_table_boot
-    sub edx, KERNEL_VIRTUAL
+    lea edx, [page_table_boot - KERNEL_VIRTUAL]
+
     or edx, 3
     mov dword [edi], edx
     mov dword [edi + 768 * 4], edx

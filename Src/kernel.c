@@ -99,7 +99,6 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kfree(ptr1);
     kfree(ptr2);
 
-    /*
     //initializing fs
     init_fs(32, 64);
     
@@ -127,6 +126,6 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 	listDirectory("/dir1/dir2");
 	closeFile(file1);
 	closeFile(file2);
-    */
+    
     asm volatile("sti");
 }
