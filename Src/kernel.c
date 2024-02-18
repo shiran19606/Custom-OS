@@ -7,8 +7,14 @@
 #include "pmm.h"
 #include "vmm.h"
 
-extern uint32_t kernel_start;
-extern uint32_t kernel_end;
+extern uint32_t kernel_physical_start;
+extern uint32_t kernel_physical_end;
+extern uint32_t kernel_virtual_start;
+extern uint32_t kernel_virtual_end;
+extern uint32_t KERNEL_VIRTUAL;
+
+extern uint32_t PAGE_DIR_VIRTUAL;
+extern uint32_t PAGE_DIR_PHYSICAL;
 
 extern uint32_t* pmm_bitmap;
 extern uint32_t* bitmap_end;
@@ -24,45 +30,31 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Initialized GDT and IDT\n");
     init_keyboard();
     kprintf("Initialized Keyboard Input\n");
-    //initialize_allocator();
     multiboot_memory_map_t * memory_map = (multiboot_memory_map_t *)(mboot_ptr->mmap_addr);
     uint32_t num_entries = mboot_ptr->mmap_length / sizeof(multiboot_memory_map_t);
-    uint32_t memorySize = memory_map[num_entries-1].base_addr_low + (memory_map[num_entries-1].length_low-1);;
-    init_physical_memory(memorySize);
     
+    uint32_t kernel_base = &KERNEL_VIRTUAL;
+    memory_map = ((uint32_t)memory_map + kernel_base);
+    uint32_t memorySize = memory_map[num_entries-1].base_addr_low + (memory_map[num_entries-1].length_low-1);
+    init_physical_memory(memorySize);
     //set regions of memory as free if they are free on the memory map
     for (uint32_t i = RESERVE_MEMORY_BELOW_1MB; i < num_entries; i++) {
         if (memory_map[i].type == MEMORY_MAP_REGION_FREE)
             init_region_free(memory_map[i].base_addr_low, memory_map[i].base_addr_low + memory_map[i].length_low);
     }
-
     //set memory used by the kernel and the bitmap as used.
-    init_region_used((const uint32_t)&kernel_start, (const uint32_t)&kernel_end);
-    init_region_used((const uint32_t)pmm_bitmap, (const uint32_t)bitmap_end);
-
-    kprintf("Initialized physical memory\n");
-
-    uint8_t result = initialize_vmm();
+    init_region_used((const uint32_t)&kernel_physical_start, (const uint32_t)&kernel_physical_end);
+    init_region_used((const uint32_t)((uint32_t)pmm_bitmap - kernel_base), (const uint32_t)((uint32_t)bitmap_end - kernel_base)); //calculate physical addresses for the bitmap
     
+    kprintf("Initialized physical memory\n");
+    uint8_t result = initialize_vmm();
+
     if (!result)
         asm volatile("cli;hlt");
     kprintf("Initialized virtual memory\n");
-    
-    char* ptr1 = (char*)0x00200000;
-    *ptr1 = 9;
-    kprintf("Accessing mapped memory at %x gives: %d\n", ptr1, *ptr1);
-    char* ptr = (char*)0xA0000000;
-    kprintf("Value at address %x is %x\n", ptr, *ptr);
-    kprintf("frame is %x\n", virtual_to_physical(ptr));
 
-    unmap_page(ptr);
-    kprintf("Unmaped page at address %x\n", ptr);
-    
-    kprintf("Value at address %x is %x\n", ptr, *ptr);
-    kprintf("frame is %x\n", virtual_to_physical(ptr));
-    /*
-    //initializing fs
-    init_fs(32, 64);
+    initialize_allocator();
+
 
     //testing memory allocation
     uint32_t ptr1 = kmalloc(10);
@@ -107,6 +99,10 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kfree(ptr1);
     kfree(ptr2);
 
+    /*
+    //initializing fs
+    init_fs(32, 64);
+    
 	createFile("/File1");
 	createFile("File1");
 	createDirectory("/dir1");

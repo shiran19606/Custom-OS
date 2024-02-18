@@ -1,6 +1,6 @@
 #include "pmm.h"
 
-extern uint32_t kernel_end;
+extern uint32_t kernel_virtual_end;
 
 uint32_t* pmm_bitmap = 0;
 uint32_t* bitmap_end = 0;
@@ -31,7 +31,7 @@ void init_block_free(const uint32_t add)
 }
 
 void init_region_used(const uint32_t start_add, const uint32_t end_add)
-{
+{   
     if (end_add <= start_add)
         return;
     uint32_t startBlock = start_add % BLOCK_SIZE == 0 ? start_add : ALIGN_4KB_DOWN(start_add);
@@ -59,7 +59,7 @@ void init_region_free(const uint32_t start_add, const uint32_t end_add)
 
 void init_physical_memory(const uint32_t size)
 {
-    uint32_t kernel_end_address = (uint32_t)(&kernel_end);
+    uint32_t kernel_end_address = (uint32_t)(&kernel_virtual_end);
     if (kernel_end_address % BLOCK_SIZE != 0)
         kernel_end_address = ALIGN_4KB_UP(kernel_end_address);
     pmm_bitmap = (uint32_t*) kernel_end_address;

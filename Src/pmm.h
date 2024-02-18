@@ -1,3 +1,6 @@
+#ifndef PMM_H
+#define PMM_H
+
 #include "utils.h"
 #include "Screen.h"
 
@@ -67,3 +70,5 @@ num_blocks: pretty self explanatory, the amount of blocks to free
 return value: no return value. frees the blocks specified.
 */
 void free_blocks(const uint32_t address, const uint32_t num_blocks);
+
+#endif

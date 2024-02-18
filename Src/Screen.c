@@ -1,6 +1,6 @@
 #include "Screen.h"
 
-uint16_t* videoMemory = (uint16_t*)0xB8000;
+uint16_t* videoMemory = (uint16_t*)(0xB8000 + 0xC0000000);
 uint8_t cur_x = 0;
 uint8_t cur_y = 0;
 

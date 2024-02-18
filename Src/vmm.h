@@ -1,3 +1,6 @@
+#ifndef VMM_H
+#define VMM_H
+
 #include "pmm.h"
 #include "isr.h"
 
@@ -178,3 +181,5 @@ for example, a virtual address 0xC879F345. to convert it to physical address:
 find the page using getPage(0xC879F345 & 0xFFFFF000), and then get the index in the page using PAGE_INDEX, and then do page->frame | PAGE_INDEX and return the result.
 */
 void* virtual_to_physical(const void* virtual_address);
+
+#endif

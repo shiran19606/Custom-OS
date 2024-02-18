@@ -1,3 +1,6 @@
+#ifndef FS_H
+#define FS_H
+
 #include "utils.h"
 #include "heap.h"
 
@@ -72,3 +75,5 @@ MyFile* openFile(const char* filepath);
 void closeFile(MyFile* file);
 void listDirectory(const char* path);
 void init_fs(uint32_t num_of_inodes, uint32_t num_of_blocks);
+
+#endif

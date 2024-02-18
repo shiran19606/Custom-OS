@@ -4,6 +4,9 @@ extern void load_page_directory(uint32_t base_reg);
 extern void flush_tlb(void);
 extern void enable_paging(void);
 
+extern uint32_t PAGE_DIR_VIRTUAL;
+extern uint32_t PAGE_DIR_PHYSICAL;
+
 page_directory_t* current_page_dir = 0; //physical address of the current page directory
 page_directory_t* current_page_dir_virtual = 0; //physical address of the current page directory
 
@@ -182,32 +185,13 @@ void* virtual_to_physical(const void* virtual_address)
 
 uint8_t initialize_vmm()
 {
-    page_directory_t* pd = (page_directory_t*) allocate_block();
-    page_table_t* pt = (page_table_t*) allocate_block();
-    if (pd == 0xFFFFFFFF || pt == 0xFFFFFFFF) return 0;
+    current_page_dir_virtual = &PAGE_DIR_VIRTUAL;
+    current_page_dir = &PAGE_DIR_PHYSICAL;
 
-    memset((void*)pd, 0, BLOCK_SIZE); //paging is off so we can access the physical blocks
-    memset((void*)pt, 0, BLOCK_SIZE);
-
-
-    for(uint32_t i = 0; i < ENTRIES_IN_PAGE_DIR; i++)
-        pd->pages[i] = 0x2; //read-write, not present, supervisor
-
-    page_dir_entry_t* first_page_table = &(pd->pages[0]);
-    SET_ATTRIBUTE(first_page_table, PDE_PRESENT);
-    SET_ATTRIBUTE(first_page_table, PDE_WRITEABLE);
-    PDE_SET_FRAME(first_page_table, (uint32_t)pt);
-
-    page_dir_entry_t* last_page_table = &(pd->pages[ENTRIES_IN_PAGE_DIR-1]);
-    SET_ATTRIBUTE(last_page_table, PDE_PRESENT);
-    SET_ATTRIBUTE(last_page_table, PDE_WRITEABLE);
-    PDE_SET_FRAME(last_page_table, (uint32_t)pd);
-
-    current_page_dir = pd; //set the current page directory before mapping.
-    // identity mapping the first 4MiB
-    for(uint32_t i = 0, virt_addr = 0, phys_addr = 0; i < ENTRIES_IN_PAGE_TABLE; ++i, virt_addr += PAGE_SIZE, phys_addr += PAGE_SIZE)
-        map_page((void*)virt_addr, (void*)phys_addr, PTE_PRESENT | PTE_WRITEABLE);
+    page_dir_entry_t* last_page_table = &(current_page_dir_virtual->pages[ENTRIES_IN_PAGE_DIR-1]);
+    SET_ATTRIBUTE(last_page_table, PDE_PRESENT | PDE_WRITEABLE);
+    PDE_SET_FRAME(last_page_table, current_page_dir); //the last entry in the virtual pd is the physical pd - implementation of recrusive paging.
     
-    init_paging(pd);
+    init_paging(current_page_dir);
     return 1;
 }

@@ -1,15 +1,28 @@
 #include "heap.h"
 
-extern uint32_t kernel_end;
-// Define your free_list
+
 block_header* free_list = NULL;
 
 void initialize_allocator() {
     // Initialize the free list with the entire memory space
-    block_header* initial_block = (block_header*)&kernel_end;
+    uint32_t num_pages = MEMORY_SIZE / PAGE_SIZE;
+    for (uint32_t i = 0, start_addr = KHEAP_START;i<num_pages;i++, start_addr += PAGE_SIZE)
+    {
+        void* block = (void*)allocate_block();
+        if ((uint32_t)block == 0xFFFFFFFF)
+        {
+            kprintf("Not enough memory for heap");
+            asm volatile("cli;hlt");
+        }
+        if (map_page((void*)start_addr, block, (PTE_PRESENT | PTE_WRITEABLE)))
+            memset((void*)start_addr, 0, PAGE_SIZE); //clear page
+        else
+            asm volatile("cli;hlt");
+
+    }
+    block_header* initial_block = (block_header*)KHEAP_START;
     initial_block->size = (MEMORY_SIZE - sizeof(block_header));
     initial_block->next = NULL;
-
     free_list = initial_block;
 }
 
