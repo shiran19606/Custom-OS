@@ -1,0 +1,539 @@
+00000000000i[      ] Bochs x86 Emulator 2.7
+00000000000i[      ]   Built from SVN snapshot on August  1, 2021
+00000000000i[      ]   Timestamp: Sun Aug  1 10:07:00 CEST 2021
+00000000000i[      ] System configuration
+00000000000i[      ]   processors: 1 (cores=1, HT threads=1)
+00000000000i[      ]   A20 line support: yes
+00000000000i[      ] IPS is set to 1000000
+00000000000i[      ] CPU configuration
+00000000000i[      ]   SMP support: yes, quantum=16
+00000000000i[      ]   level: 6
+00000000000i[      ]   APIC support: xapic
+00000000000i[      ]   FPU support: yes
+00000000000i[      ]   MMX support: yes
+00000000000i[      ]   3dnow! support: yes
+00000000000i[      ]   SEP support: yes
+00000000000i[      ]   SIMD support: sse2
+00000000000i[      ]   XSAVE support: no 
+00000000000i[      ]   AES support: no
+00000000000i[      ]   SHA support: no
+00000000000i[      ]   MOVBE support: no
+00000000000i[      ]   ADX support: no
+00000000000i[      ]   x86-64 support: yes
+00000000000i[      ]   1G paging support: no
+00000000000i[      ]   MWAIT support: yes
+00000000000i[      ]   VMX support: 1
+00000000000i[      ]   SVM support: no
+00000000000i[      ] Optimization configuration
+00000000000i[      ]   RepeatSpeedups support: yes
+00000000000i[      ]   Fast function calls: yes
+00000000000i[      ]   Handlers Chaining speedups: no
+00000000000i[      ] Devices configuration
+00000000000i[      ]   PCI support: i440FX i430FX i440BX
+00000000000i[      ]   Network devices support: NE2000 E1000
+00000000000i[      ]   Sound support: SB16 ES1370
+00000000000i[      ]   USB support: UHCI OHCI EHCI xHCI
+00000000000i[      ]   VGA extension support: vbe cirrus voodoo
+00000000000i[IMG   ] Disk image modules
+00000000000i[IMG   ]   flat concat sparse dll growing undoable volatile vmware4
+00000000000i[IMG   ]   vvfat vpc vmware3 vbox
+00000000000i[NETCTL] Networking modules
+00000000000i[NETCTL]   null linux slirp tuntap vnet vde socket
+00000000000i[SNDCTL] Sound drivers
+00000000000i[SNDCTL]   dummy file sdl oss alsa
+00000000000i[USBCTL] Pluggable USB devices
+00000000000i[USBCTL]   floppy disk cdrom printer mouse tablet keypad keyboard
+00000000000i[USBCTL]   hub
+00000000000i[MEM0  ] allocated memory at 0x7f7155ddd010. after alignment, vector=0x7f7155dde000
+00000000000i[MEM0  ] 32.00MB
+00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
+00000000000i[MEM0  ] rom at 0xffff0000/65536 ('/usr/share/bochs/BIOS-bochs-legacy')
+00000000000i[CPU0  ] WARNING: 3DNow! is not implemented yet !
+00000000000i[DEV   ] will paste characters every 100 iodev timer ticks
+00000000000i[      ] lt_dlhandle is 0x55799a2400f0
+00000000000i[PLUGIN] loaded plugin libbx_soundalsa.so
+00000000000i[WAVOUT] ALSA: opened default PCM output device
+00000000000i[WAVOUT] changed sample rate to 44101
+00000000000i[      ] lt_dlhandle is 0x55799a8ccaa0
+00000000000i[PLUGIN] loaded plugin libbx_pci.so
+00000000000i[      ] lt_dlhandle is 0x55799a4a18d0
+00000000000i[PLUGIN] loaded plugin libbx_pci2isa.so
+00000000000i[      ] lt_dlhandle is 0x55799a442af0
+00000000000i[PLUGIN] loaded plugin libbx_usb_uhci.so
+00000000000i[      ] lt_dlhandle is 0x55799a3df8c0
+00000000000i[PLUGIN] loaded plugin libbx_acpi.so
+00000000000i[      ] lt_dlhandle is 0x55799a3dfb30
+00000000000i[PLUGIN] loaded plugin libbx_hpet.so
+00000000000i[      ] lt_dlhandle is 0x55799a8d7500
+00000000000i[PLUGIN] loaded plugin libbx_cmos.so
+00000000000i[      ] lt_dlhandle is 0x55799a8d7d10
+00000000000i[PLUGIN] loaded plugin libbx_dma.so
+00000000000i[      ] lt_dlhandle is 0x55799a8d8520
+00000000000i[PLUGIN] loaded plugin libbx_pic.so
+00000000000i[      ] lt_dlhandle is 0x55799a8d8ce0
+00000000000i[PLUGIN] loaded plugin libbx_pit.so
+00000000000i[      ] lt_dlhandle is 0x55799a8d95a0
+00000000000i[PLUGIN] loaded plugin libbx_vga.so
+00000000000i[      ] lt_dlhandle is 0x55799a8fabe0
+00000000000i[PLUGIN] loaded plugin libbx_floppy.so
+00000000000i[      ] lt_dlhandle is 0x55799a8fb420
+00000000000i[PLUGIN] loaded plugin libbx_ioapic.so
+00000000000i[      ] lt_dlhandle is 0x55799a8fbc30
+00000000000i[PLUGIN] loaded plugin libbx_keyboard.so
+00000000000i[      ] lt_dlhandle is 0x55799a8fc490
+00000000000i[PLUGIN] loaded plugin libbx_harddrv.so
+00000000000i[      ] lt_dlhandle is 0x55799a8fe560
+00000000000i[PLUGIN] loaded plugin libbx_pci_ide.so
+00000000000i[PLUGIN] init_dev of 'pci' plugin device by virtual method
+00000000000i[DEV   ] i440FX PMC present at device 0, function 0
+00000000000i[PLUGIN] init_dev of 'pci2isa' plugin device by virtual method
+00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
+00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
+00000000000i[CMOS  ] Using local time for initial clock
+00000000000i[CMOS  ] Setting initial clock to: Mon Feb 26 20:38:27 2024 (time0=1708972707)
+00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
+00000000000i[DMA   ] channel 4 used by cascade
+00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'pit' plugin device by virtual method
+00000000000i[PIT   ] PIT using realtime synchronisation method
+00000000000i[PLUGIN] init_dev of 'vga' plugin device by virtual method
+00000000000i[MEM0  ] Register memory access handlers: 0x0000000a0000 - 0x0000000bffff
+00000000000i[VGA   ] interval=200000, mode=realtime
+00000000000i[VGA   ] VSYNC using realtime mode
+00000000000i[MEM0  ] Register memory access handlers: 0x0000e0000000 - 0x0000e0ffffff
+00000000000i[BXVGA ] VBE Bochs Display Extension Enabled
+00000000000i[MEM0  ] rom at 0xc0000/38400 ('/usr/share/bochs/VGABIOS-lgpl-latest')
+00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
+00000000000i[DMA   ] channel 2 used by Floppy Drive
+00000000000i[FLOPPY] Using boot sequence disk, cdrom, none
+00000000000i[FLOPPY] Floppy boot signature check is enabled
+00000000000i[PLUGIN] init_dev of 'acpi' plugin device by virtual method
+00000000000i[DEV   ] ACPI Controller present at device 1, function 3
+00000000000i[PLUGIN] init_dev of 'hpet' plugin device by virtual method
+00000000000i[HPET  ] initializing HPET
+00000000000i[MEM0  ] Register memory access handlers: 0x0000fed00000 - 0x0000fed003ff
+00000000000i[PLUGIN] init_dev of 'ioapic' plugin device by virtual method
+00000000000i[IOAPIC] initializing I/O APIC
+00000000000i[MEM0  ] Register memory access handlers: 0x0000fec00000 - 0x0000fec00fff
+00000000000i[IOAPIC] IOAPIC enabled (base address = 0xfec00000)
+00000000000i[PLUGIN] init_dev of 'keyboard' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'harddrv' plugin device by virtual method
+00000000000i[HD    ] CD on ata0-0: 'os.iso'
+00000000000i[CD1   ] load cdrom with path='os.iso'
+00000000000i[CD1   ] Opening image file as a cd.
+00000000000i[HD    ] Media present in CD-ROM drive
+00000000000i[HD    ] Capacity is 284 sectors (0.55 MB)
+00000000000i[HD    ] HD on ata0-1: 'disk.img', 'flat' mode
+00000000000i[IMG   ] hd_size: 10321920
+00000000000i[HD    ] ata0-1: autodetect geometry: CHS=20/16/63 (sector size=512)
+00000000000i[HD    ] translation on ata0-1 set to 'none'
+00000000000i[PLUGIN] init_dev of 'pci_ide' plugin device by virtual method
+00000000000i[DEV   ] PIIX3 PCI IDE controller present at device 1, function 1
+00000000000i[PLUGIN] init_dev of 'serial' plugin device by virtual method
+00000000000i[SER   ] com1 at 0x03f8 irq 4 (mode: file)
+00000000000i[PLUGIN] init_dev of 'iodebug' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'speaker' plugin device by virtual method
+00000000000i[PCSPK ] Using lowlevel sound support for output
+00000000000i[PLUGIN] init_dev of 'unmapped' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'biosdev' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'parallel' plugin device by virtual method
+00000000000i[PAR   ] parallel port 1 at 0x0378 irq 7
+00000000000i[PLUGIN] init_dev of 'extfpuirq' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'gameport' plugin device by virtual method
+00000000000i[PLUGIN] init_dev of 'usb_uhci' plugin device by virtual method
+00000000000i[DEV   ] USB UHCI present at device 1, function 2
+00000000000i[UHCI  ] USB UHCI initialized
+00000000000i[PLUGIN] register state of 'pci' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pci2isa' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'cmos' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'dma' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pic' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pit' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'vga' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'floppy' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'serial' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'iodebug' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'speaker' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'unmapped' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'biosdev' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'parallel' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'extfpuirq' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'gameport' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'usb_uhci' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'acpi' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'hpet' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'ioapic' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'keyboard' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'harddrv' plugin device by virtual method
+00000000000i[PLUGIN] register state of 'pci_ide' plugin device by virtual method
+00000000000i[SYS   ] bx_pc_system_c::Reset(HARDWARE) called
+00000000000i[CPU0  ] cpu hardware reset
+00000000000i[APIC0 ] allocate APIC id=0 (MMIO enabled) to 0x0000fee00000
+00000000000i[CPU0  ] CPU[0] is the bootstrap processor
+00000000000i[CPU0  ] CPUID[0x00000000]: 00000005 68747541 444d4163 69746e65
+00000000000i[CPU0  ] CPUID[0x00000001]: 00000633 00010800 00002028 17cbfbff
+00000000000i[CPU0  ] CPUID[0x00000002]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x00000005]: 00000040 00000040 00000003 00000020
+00000000000i[CPU0  ] CPUID[0x80000000]: 80000008 68747541 444d4163 69746e65
+00000000000i[CPU0  ] CPUID[0x80000001]: 00000633 00000000 00000101 ebd3f3ff
+00000000000i[CPU0  ] CPUID[0x80000002]: 20444d41 6c687441 74286e6f 7020296d
+00000000000i[CPU0  ] CPUID[0x80000003]: 65636f72 726f7373 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x80000004]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x80000005]: 01ff01ff 01ff01ff 40020140 40020140
+00000000000i[CPU0  ] CPUID[0x80000006]: 00000000 42004200 02008140 00000000
+00000000000i[CPU0  ] CPUID[0x80000007]: 00000000 00000000 00000000 00000000
+00000000000i[CPU0  ] CPUID[0x80000008]: 00003028 00000000 00000000 00000000
+00000000000i[CPU0  ] CPU Features supported:
+00000000000i[CPU0  ] 		x87
+00000000000i[CPU0  ] 		486ni
+00000000000i[CPU0  ] 		pentium_ni
+00000000000i[CPU0  ] 		p6ni
+00000000000i[CPU0  ] 		mmx
+00000000000i[CPU0  ] 		3dnow!
+00000000000i[CPU0  ] 		debugext
+00000000000i[CPU0  ] 		vme
+00000000000i[CPU0  ] 		pse
+00000000000i[CPU0  ] 		pae
+00000000000i[CPU0  ] 		pge
+00000000000i[CPU0  ] 		pse36
+00000000000i[CPU0  ] 		mtrr
+00000000000i[CPU0  ] 		pat
+00000000000i[CPU0  ] 		sysenter_sysexit
+00000000000i[CPU0  ] 		clflush
+00000000000i[CPU0  ] 		sse
+00000000000i[CPU0  ] 		sse2
+00000000000i[CPU0  ] 		mwait
+00000000000i[CPU0  ] 		vmx
+00000000000i[CPU0  ] 		longmode
+00000000000i[CPU0  ] 		lm_lahf_sahf
+00000000000i[CPU0  ] 		nx
+00000000000i[CPU0  ] 		cmpxhg16b
+00000000000i[CPU0  ] 		rdtscp
+00000000000i[CPU0  ] 		ffxsr
+00000000000i[CPU0  ] 		xapic
+00000000000i[PLUGIN] reset of 'pci' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pci2isa' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'cmos' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'dma' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pic' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pit' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'vga' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'floppy' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'acpi' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'hpet' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'ioapic' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'keyboard' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'harddrv' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'pci_ide' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'serial' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'iodebug' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'speaker' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'unmapped' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'biosdev' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'parallel' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'extfpuirq' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'gameport' plugin device by virtual method
+00000000000i[PLUGIN] reset of 'usb_uhci' plugin device by virtual method
+00000000000i[      ] set SIGINT handler to bx_debug_ctrlc_handler
+00000004662i[BIOS  ] $Revision: 14314 $ $Date: 2021-07-14 18:10:19 +0200 (Mi, 14. Jul 2021) $
+00000317068i[KBD   ] reset-disable command received
+00000318187i[PIDE  ] BAR #4: i/o base address = 0xc000
+00000318414i[UHCI  ] BAR #4: i/o base address = 0xc100
+00000324249i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x0b
+00000324265i[P2ISA ] write: ELCR2 = 0x08
+00000324285i[UHCI  ] new IRQ line = 11
+00000324350i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0a
+00000324366i[P2ISA ] write: ELCR2 = 0x0c
+00000324386i[ACPI  ] new IRQ line = 10
+00000442686i[VBIOS ] VGABios $Id: vgabios.c 288 2021-05-28 19:05:28Z vruppert $
+00000442757i[BXVGA ] VBE known Display Interface b0c0
+00000442789i[BXVGA ] VBE known Display Interface b0c5
+00000445432i[VBIOS ] VBE Bios $Id: vbe.c 292 2021-06-03 12:24:22Z vruppert $
+00000704766i[BIOS  ] ata0-1: PCHS=20/16/63 translation=none LCHS=20/16/63
+00358991329i[BIOS  ] Booting from 07c0:0000
+00359092068i[BIOS  ] int13_harddisk: function 41, unmapped device for ELDL=81
+00359095739i[BIOS  ] int13_harddisk: function 08, unmapped device for ELDL=81
+00359099410i[BIOS  ] *** int 15h function AX=00c0, BX=0000 not yet supported!
+00365656628e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656634e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656640e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656646e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656652e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656658e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656664e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656670e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656676e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656682e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656688e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656694e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656700e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656706e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656712e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656718e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656724e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656730e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656736e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656742e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656748e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656754e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656760e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656766e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656772e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656778e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656784e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656790e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656796e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656802e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656808e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656814e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656820e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656826e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656832e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656838e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656844e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656850e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656856e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656862e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656868e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656874e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656880e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656886e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656892e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656898e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656904e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656910e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656916e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656922e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656928e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656934e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656940e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656946e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656952e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656958e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656964e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656970e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656976e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656982e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656988e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365656994e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657000e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657006e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657012e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657018e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657024e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657030e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657036e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657042e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657048e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657054e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657060e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657066e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657072e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657078e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657084e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657090e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657096e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657102e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657108e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657114e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657120e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657126e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657132e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657138e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657144e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657150e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657156e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657162e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657168e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657174e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657180e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657186e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657192e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657198e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657204e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657210e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657216e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657222e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657228e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657234e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657240e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657246e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657252e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657258e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657264e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657270e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657276e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657282e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657288e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657294e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657300e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657306e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657312e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657318e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657324e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657330e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657336e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657342e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657348e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657354e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657360e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657366e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657372e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657378e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657384e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657390e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657777e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657783e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657789e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657795e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657801e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657807e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657813e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657819e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657825e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657831e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657837e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657843e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657849e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657855e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657861e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657867e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657873e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657879e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657885e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657891e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657897e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657903e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657909e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657915e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657921e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657927e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657933e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657939e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657945e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657951e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657957e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657963e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657969e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657975e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657981e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657987e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657993e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365657999e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658005e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658011e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658017e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658023e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658029e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658035e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658041e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658047e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658053e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658059e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658065e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658071e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658077e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658083e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658089e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658095e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658101e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658107e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658113e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658119e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658125e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658131e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658137e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658143e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658149e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658155e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658161e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658167e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658173e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658179e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658185e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658191e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658197e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658203e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658209e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658215e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658221e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658227e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658233e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658239e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658245e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658251e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658257e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658263e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658269e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658275e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658281e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658287e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658293e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658299e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658305e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658311e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658317e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658323e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658329e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658335e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658341e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658347e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658353e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658359e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658365e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658371e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658377e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658383e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658389e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658395e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658401e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658407e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658413e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658419e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658425e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658431e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658437e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658443e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658449e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658455e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658461e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658467e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658473e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658479e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658485e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658491e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658497e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658503e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658509e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658515e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658521e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658527e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658533e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658539e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+00365658813i[HD    ] disk ata1-0 not present, aborting
+00524126448e[HD    ] logical address out of bounds (20160/20160) - aborting command
+00524128265e[HD    ] logical address out of bounds (20160/20160) - aborting command
+00524128481p[HD    ] >>PANIC<< IO write(0x01f0): current command is 00h
+00524128482p[HD    ] >>PANIC<< IO write(0x01f0): current command is 00h
+00524128483p[HD    ] >>PANIC<< IO write(0x01f0): current command is 00h
+00524128483i[CPU0  ] CPU is in protected mode (active)
+00524128483i[CPU0  ] CS.mode = 32 bit
+00524128483i[CPU0  ] SS.mode = 32 bit
+00524128483i[CPU0  ] EFER   = 0x00000000
+00524128483i[CPU0  ] | EAX=00000051  EBX=00000000  ECX=000000fe  EDX=000001f0
+00524128483i[CPU0  ] | ESP=c010acba  EBP=c010ad14  ESI=c010dde4  EDI=00000000
+00524128483i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
+00524128483i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00524128483i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00524128483i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00524128483i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00524128483i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00524128483i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00524128483i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00524128483i[CPU0  ] | EIP=c0104c27 (c0104c24)
+00524128483i[CPU0  ] | CR0=0xe0000011 CR2=0x00000000
+00524128483i[CPU0  ] | CR3=0x0010b000 CR4=0x00000000
+00524128483i[CMOS  ] Last time is 1708973231 (Mon Feb 26 20:47:11 2024)
+00524128483i[SIM   ] quit_sim called with exit code 1

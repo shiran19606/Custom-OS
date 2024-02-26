@@ -6,6 +6,7 @@
 #include "multiboot.h"
 #include "pmm.h"
 #include "vmm.h"
+#include "ide.h"
 
 extern uint32_t kernel_physical_start;
 extern uint32_t kernel_physical_end;
@@ -54,7 +55,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Initialized virtual memory\n");
 
     initialize_allocator();
-
+    ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000);
 
     //testing memory allocation
     uint32_t ptr1 = kmalloc(10);

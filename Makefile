@@ -10,7 +10,7 @@ LD=/usr/local/i386elfgcc/bin/i386-elf-ld
 SRC_DIR = ./Src
 BUILD_DIR = ./Build
 
-OBJECTS = $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o $(BUILD_DIR)/Screen.o $(BUILD_DIR)/keyboard.o	$(BUILD_DIR)/heap.o $(BUILD_DIR)/utils.o $(BUILD_DIR)/fs.o $(BUILD_DIR)/pmm.o $(BUILD_DIR)/vmm.o $(BUILD_DIR)/paging.o
+OBJECTS = $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o $(BUILD_DIR)/Screen.o $(BUILD_DIR)/keyboard.o	$(BUILD_DIR)/heap.o $(BUILD_DIR)/utils.o $(BUILD_DIR)/fs.o $(BUILD_DIR)/pmm.o $(BUILD_DIR)/vmm.o $(BUILD_DIR)/paging.o $(BUILD_DIR)/ide.o
 
 # First rule is the one executed when no parameters are fed to the Makefile
 all: run
@@ -42,10 +42,11 @@ build: prebuild $(BUILD_DIR)/kernel.elf
             iso
 
 run: build
-	qemu-system-i386 -cdrom os.iso
-	
+	bochs -f bochsrc.txt -q
+run2: build
+	qemu-system-i386 -boot once=d -d int -drive file=os.iso,if=ide,index=0,media=cdrom -drive file=disk.img,if=ide,index=1,media=cdrom
 debug: build
-	qemu-system-i386 -s -S -cdrom os.iso
+	qemu-system-i386 -s -S -boot d -d int -cdrom os.iso -drive format=raw,file=disk.img
 	
 prebuild:
 	clear
@@ -56,4 +57,3 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf ./iso
 	rm -f os.iso
-	rm -f disk.img
