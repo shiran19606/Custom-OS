@@ -44,7 +44,7 @@ build: prebuild $(BUILD_DIR)/kernel.elf
 run: build
 	bochs -f bochsrc.txt -q
 run2: build
-	qemu-system-i386 -boot once=d -d int -drive file=os.iso,if=ide,index=0,media=cdrom -drive file=disk.img,if=ide,index=1,media=cdrom
+	qemu-system-i386 -boot d -d int -cdrom os.iso -drive file=disk.img,format=raw
 debug: build
 	qemu-system-i386 -s -S -boot d -d int -cdrom os.iso -drive format=raw,file=disk.img
 	
