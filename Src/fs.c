@@ -370,6 +370,13 @@ void format_fs()
 	ide_access(drive_num, 0, SUPERBLOCK_SIZE, sb, ATA_WRITE);
 	ide_access(drive_num, sb->inodeBitmap, (sb->blockBitmap - sb->inodeBitmap), buff, ATA_WRITE);
 	ide_access(drive_num, sb->blockBitmap, (sb->inodesAddress - sb->blockBitmap), buff, ATA_WRITE);
+
+	uint32_t index = allocateInode(); //allocate a dummy inode, as the first inode is reserved
+	index = allocateInode(); //this is the inode for the root directory, so put isDir as true.
+	Inode inode1;
+	read_inode(index, &inode1);
+	inode1.isDir = 1;
+	write_inode(index, &inode1);
 }
 
 void init_fs(uint8_t format_disk)
@@ -380,11 +387,4 @@ void init_fs(uint8_t format_disk)
 
 	if (sb->magicNumber != FS_MAGIC_NUMBER || format_disk)
 		format_fs();
-
-	uint32_t index = allocateInode(); //allocate a dummy inode, as the first inode is reserved
-	index = allocateInode(); //this is the inode for the root directory, so put isDir as true.
-	Inode inode1;
-	read_inode(index, &inode1);
-	inode1.isDir = 1;
-	write_inode(index, &inode1);
 }
