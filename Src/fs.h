@@ -4,8 +4,7 @@
 #include "utils.h"
 #include "vmm.h"
 #include "heap.h"
-
-#define MEMSTART 0x40000000
+#include "ide.h"
 
 #define MAX_FILENAME_LENGTH 28
 
@@ -18,11 +17,11 @@
 #define INODE_SIZE sizeof(Inode)
 #define FS_BLOCK_SIZE sizeof(Block)
 
-#define INDEX_FROM_INODE(addr) (addr - sb->inodesAddress) / INODE_SIZE
-#define INODE_FROM_INDEX(idx) (sb->inodesAddress + INODE_SIZE * (idx));
-#define ROOT_INODE() INODE_FROM_INDEX(1)
+#define INODES_COUNT_DEFAULT 32
+#define BLOCKS_COUNT_DEFAULT 128
 
-#define FS_SIZE(num_inodes, num_blocks) ALIGN_4KB_UP(SUPERBLOCK_SIZE + (INODE_SIZE * num_inodes) + (BLOCK_SIZE * num_blocks))
+#define FS_DONT_FORMAT_DISK 0
+#define FS_FORMAT_DISK 1
 
 typedef struct SuperBlock
 {
@@ -60,23 +59,20 @@ typedef struct dirEntry //in a directory, each file in the directory will have a
 } directoryEntry;
 
 
-
-void extractPath(const char* inputString, char* outputBuffer);
-void createFileOrDirectory(const char* name, int isDir);
-Inode* breakDownPath(Inode* parent, const char* path);
-int checkPathLegit(Inode* parent, const char* path);
-Inode* allocateInode(SuperBlock* sb);
-void writeData(Inode* inode, const char* data, uint32_t dataSize);
-int doesFileExist(const char* filepath);
+//helper functions.
+void createFileOrDirectory(const char* filename, int isDir);
 uint8_t* getInodeContent(Inode* inode);
+
+//user functions
 void createFile(const char* filename);
 void createDirectory(const char* dirname);
-Inode* getInodeFromName(Inode* current, const char* name);
 void writeToFile(MyFile* fileToWrite, const char* data);
 char* readFromFile(MyFile* fileToRead);
-MyFile* openFile(const char* filepath);
-void closeFile(MyFile* file);
-void listDirectory(const char* path);
-void init_fs(uint32_t num_of_inodes, uint32_t num_of_blocks);
+MyFile* openFile(char* filename);
+void closeFile(MyFile* file1);
+void listDir(char* path);
+
+//init functions
+void init_fs(uint8_t format_disk);
 
 #endif
