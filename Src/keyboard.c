@@ -5,6 +5,7 @@ int caps = 0;
 int buffer_index = 0;
 int shift = 0;
 
+
 void printLetter(uint8_t scancode) {
     char ch = 0;
     switch (scancode) {
@@ -195,16 +196,42 @@ void printLetter(uint8_t scancode) {
             put_char(0x09);
             break;
         case 0x48: // arrow up
-            printString("Arrow Up");
+            if(getY() > 0)
+                setY(getY() - 1);
+            else
+                scrollUp();
+            setCursorLocation();
             break;
         case 0x4B: // arrow left
-            printString("Arrow Left");
+            if(getX() > 0)
+                setX(getX() - 1);
+            else if (getY() > 0)
+            {
+                setX(79);
+                setY(getY() - 1);
+            }
+            else
+                scrollUp();
+            setCursorLocation();
             break;
         case 0x50: // arrow down
-            printString("Arrow Down");
+            if(getY() < 24)
+                setY(getY() + 1);
+            else
+                scrollDown();
+            setCursorLocation();
             break;
         case 0x4D: // arrow right
-            printString("Arrow Right");
+            if(getX() < 79)
+                setX(getX() + 1);
+            else if (getY() < 24)
+            {
+                setX(0);
+                setY(getY() + 1);
+            }
+            else
+                scrollDown();
+            setCursorLocation();
             break;
         case 0x0: // error
             printString("ERROR");

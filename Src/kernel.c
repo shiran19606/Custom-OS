@@ -126,6 +126,8 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 	listDirectory("/dir1/dir2");
 	closeFile(file1);
 	closeFile(file2);
+
+    kprintf("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15");
     
     asm volatile("sti");
 }

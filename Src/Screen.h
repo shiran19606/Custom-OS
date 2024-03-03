@@ -13,6 +13,12 @@
 
 #define SWITCH_VALUE 2147483647
 
+void scrollUp();
+void scrollDown();
+void setX(uint8_t num);
+void setY(uint8_t num);
+uint8_t getX();
+uint8_t getY();
 void setCursorLocation();
 void clearScreen();
 void printString(const char* str);
