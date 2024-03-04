@@ -6,6 +6,7 @@
 #include "multiboot.h"
 #include "pmm.h"
 #include "vmm.h"
+#include "ide.h"
 
 extern uint32_t kernel_physical_start;
 extern uint32_t kernel_physical_end;
@@ -54,80 +55,34 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Initialized virtual memory\n");
 
     initialize_allocator();
-
-
-    //testing memory allocation
-    uint32_t ptr1 = kmalloc(10);
-    uint32_t ptr2 = kmalloc(100);
-    if (!ptr1 || !ptr2)
-    {    
-        kprintf("Error allocating memory");
-        return;
-    }
-    kprintf("ptr1 is %x and ptr2 is %x\n", ptr1, ptr2);
-    kfree(ptr1);
-    kfree(ptr2);
-
-    //testing assignment of values to allocated memory
-    ptr1 = kmalloc(4);
-    if (!ptr1)
-    {    
-        kprintf("Error allocating memory");
-        return;
-    }
-    int* ptr = ptr1;
-    *ptr = 10;
-    kprintf("ptr1 is %x and its value is %d\n", ptr, *ptr);
-
-    //testing strlen and memcpy functions
-    ptr2 = kmalloc(strlen(str)+1);
-    if (!ptr2)
-    {    
-        kprintf("Error allocating memory");
-        return;
-    }
-    memcpy((void*)ptr2, str, strlen(str)+1);
-    kprintf("The string in ptr2 is: %s\n", (char*)ptr2);
-
-    //testing strcmp
-    kprintf("strcmp with the string in ptr2 and str2 is %d\n", strcmp((const char*)ptr2, str));
-
-    //testing memset
-    memset((void*)ptr2, 'A', 2); //putting A as the first two chars in ptr2.
-    kprintf("%s\n", (const char*)ptr2);
-
-    kfree(ptr1);
-    kfree(ptr2);
+    ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000);
 
     //initializing fs
-    init_fs(32, 64);
+    init_fs(FS_FORMAT_DISK);
     
+    //testing file and directory creation
 	createFile("/File1");
-	createFile("File1");
 	createDirectory("/dir1");
-	createFile("/dir1/File3");
-	createDirectory("dir1/dir1");
-	createFile("/dir1/dir1/File4");
-	MyFile* file1 = openFile("/File1");
-	if (file1 == NULL)
-	{
-		kprintf("Error opening file1");
-		return;
-	}
-	writeToFile(file1, "My World!");
-	MyFile* file2 = openFile("/dir1/dir1/File4");
-	if (file2 == NULL)
-	{
-		kprintf("Error opening file4");
-		return;
-	}
-	writeToFile(file2, "My World Is File4!");
-	kprintf("%s %s\n", readFromFile(file1), readFromFile(file2));
-	listDirectory("/dir1/dir2");
-	closeFile(file1);
-	closeFile(file2);
+    createFile("/dir1/File2");
 
-    kprintf("1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15");
+    //testing creation of a file that already exists, and a file in an invalid path
+    createFile("File1");
+    createFile("/dir2/File3");
     
+    //testing file opening, writing, reading and closing.
+    MyFile* file1 = openFile("/dir1/File2");
+    if (file1 != NULL)
+    {
+        writeToFile(file1, "Hello World");
+        uint8_t* data = readFromFile(file1);
+        kprintf("Data of file is %s\n", data);
+        kfree((void*)data);
+    }
+    closeFile(file1);
+    
+    //testing ls.
+    listDir("/");
+    listDir("/dir1/");
+
     asm volatile("sti");
 }
