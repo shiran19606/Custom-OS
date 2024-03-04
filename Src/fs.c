@@ -1,6 +1,43 @@
 #include "fs.h"
 
+SuperBlock current_sb;
 SuperBlock* sb;
+uint8_t drive_num;
+
+//read the inode bitmap from physical disk
+uint32_t* get_inode_bitmap()
+{
+	uint32_t* bitmap = (uint32_t*)kmalloc((uint32_t)(sb->inodesCount / BITS_PER_BYTE));
+	ide_access(drive_num, sb->inodeBitmap, (sb->inodesCount / BITS_PER_BYTE), (uint32_t)bitmap, ATA_READ);
+	return bitmap;
+}
+
+uint32_t* get_block_bitmap()
+{
+	uint32_t* bitmap = (uint32_t*)kmalloc((uint32_t)(sb->blocksCount / BITS_PER_BYTE));
+	ide_access(drive_num, sb->blockBitmap, (sb->blocksCount / BITS_PER_BYTE), (uint32_t)bitmap, ATA_READ);
+	return bitmap;
+}
+
+void set_inode_bitmap(uint32_t* bitmap)
+{
+	ide_access(drive_num, sb->inodeBitmap, (sb->inodesCount / BITS_PER_BYTE), (uint32_t)bitmap, ATA_WRITE);
+}
+
+void set_blcok_bitmap(uint32_t* bitmap)
+{
+	ide_access(drive_num, sb->blockBitmap, (sb->blocksCount / BITS_PER_BYTE), (uint32_t)bitmap, ATA_WRITE);
+}
+
+void read_inode(uint32_t index, Inode* inode)
+{
+	ide_access(drive_num, sb->inodesAddress + (index * INODE_SIZE), INODE_SIZE, (uint32_t)inode, ATA_READ);
+}
+
+void write_inode(uint32_t index, Inode* inode)
+{
+	ide_access(drive_num, sb->inodesAddress + (index * INODE_SIZE), INODE_SIZE, (uint32_t)inode, ATA_WRITE);
+}
 
 // Function to find the first clear index in the bitmap
 int findFirstClearIndex(uint32_t* bitmap, uint32_t size) {
@@ -29,29 +66,81 @@ void clearBit(uint32_t* bitmap, uint32_t index) {
 	bitmap[word] &= ~(1 << bit); // Clear the bit by ANDing with the complement of a mask
 }
 
-// Function to allocate an inode
-Inode* allocateInode(SuperBlock* sb) {
-	int index = findFirstClearIndex((uint32_t*)sb->inodeBitmap, (int)sb->inodesCount);
-	if (index == -1) {
-		kprintf("No kfree inodes available.\n");
+uint32_t get_inode_from_name_and_dir(Inode* dirInode, char* name)
+{
+	//add to parent directory.
+	uint8_t* ptr = getInodeContent(dirInode); 
+	uint8_t* newEntry = ptr;
+	uint32_t result = 0, flag = 1;
+	while (ptr && ((directoryEntry*)ptr)->inodeNumber && flag)
+	{
+		if (strcmp(((directoryEntry*)ptr)->filename, name) == 0)
+		{
+			result = ((directoryEntry*)ptr)->inodeNumber;
+			flag = 0;
+		}
+		ptr += sizeof(directoryEntry);
+	}
+	kfree((void*)newEntry);
+	return result;
+}
+
+
+uint32_t get_working_dir(Inode* root, char* path)
+{
+	uint32_t index = 1; //start from root.
+	Inode* tmp = root;
+	while (path && *path)
+	{
+		uint8_t arr[MAX_FILENAME_LENGTH] = {0};
+		uint32_t i = 0;
+		while (*path && *path != '/')
+		{
+			arr[i] = *path;
+			i++;
+			path++;
+		}
+		if (*path == '/') //if we reached '/'
+		{
+			index = get_inode_from_name_and_dir(tmp, arr);
+			if (!index) //if we got index 0, it means the current dir path is not valid.
+				return index;
+			read_inode(index, tmp);
+			path++;
+		} 
+	}
+	return index;
+}
+
+uint32_t allocateInode()
+{
+	uint32_t* inode_bitmap = get_inode_bitmap();
+	int index = findFirstClearIndex((uint32_t*)inode_bitmap, (int)sb->inodesCount);
+	if (index == -1)
+	{
+		kprintf("Error: No free inodes available.\n");
 		return NULL;
 	}
-
-	setBit((uint32_t*)sb->inodeBitmap, index);
-	Inode* newInode = (Inode*)(sb->inodesAddress + sizeof(Inode) * index);
-	newInode->fileSize = 0;
-	newInode->isDir = 0;
-	newInode->numOfBlocksUsed = 0;
-	return newInode;
+	setBit((uint32_t*)inode_bitmap, index);
+	set_inode_bitmap(inode_bitmap);
+	kfree((void*)inode_bitmap);
+	Inode inode1;
+	read_inode(index, &inode1);
+	inode1.fileSize = 0;
+	inode1.isDir = 0;
+	inode1.numOfBlocksUsed = 0;
+	write_inode(index, &inode1);
+	return index;
 }
 
 // Function to write data to inode blocks
 void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 	// Clear existing blocks assigned to the inode
+	uint32_t* block_bitmap = get_block_bitmap();
 	for (int i = 0; i < inode->numOfBlocksUsed; ++i) {
 		// Clear block by clearing the corresponding bit in the block bitmap
 		int index = ((uint32_t)inode->blocks[i] - sb->blocksAddress) / FS_BLOCK_SIZE;
-		clearBit((uint32_t*)sb->blockBitmap, index);
+		clearBit((uint32_t*)block_bitmap, index);
 		inode->blocks[i] = 0; // Reset block reference in inode
 	}
 
@@ -59,62 +148,38 @@ void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 	int requiredBlocks = (dataSize + FS_BLOCK_SIZE - 1) / FS_BLOCK_SIZE;
 
 	// Check if data exceeds the capacity of the inode's three blocks
-	if (requiredBlocks > POINTERS_PER_INODE) {
-		kprintf("Data too large to fit within the inode's capacity.\n");
+	if (requiredBlocks > POINTERS_PER_INODE)
+	{
+		kprintf("Error: Data too large to fit within the inode's capacity.\n");
 		return;
 	}
 
 	// Allocate new blocks to the inode for data storage
 	for (int i = 0; i < requiredBlocks; ++i) {
-		int kfreeBlockIndex = findFirstClearIndex((uint32_t*)sb->blockBitmap, (int)sb->blocksCount);
-		if (kfreeBlockIndex == -1) {
-			kprintf("No kfree blocks available for writing data.\n");
+		int kfreeBlockIndex = findFirstClearIndex((uint32_t*)block_bitmap, (int)sb->blocksCount);
+		if (kfreeBlockIndex == -1) 
+		{
+			kprintf("Error: No free blocks available for writing data.\n");
 			return;
 		}
-		setBit((uint32_t*)sb->blockBitmap, (uint32_t)kfreeBlockIndex); // Set the bit in the block bitmap
+		setBit((uint32_t*)block_bitmap, (uint32_t)kfreeBlockIndex); // Set the bit in the block bitmap
 		inode->blocks[i] = (uint32_t)sb->blocksAddress + kfreeBlockIndex * FS_BLOCK_SIZE; // Assign block number to the inode
 	}
+	set_blcok_bitmap(block_bitmap);
+	kfree((void*)block_bitmap);
 
 	int blockIndex = 0;
-	for (uint32_t i = 0; i < dataSize; i += FS_BLOCK_SIZE) {
-		memcpy((void*)(inode->blocks[blockIndex]), (const void*)(data + i), FS_BLOCK_SIZE);
+	uint32_t size = dataSize;
+	for (uint32_t i = 0; i < dataSize; i += FS_BLOCK_SIZE) 
+	{
+		uint32_t size_to_write = (size > FS_BLOCK_SIZE) ? FS_BLOCK_SIZE : size;
+		ide_access(drive_num, inode->blocks[blockIndex], size_to_write, (data + i), ATA_WRITE);
+		size -= size_to_write;
 		blockIndex++;
 	}
 	// Update inode details
 	inode->fileSize = dataSize;
 	inode->numOfBlocksUsed = requiredBlocks;
-}
-
-int doesFileExist(const char* filepath) {
-	Inode* root = (Inode*)ROOT_INODE(); // Get the root inode
-	char pathBuffer[256] = {0}; // Create a buffer to extract the path
-	extractPath(filepath, pathBuffer); // Function that extracts the path before the last '/'
-	if (strlen(pathBuffer) == 1 && pathBuffer[0] == '/')
-		memcpy((void*)pathBuffer, (const void*)filepath, strlen(filepath));
-	// Break down the path to reach the directory where the file is supposed to be
-	Inode* directory = breakDownPath(root, pathBuffer);
-
-	if (directory == NULL) {
-		return 0; // Directory doesn't exist or is not a directory
-	}
-	if (directory->isDir == 0)
-		return 1; //we found the file
-
-	// Get the filename from the filepath
-	const char* filename = filepath + strlen(pathBuffer) + 1;
-
-	// Search for the file in the directory
-	uint8_t* ptr = getInodeContent(directory);
-	directoryEntry* entries = (directoryEntry*)ptr;
-	while (ptr && ((directoryEntry*)ptr)->inodeNumber) {
-		if (strcmp(((directoryEntry*)ptr)->filename, filename) == 0) {
-			kfree(entries);
-			return 1; // File exists in the directory
-		}
-		ptr += sizeof(directoryEntry);
-	}
-	kfree(entries);
-	return 0; // File doesn't exist in the directory
 }
 
 
@@ -124,18 +189,12 @@ uint8_t* getInodeContent(Inode* inode)
 	uint8_t* blocks = (uint8_t*)kmalloc(sizeof(Block) * POINTERS_PER_INODE); //3 blocks in each inode
 	memset((void*)blocks, 0, sizeof(Block) * POINTERS_PER_INODE);
 	int j = 0;
-	for (int i = 0; i < POINTERS_PER_INODE; i++)
+	uint32_t size = inode->fileSize;
+	for (int i = 0; i < inode->numOfBlocksUsed; i++)
 	{
-		unsigned char* ptr = (unsigned char*)inode->blocks[i];
-		if (ptr)
-		{
-			for (int i = 0; i < FS_BLOCK_SIZE; i++)
-			{
-				blocks[j] = *ptr;
-				j++;
-				ptr++;
-			}
-		}
+		uint32_t size_to_read = (size > FS_BLOCK_SIZE) ? FS_BLOCK_SIZE : size;
+		ide_access(drive_num, inode->blocks[i], size_to_read, blocks + (i * FS_BLOCK_SIZE), ATA_READ);
+		size_to_read -= FS_BLOCK_SIZE;
 	}
 	return blocks;
 }
@@ -156,7 +215,9 @@ void createFileOrDirectory(const char* filename, int isDir)
 		filename++;
 	char buff[MAX_FILENAME_LENGTH] = { 0 };
 	//get the parent directory of the new file.
-	Inode* root = (Inode*)ROOT_INODE();
+	Inode inode1;
+	Inode* root = &inode1;
+
 	char* path = filename;
 	char* tmp = filename;
 	while (filename && *filename)
@@ -166,224 +227,164 @@ void createFileOrDirectory(const char* filename, int isDir)
 		filename++;
 	}
 	int j = 0;
-	Inode* parent = root;
-	for (const char* i = path; i < tmp - 1; i++)
-		buff[j++] = *i;
-	if (!checkPathLegit(parent, buff)) {
-		kprintf("Path To create file %s in is not valid\n", path);
-		return;
-	}
-	if (doesFileExist(path))
-	{
-		kprintf("File with path %s already exists\n", path);
-		return;
-	}
-	if (*buff)
-		parent = breakDownPath(root, buff);
 
 	//get inode for new file and choose file or directory.
-	Inode* inodeForNewFile = allocateInode(sb);
-	inodeForNewFile->isDir = isDir;
+	uint32_t index1 = allocateInode();
+	Inode inodeForNewFile;
+	read_inode(index1, &inodeForNewFile);
+	inodeForNewFile.isDir = isDir;
+	write_inode(index1, &inodeForNewFile);
+
+	Inode inode2;
+	read_inode(1, &inode2);
+	uint32_t working_dir = get_working_dir(&inode2, path);
+	if (working_dir == 0)
+	{
+		kprintf("Error: Path to create the file in is not valid\n");
+		return;
+	}
+	read_inode(working_dir, root);
 
 	//add to parent directory.
-	uint32_t inodeIndex = INDEX_FROM_INODE((uint32_t)inodeForNewFile);
-	uint8_t* ptr = getInodeContent(parent); 
+	uint8_t* ptr = getInodeContent(root); 
 	directoryEntry* newEntry = (directoryEntry*)ptr;
 	uint32_t numEntries = 0;
+	uint32_t flag = 1;
 	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
 	{
+		if (strcmp(((directoryEntry*)ptr)->filename, tmp) == 0)
+		{
+			kprintf("Error: File with name %s already exists in directory\n", tmp);
+			flag = 0;
+		}
 		ptr += sizeof(directoryEntry);
 		numEntries++;
 	}
-	uint32_t i = 0;
-	for (i = 0; i < MAX_FILENAME_LENGTH && tmp[i]; i++, ptr++)
-		*ptr = tmp[i];
-	for (i; i < MAX_FILENAME_LENGTH; i++, ptr++) //pad filename with nulls
-		*ptr = 0;
-	*ptr = inodeIndex;
-	writeData(parent, (const char*)newEntry, (numEntries+1)*(sizeof(directoryEntry)));
+	if (flag)
+	{
+		uint32_t i = 0;
+		for (i = 0; i < MAX_FILENAME_LENGTH && tmp[i]; i++, ptr++)
+			*ptr = tmp[i];
+		for (i; i < MAX_FILENAME_LENGTH; i++, ptr++) //pad filename with nulls
+			*ptr = 0;
+		*ptr = index1;
+	}
+	writeData(root, (const char*)newEntry, (numEntries+1)*(sizeof(directoryEntry)));
+	write_inode(working_dir, root);
 	kfree((void*)newEntry);
-}
-
-Inode* getInodeFromName(Inode* current, const char* name)
-{
-	uint8_t* ptr = getInodeContent(current);
-	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
-	{
-		if (strcmp(((directoryEntry*)ptr)->filename, name) == 0)
-			return (Inode*)INODE_FROM_INDEX(((directoryEntry*)ptr)->inodeNumber);
-		ptr += sizeof(directoryEntry);
-	}
-	return NULL;
-}
-
-Inode* breakDownPath(Inode* parent, const char* path)
-{
-	char buffer[MAX_FILENAME_LENGTH] = { 0 };
-	uint32_t j = 0;
-	while (path)
-	{
-		if (!(*path))
-			return getInodeFromName(parent, buffer);
-		if (*path == '/')
-		{
-			Inode* tmp = getInodeFromName(parent, buffer);
-			if (tmp)
-				return breakDownPath(tmp, (path + 1));
-			else
-				return NULL;
-		}
-		else
-		{
-			buffer[j] = *path;
-			j++;
-			path++;
-		}
-	}
-	return NULL;
-}
-
-// Function to check if a path is valid up to a certain point
-int checkPathLegit(Inode* parent, const char* path) {
-	if (!parent || !parent->isDir) {
-		return 0;
-	}
-	int flag = 1;
-	const char* temp = path;
-	while (*temp)
-	{
-		if (*temp == '/')
-			flag = 0;
-		temp++;
-	}
-	if (flag) return 1; //if there is no '/' in the name means there is no path to check if its legit, only a file to check if already exists in the root.
-	Inode* currentDir = breakDownPath(parent, path);
-	if (currentDir == NULL) {
-		return 0;
-	}
-
-	return 1;
 }
 
 void writeToFile(MyFile* fileToWrite, const char* data)
 {
-	Inode* inode = (Inode*)INODE_FROM_INDEX((uint32_t)fileToWrite->inodeNumber);
-	writeData(inode, data, strlen(data));
+	Inode inode;
+	read_inode(fileToWrite->inodeNumber, &inode);
+	writeData(&inode, data, strlen(data));
+	write_inode(fileToWrite->inodeNumber, &inode);
 }
 
 char* readFromFile(MyFile* fileToRead)
 {
-	Inode* inode = (Inode*)INODE_FROM_INDEX((uint32_t)fileToRead->inodeNumber);
-	return (char*)getInodeContent(inode);
+	Inode inode;
+	read_inode(fileToRead->inodeNumber, &inode);
+	return (char*)getInodeContent(&inode);
 }
 
-MyFile* openFile(const char* filepath)
+MyFile* openFile(char* filename)
 {
-	if (filepath[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
-		filepath++;
-	Inode* root = (Inode*)ROOT_INODE();
-	if (!checkPathLegit(root, filepath) || !doesFileExist(filepath)) {
-		kprintf("Cant open file %s\n");
+	if (filename[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
+		filename++;
+	
+	char* path = filename;
+	char* tmp = filename;
+	while (filename && *filename)
+	{
+		if (*filename == '/')
+			tmp = filename + 1;
+		filename++;
+	}
+
+	Inode inode2;
+	read_inode(1, &inode2);
+	uint32_t working_dir = get_working_dir(&inode2, path);
+	read_inode(working_dir, &inode2);
+	uint32_t indexOfFileInode = get_inode_from_name_and_dir(&inode2, tmp);
+	if (indexOfFileInode == 0)
+	{
+		kprintf("Error: cant open file %s\n", tmp);
 		return NULL;
 	}
-	Inode* fileToRead = breakDownPath(root, filepath);
-	MyFile* file = kmalloc(sizeof(MyFile));
-	if (file)
-		file->inodeNumber = INDEX_FROM_INODE((uint32_t)fileToRead);
+	MyFile* file = (MyFile*)kmalloc(sizeof(MyFile));
+	file->inodeNumber = indexOfFileInode;
 	return file;
 }
 
-void closeFile(MyFile* file)
+void closeFile(MyFile* file1)
 {
-	if (file)
-		kfree(file);
+	if (file1)
+		kfree((void*)file1);
 }
 
-// Function to list directory entries for a given path
-void listDirectory(const char* path) {
-	if (path[0] == '/') // If the path starts with '/', skip it
+void listDir(char* path)
+{
+	char* tmp = path;
+	if (path[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		path++;
 
-
-	Inode* root = (Inode*)ROOT_INODE();
-	if (!checkPathLegit(root, path)) {
-		kprintf("The directory %s cant be listed\n", path);
+	Inode inode2;
+	read_inode(1, &inode2);
+	uint32_t working_dir = get_working_dir(&inode2, path);
+	if (working_dir == 0)
+	{
+		kprintf("Error: cant list directory\n");
 		return;
 	}
+	read_inode(working_dir, &inode2);
 
-	Inode* currentDir = root;
-	if (*path) //if we ls the root, the path would now point to null, because the path was only "/" and we did path++ at the start. if *path it means path is not null
-		currentDir = breakDownPath(root, path);
-	// Check if the given path exists and points to a directory
-	if (!currentDir || !currentDir->isDir) {
-		kprintf("Path doesn't exist or is not a directory.\n");
-		return;
-	}
+	//add to parent directory.
+	uint8_t* ptr = getInodeContent(&inode2); 
+	uint8_t* newEntry = ptr;
 
-	// Get the content of the directory (assuming it's an array of directoryEntry structs)
-	directoryEntry* dirContent = (directoryEntry*)getInodeContent(currentDir);
-	if (!dirContent) {
-		kprintf("Failed to retrieve directory content.\n");
-		return;
-	}
-	uint8_t* ptr = (uint8_t*)dirContent;
+	kprintf("Listing directory at path: %s\n", tmp);
+	
 	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
 	{
 		kprintf("%s ", ((directoryEntry*)ptr)->filename);
 		ptr += sizeof(directoryEntry);
 	}
-	kfree(dirContent);
+	kprintf("\n");
+	kfree((void*)newEntry);
 }
 
-void extractPath(const char* inputString, char* outputBuffer) {
-	int i = 0, lastSlashIndex = -1;
 
-	// Find the index of the last '/'
-	while (inputString[i] != '\0') {
-		if (inputString[i] == '/')
-			lastSlashIndex = i;
-		i++;
-	}
-
-	// If no '/' was found or the string starts with '/', set the output buffer to '/'
-	if (lastSlashIndex == -1 || lastSlashIndex == 0) {
-		outputBuffer[0] = '/';
-		outputBuffer[1] = '\0';
-		return;
-	}
-
-	// Copy characters up to the last '/'
-	for (i = 0; i < lastSlashIndex; i++) {
-		outputBuffer[i] = inputString[i];
-	}
-	outputBuffer[lastSlashIndex] = '\0';
-}
-
-void init_fs(uint32_t num_of_inodes, uint32_t num_of_blocks)
+void format_fs()
 {
-	sb = (SuperBlock*)MEMSTART;
-	uint32_t num_pages = FS_SIZE(num_of_inodes, num_of_blocks) / PAGE_SIZE;
-	for (uint32_t i = 0, start_addr = MEMSTART;i<num_pages;i++, start_addr += PAGE_SIZE)
-	{
-		void* block = (void*)allocate_block();
-		if ((uint32_t)block != 0xFFFFFFFF)
-		{
-			if (map_page((void*)start_addr, block, (PTE_PRESENT | PTE_WRITEABLE)))
-				memset((void*)start_addr, 0, PAGE_SIZE);
-		}
-		else
-		{
-			kprintf("No memory for fs");
-			asm volatile("cli;hlt"); //if we have no memory, stop the machine.
-		}
-	}
-	sb->inodesCount = num_of_inodes;
-	sb->blocksCount = num_of_blocks;
+	kprintf("Formating disk\n");
+	sb->inodesCount = INODES_COUNT_DEFAULT;
+	sb->blocksCount = BLOCKS_COUNT_DEFAULT;
+	sb->inodeBitmap = SUPERBLOCK_SIZE;
+	sb->blockBitmap = sb->inodeBitmap + (sb->inodesCount / BITS_PER_BYTE);
+	sb->inodesAddress = sb->blockBitmap + (sb->blocksCount / BITS_PER_BYTE);
+	sb->blocksAddress = sb->inodesAddress + (sb->inodesCount * INODE_SIZE);
 	sb->magicNumber = FS_MAGIC_NUMBER;
-	sb->inodeBitmap = ((uint32_t)sb + SUPERBLOCK_SIZE);
-	sb->blockBitmap = ((uint32_t)sb->inodeBitmap + num_of_inodes / BITS_PER_BYTE);
-	sb->inodesAddress = ((uint32_t)sb->blockBitmap + num_of_blocks / BITS_PER_BYTE);;
-	sb->blocksAddress = ((uint32_t)sb->inodesAddress + num_of_inodes * INODE_SIZE);
-	allocateInode(sb); //allocate a dummy inode, as the first inode is reserved
-	allocateInode(sb)->isDir = 1; //this is the inode for the root directory, so put isDir as true.
+	uint8_t buff[SECTOR_SIZE] = {0};
+	ide_access(drive_num, 0, SUPERBLOCK_SIZE, sb, ATA_WRITE);
+	ide_access(drive_num, sb->inodeBitmap, (sb->blockBitmap - sb->inodeBitmap), buff, ATA_WRITE);
+	ide_access(drive_num, sb->blockBitmap, (sb->inodesAddress - sb->blockBitmap), buff, ATA_WRITE);
+
+	uint32_t index = allocateInode(); //allocate a dummy inode, as the first inode is reserved
+	index = allocateInode(); //this is the inode for the root directory, so put isDir as true.
+	Inode inode1;
+	read_inode(index, &inode1);
+	inode1.isDir = 1;
+	write_inode(index, &inode1);
+}
+
+void init_fs(uint8_t format_disk)
+{
+	drive_num = PRIMARY_SLAVE;
+	sb = &current_sb;
+	ide_access(drive_num, 0, SUPERBLOCK_SIZE, sb, ATA_READ); //read superblock information from disk
+
+	if (sb->magicNumber != FS_MAGIC_NUMBER || format_disk)
+		format_fs();
 }
