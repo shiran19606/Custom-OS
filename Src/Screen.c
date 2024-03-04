@@ -1,10 +1,42 @@
 #include "Screen.h"
 
 uint16_t* videoMemory = (uint16_t*)(0xB8000 + 0xC0000000);
+uint16_t backBuffer[80 * 75] = {(SPACE_ASCII_VALUE | (0x0f << 8))};
 uint8_t cur_x = 0;
 uint8_t cur_y = 0;
+uint8_t bbx = 0;
+uint8_t bby = 0;
+uint8_t numLinesBb = 0;
 
 
+void scrollUp()
+{
+    if(bby >= 25)
+    {
+        uint8_t attribute = 0x0f;
+        uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
+        for (int i = 0;i<80*25;i++)
+            videoMemory[i] = backBuffer[(bby - 25) * 80 + i]; //in each line, we copy the char in the same location in the line above.
+        bby--;
+    }
+}
+
+void scrollDown()
+{
+    if(numLinesBb >= 25 && bby <= numLinesBb)
+    {
+        uint8_t attribute = 0x0f;
+        uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
+        for (int i = 0;i<80*25;i++)
+            videoMemory[i] = backBuffer[(bby - cur_y) * 80 + i]; //in each line, we copy the char in the same location in the line below.
+        bby++;
+    }
+}
+
+void setX(uint8_t num) {cur_x = num;}
+void setY(uint8_t num) {cur_y = num;}
+uint8_t getX(){return cur_x;}
+uint8_t getY(){return cur_y;}
 
 //function will set the location of the Mouse Cursor, using VGA ports 0x3D4 with is the VGA's command port, and the 0x3D5 which is the VGA's data port.
 
@@ -32,6 +64,17 @@ void scrollIfNeeded()
         cur_x = 0;
         cur_y = 24;
     }
+
+    if(bby >= 75)
+    {
+        uint8_t attribute = 0x0f;
+        uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
+        for (int i = 0;i<80*49;i++)
+            backBuffer[i] = backBuffer[i+80]; //in each line, we copy the char in the same location in the line below.
+        for (int i = 0;i<80;i++)
+            backBuffer[49*80 + i] = blankPoint;
+        bby = 49;
+    }
 }
 //clearing the screen is basically just printing spaces all over the screen.
 void clearScreen()
@@ -54,34 +97,48 @@ void put_char(uint8_t charToPrint)
     if (charToPrint == BACKSPACE && cur_x) //cur_x means the cur_x is bigger than 0.
     {
         cur_x--;
+        bbx--;
     }
     else if (charToPrint == BACKSPACE && !cur_x && cur_y)
     {
         cur_x = 79;
         cur_y--;
+        bbx = 79;
+        bby--;
+        numLinesBb--;
     }
     else if (charToPrint == TAB)
     {
         cur_x = (cur_x+8) & ~(8-1); //advance x to the next location divisable by 8.
+        bbx = (bbx+8) & ~(8-1); //advance x to the next location divisable by 8.
     }
     else if (charToPrint == '\r')
     {
         cur_x = 0;
+        bbx = 0;
     }
     else if (charToPrint == '\n')
     {
         cur_x = 0;
         cur_y++;
+        bbx = 0;
+        bby++;
+        numLinesBb++;
     }
     else if (charToPrint >= ' ') //check if the char is printable
     {
         videoMemory[cur_y * 80 + cur_x] = (charToPrint) | (attributes << 8);
+        backBuffer[bby * 80 + bbx] = (charToPrint) | (attributes << 8);
         cur_x++;
+        bbx++;
     }
     if (cur_x >=80)
     {
         cur_x = 0;
         cur_y++;
+        bbx = 0;
+        bby++;
+        numLinesBb++;
     }
 
     scrollIfNeeded();
