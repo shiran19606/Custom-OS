@@ -278,6 +278,11 @@ void writeToFile(MyFile* fileToWrite, const char* data)
 {
 	Inode inode;
 	read_inode(fileToWrite->inodeNumber, &inode);
+	if (inode.isDir)
+	{
+		kprintf("Cant Write to a directory\n");
+		return;
+	}
 	writeData(&inode, data, strlen(data));
 	write_inode(fileToWrite->inodeNumber, &inode);
 }
@@ -286,6 +291,11 @@ char* readFromFile(MyFile* fileToRead)
 {
 	Inode inode;
 	read_inode(fileToRead->inodeNumber, &inode);
+	if (inode.isDir)
+	{
+		kprintf("Cant read from a directory\n");
+		return NULL;
+	}
 	return (char*)getInodeContent(&inode);
 }
 
@@ -313,6 +323,15 @@ MyFile* openFile(char* filename)
 		kprintf("Error: cant open file %s\n", tmp);
 		return NULL;
 	}
+
+	Inode inode_tmp;
+	read_inode(indexOfFileInode, &inode_tmp);
+	if (inode_tmp.isDir)
+	{
+		kprintf("Cant open a directory\n");
+		return NULL;
+	}
+
 	MyFile* file = (MyFile*)kmalloc(sizeof(MyFile));
 	file->inodeNumber = indexOfFileInode;
 	return file;
@@ -326,13 +345,24 @@ void closeFile(MyFile* file1)
 
 void listDir(char* path)
 {
-	char* tmp = path;
 	if (path[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		path++;
 
 	Inode inode2;
 	read_inode(1, &inode2);
-	uint32_t working_dir = get_working_dir(&inode2, path);
+
+	//this code here is used to create a string to call get_working_dir with. if the user entered Dir1 to list the directory Dir1, the get_working_dir terminates the string by '/' so it expects to see '/' at the end, so we add a '/' to a tmp string.
+	uint32_t size_path = strlen(path);
+	char* str = (char*)kmalloc(size_path + 2);
+	memcpy(str, path, size_path);
+	str[size_path] = '/';
+	str[size_path + 1] = 0;
+
+	uint32_t working_dir = 1;
+	if (strcmp(str, "/") != 0)
+		working_dir = get_working_dir(&inode2, str);
+	kfree((void*)str);
+
 	if (working_dir == 0)
 	{
 		kprintf("Error: cant list directory\n");
@@ -340,11 +370,17 @@ void listDir(char* path)
 	}
 	read_inode(working_dir, &inode2);
 
+	if (!inode2.isDir)
+	{
+		kprintf("cant ls a file\n");
+		return;
+	}
+
 	//add to parent directory.
 	uint8_t* ptr = getInodeContent(&inode2); 
 	uint8_t* newEntry = ptr;
 
-	kprintf("Listing directory at path: %s\n", tmp);
+	kprintf("Listing directory at path: /%s\n", path);
 	
 	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
 	{

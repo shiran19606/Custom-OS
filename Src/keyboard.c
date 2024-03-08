@@ -5,6 +5,7 @@ int caps = 0;
 int buffer_index = 0;
 int shift = 0;
 
+extern void handle_user_input(const char* input);
 
 void printLetter(uint8_t scancode) {
     char ch = 0;
@@ -160,10 +161,13 @@ void printLetter(uint8_t scancode) {
 
         // special keys
         case 0x1C: // enter
-            kprintf("\n%s\n", buffer);
-            for(int i = 0; i < 256; i++)
-                buffer[i] = 0; // cleaning buffer
+            kprintf("\n");
+            char* tmp_buffer = (char*)kmalloc(257);
+            memcpy(tmp_buffer, buffer, 257);
+            memset(buffer, 0, 257);
             buffer_index = 0;
+            handle_user_input(tmp_buffer);
+            kfree((void*)tmp_buffer);
             break;
         case 0x3A: // capslock
             caps = (caps + 1) % 2;

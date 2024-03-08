@@ -4,6 +4,8 @@
 #include "Screen.h"
 #include "utils.h"
 #include "isr.h"
+#include "heap.h"
+
 #define IRQ1 33
 
 void init_keyboard();
