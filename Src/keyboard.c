@@ -247,8 +247,8 @@ void printLetter(uint8_t scancode) {
     }
     if (ch) // checking if a key needed to be printed
     {
-        buffer[buffer_index] = ch;
         put_char(ch);
+        buffer[buffer_index] = ch;
         buffer_index++;
     }
 }

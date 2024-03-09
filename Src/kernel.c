@@ -150,11 +150,13 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Initialized virtual memory\n");
 
     initialize_allocator();
-    ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000);
+    ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000); //initialize disk driver to use in file system.
 
 
-    //initializing fs
+    //initializing fs to use the current disk contents and not format it.
     init_fs(FS_DONT_FORMAT_DISK);
+
+    //start menu.
     kprintf("Type 'help' to get the user menu\n");
     kprintf("> ");
     asm volatile("sti");
