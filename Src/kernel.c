@@ -7,6 +7,8 @@
 #include "pmm.h"
 #include "vmm.h"
 #include "ide.h"
+#include "timer.h"
+#include "process.h"
 
 extern uint32_t kernel_physical_start;
 extern uint32_t kernel_physical_end;
@@ -112,6 +114,18 @@ void handle_user_input(const char* input)
     kprintf("> ");
 }
 
+void func1(void)
+{
+    char ch = 'A';
+    while(1) put_char(ch);
+}
+
+void func2(void)
+{
+    char ch = 'B';
+    while(1) put_char(ch);
+}
+
 void kernel_main(multiboot_info_t* mboot_ptr) 
 {
     const char* str = "Hello World";
@@ -151,7 +165,10 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 
     initialize_allocator();
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000); //initialize disk driver to use in file system.
-
+    init_multitasking();
+    create_process(func1);
+    create_process(func2);
+    init_timer(1193);
 
     //initializing fs to use the current disk contents and not format it.
     init_fs(FS_DONT_FORMAT_DISK);
@@ -160,4 +177,8 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Type 'help' to get the user menu\n");
     kprintf("> ");
     asm volatile("sti");
+    while(1)
+    {
+        put_char(0x08);
+    }
 }

@@ -67,7 +67,7 @@ void init_idt()
     set_idt_gate(29, (uint32_t)isr29, 0x08, 0x8E);
     set_idt_gate(30, (uint32_t)isr30, 0x08, 0x8E);
     set_idt_gate(31, (uint32_t)isr31, 0x08, 0x8E);
-    set_idt_gate(32, (uint32_t)irq0 , 0x08, 0x8E);
+    set_idt_gate(32, (uint32_t)Timer_Handler , 0x08, 0x8E);
     set_idt_gate(33, (uint32_t)irq1 , 0x08, 0x8E);
     set_idt_gate(34, (uint32_t)irq2 , 0x08, 0x8E);
     set_idt_gate(35, (uint32_t)irq3 , 0x08, 0x8E);

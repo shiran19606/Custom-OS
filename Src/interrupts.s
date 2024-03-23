@@ -1,5 +1,12 @@
 [EXTERN isr_handler] ;our C handler function we will call on each interrupt.
 [EXTERN irq_handler] ;our c irq_handler function
+[GLOBAL Timer_Handler]
+[GLOBAL SwitchToTask]
+[EXTERN current_process]
+[EXTERN add_process]
+[EXTERN schedule]
+[EXTERN printNumberHex]
+[EXTERN put_char]
 
 ;we will write a macro handler for a case where no error code is pushed, and a macro handler for a case where an error code is pushed.
 ;to see on what cases the error code is pushed, we used the intel manual on interrupts: https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf.
@@ -94,7 +101,6 @@ isr_common_case: ;we jump to this common case no matter if we had an error code 
         jmp irq_common_case
 %endmacro
 
-IRQ 0,  32
 IRQ 1,  33
 IRQ 2,  34
 IRQ 3,  35
@@ -138,4 +144,78 @@ irq_common_case:
     add esp, 8
     sti
     iret
+
+
+Timer_Handler:
+    push        eax
+    push        ebx
+    push        ecx
+    push        edx
+    push        ebp
+    push        esi
+    push        edi
+
+    mov         eax,0x20
+    out         0x20,al
+
+    call schedule
+    
+
+    pop         edi
+    pop         esi
+    pop         ebp
+    pop         edx
+    pop         ecx
+    pop         ebx
+    pop         eax
+    iret
+
+;;
+;; -- Some offsets into the PCB sructure
+;;    ----------------------------------
+TOS     equ         0
+VAS     equ         4
+STATE   equ         12
+
+
+;;
+;; -- These are the different states
+;;    ------------------------------
+RUNNING equ         0
+READY   equ         1
+PAUSED  equ         2
+SLEEPING    equ     3
+TERMINATED  equ     4
+
+
+SwitchToTask:
+    cli
+    push        ebx
+    push        esi
+    push        edi
+    push        ebp
+
+    mov         edi,[current_process]        ;; `edi` = previous tasks PCB
+
+    mov         [edi+TOS],esp           ;; save the top of the stack
+    mov         eax, cr3
+    mov         [edi+VAS], eax
+
+    ;; -- load the next task's state
+
+    mov esi, [esp + 20]
+    mov [current_process], esi
+
+    mov         esp,[esi+TOS]           ;; load the next process's stack
+    mov         eax,[esi+VAS]
+    mov         cr3,eax
+    mov         dword [esi+STATE],RUNNING     ;; make the current task running
+
+    pop         ebp
+    pop         edi
+    pop         esi
+    pop         ebx
+    
+    sti
+    ret                                 ;; this is the next task's `eip`
 
