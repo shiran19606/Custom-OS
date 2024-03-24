@@ -211,6 +211,7 @@ void createDirectory(const char* dirname)
 
 void createFileOrDirectory(const char* filename, int isDir)
 {
+	asm volatile("cli");
 	if (filename[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		filename++;
 	char buff[MAX_FILENAME_LENGTH] = { 0 };
@@ -241,6 +242,7 @@ void createFileOrDirectory(const char* filename, int isDir)
 	if (working_dir == 0)
 	{
 		kprintf("Error: Path to create the file in is not valid\n");
+		asm volatile("sti");
 		return;
 	}
 	read_inode(working_dir, root);
@@ -272,35 +274,43 @@ void createFileOrDirectory(const char* filename, int isDir)
 	writeData(root, (const char*)newEntry, (numEntries+1)*(sizeof(directoryEntry)));
 	write_inode(working_dir, root);
 	kfree((void*)newEntry);
+	asm volatile("sti");
 }
 
 void writeToFile(MyFile* fileToWrite, const char* data)
 {
+	asm volatile("cli");
 	Inode inode;
 	read_inode(fileToWrite->inodeNumber, &inode);
 	if (inode.isDir)
 	{
 		kprintf("Cant Write to a directory\n");
+		asm volatile("sti");
 		return;
 	}
 	writeData(&inode, data, strlen(data));
 	write_inode(fileToWrite->inodeNumber, &inode);
+	asm volatile("sti");
 }
 
 char* readFromFile(MyFile* fileToRead)
 {
+	asm volatile("cli");
 	Inode inode;
 	read_inode(fileToRead->inodeNumber, &inode);
 	if (inode.isDir)
 	{
 		kprintf("Cant read from a directory\n");
+		asm volatile("sti");
 		return NULL;
 	}
+	asm volatile("sti");
 	return (char*)getInodeContent(&inode);
 }
 
 MyFile* openFile(char* filename)
 {
+	asm volatile("cli");
 	if (filename[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		filename++;
 	
@@ -334,17 +344,21 @@ MyFile* openFile(char* filename)
 
 	MyFile* file = (MyFile*)kmalloc(sizeof(MyFile));
 	file->inodeNumber = indexOfFileInode;
+	asm volatile("sti");
 	return file;
 }
 
 void closeFile(MyFile* file1)
 {
+	asm volatile("cli");
 	if (file1)
 		kfree((void*)file1);
+	asm volatile("sti");
 }
 
 void listDir(char* path)
 {
+	asm volatile("cli");
 	if (path[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		path++;
 
@@ -389,6 +403,7 @@ void listDir(char* path)
 	}
 	kprintf("\n");
 	kfree((void*)newEntry);
+	asm volatile("sti");
 }
 
 

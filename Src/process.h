@@ -22,10 +22,11 @@ typedef struct process
 } process_t;
 
 
-void add_process(process_t* new_process);
+void add_process(process_t** list, process_t* new_process);
 void create_process(void (*ent)());
-void terminate_process(process_t* process);
+void terminate_process();
 uint32_t init_multitasking();
+void clean_terminated_list();
 
 extern void SwitchToTask(process_t* process);
 

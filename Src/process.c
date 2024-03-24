@@ -3,7 +3,7 @@
 process_t* process_list;
 process_t* current_process;
 
-uint32_t main_proc = 0;
+process_t* terminated_process_list;
 
 extern page_directory_t* current_page_dir;
 
@@ -22,20 +22,20 @@ void schedule()
     }
 }
 
-void add_process(process_t* new_process)
+void add_process(process_t** list, process_t* new_process)
 {
     if (!new_process) return;
 
     new_process->status = READY;
     new_process->next = (process_t*)0;
 
-    if (process_list == (process_t*)0) 
+    if (*list == (process_t*)0) 
     {
-        process_list = new_process;
+        *list = new_process;
         current_process = new_process;
     } 
     else {
-        process_t* temp = process_list;
+        process_t* temp = *list;
         while (temp->next != NULL && temp->next != process_list) 
             temp = temp->next;
         temp->next = new_process;
@@ -55,14 +55,15 @@ void create_process(void (*ent)())
     PUSH(stack, 0);
 
     new_proc->stack_top = stack;
-    add_process(new_proc);
+    add_process(&process_list, new_proc);
 }
 
-void terminate_process(process_t* process)
+void terminate_process() //terminate the current process.
 {
+    asm volatile("cli");
     process_t* temp = process_list;
     process_t* last = 0;
-    while (temp && temp != process)
+    while (temp && temp != current_process)
     {
         last = temp;
         temp = temp->next;
@@ -73,6 +74,10 @@ void terminate_process(process_t* process)
         process_list = temp->next;
     else
         last->next = temp->next;
+    add_process(&terminated_process_list, current_process);
+    current_process->status = TERMINATED;
+    asm volatile("sti");
+    while(1);
 }
 
 uint32_t init_multitasking()
@@ -81,10 +86,32 @@ uint32_t init_multitasking()
     current_process = 0;
 
     process_t* tmp_proc = (process_t*)kmalloc(sizeof(process_t));
-    main_proc = (uint32_t)tmp_proc;
     tmp_proc->stack_top = 0;
     tmp_proc->cr3 = (uint32_t)current_page_dir;
     tmp_proc->status = RUNNING;
     tmp_proc->next = NULL;
-    add_process(tmp_proc);
+    add_process(&process_list, tmp_proc);
+}
+
+uint32_t ticks = 0;
+void wait_ticks(uint32_t amount)
+{
+    while (ticks <= amount) {}
+    ticks = 0;
+}
+
+void clean_terminated_list()
+{
+    while(1)
+    {
+        asm volatile("cli");
+        while (terminated_process_list)
+        {
+            process_t* temp = terminated_process_list;
+            terminated_process_list = terminated_process_list->next;
+            kfree((void*)temp);
+        }
+        asm volatile("sti");
+        wait_ticks(1);
+    }
 }

@@ -5,8 +5,8 @@
 [EXTERN current_process]
 [EXTERN add_process]
 [EXTERN schedule]
+[EXTERN ticks]
 [EXTERN printNumberHex]
-[EXTERN put_char]
 
 ;we will write a macro handler for a case where no error code is pushed, and a macro handler for a case where an error code is pushed.
 ;to see on what cases the error code is pushed, we used the intel manual on interrupts: https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf.
@@ -155,12 +155,12 @@ Timer_Handler:
     push        esi
     push        edi
 
+    inc dword [ticks]
     mov         eax,0x20
     out         0x20,al
 
     call schedule
     
-
     pop         edi
     pop         esi
     pop         ebp

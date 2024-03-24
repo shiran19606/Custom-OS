@@ -117,13 +117,15 @@ void handle_user_input(const char* input)
 void func1(void)
 {
     char ch = 'A';
-    while(1) put_char(ch);
+    for (int i = 0;i<1000;i++) put_char(ch);
+    terminate_process();
 }
 
 void func2(void)
 {
     char ch = 'B';
-    while(1) put_char(ch);
+    for (int i = 0;i<1000;i++) put_char(ch);
+    terminate_process();
 }
 
 void kernel_main(multiboot_info_t* mboot_ptr) 
@@ -177,8 +179,5 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Type 'help' to get the user menu\n");
     kprintf("> ");
     asm volatile("sti");
-    while(1)
-    {
-        put_char(0x08);
-    }
+    clean_terminated_list();
 }
