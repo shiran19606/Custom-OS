@@ -49,8 +49,8 @@ debug: build
 	qemu-system-x86_64 -boot d -d int -s -S -cdrom os.iso -m 3G -M smm=off -serial file:com1.log -drive format=raw,file=disk.img -smp 1
 	
 prebuild:
-	clear
 	make clean
+	clear
 	mkdir $(BUILD_DIR)
 	
 clean:

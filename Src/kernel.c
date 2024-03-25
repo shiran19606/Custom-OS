@@ -116,15 +116,15 @@ void handle_user_input(const char* input)
 
 void func1(void)
 {
-    char ch = 'A';
-    for (int i = 0;i<1000;i++) put_char(ch);
+    int i = 0;
+    while (i++ < 1000) put_char('B');
     terminate_process();
 }
 
 void func2(void)
 {
-    char ch = 'B';
-    for (int i = 0;i<1000;i++) put_char(ch);
+    int i = 0;
+    while (i++ < 1000) put_char('A');
     terminate_process();
 }
 

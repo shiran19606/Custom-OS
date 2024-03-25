@@ -47,7 +47,8 @@ void create_process(void (*ent)())
     process_t* new_proc = (process_t*)kmalloc(sizeof(process_t));
     new_proc->cr3 = (uint32_t)current_page_dir;
     new_proc->next = NULL;
-    uint32_t* stack = (uint32_t*)kmalloc(0x1000) + 0x1000; //the stack pointer should be at the end of the stack, not at the start.
+    uint32_t* stack = (uint32_t*)((uint32_t)kmalloc(0x1000) + 0x1000); //the stack pointer should be at the end of the stack, not at the start.
+    new_proc->initial_stack = (uint32_t)stack - 0x1000;
     PUSH(stack, (uint32_t)ent);
     PUSH(stack, 0);
     PUSH(stack, 0);
@@ -87,6 +88,7 @@ uint32_t init_multitasking()
 
     process_t* tmp_proc = (process_t*)kmalloc(sizeof(process_t));
     tmp_proc->stack_top = 0;
+    tmp_proc->initial_stack = 0;
     tmp_proc->cr3 = (uint32_t)current_page_dir;
     tmp_proc->status = RUNNING;
     tmp_proc->next = NULL;
@@ -109,6 +111,8 @@ void clean_terminated_list()
         {
             process_t* temp = terminated_process_list;
             terminated_process_list = terminated_process_list->next;
+            if (temp->initial_stack)
+                kfree((void*)temp->initial_stack);
             kfree((void*)temp);
         }
         asm volatile("sti");

@@ -19,6 +19,7 @@ typedef struct process
     uint32_t cr3;
     struct process* next;
     uint32_t status;
+    uint32_t initial_stack;
 } process_t;
 
 
