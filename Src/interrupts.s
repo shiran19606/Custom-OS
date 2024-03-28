@@ -190,10 +190,14 @@ TERMINATED  equ     4
 
 SwitchToTask:
     cli
+    push        eax
     push        ebx
+    push        ecx
+    push        edx
     push        esi
     push        edi
     push        ebp
+    pushfd
 
     mov         edi,[current_process]        ;; `edi` = previous tasks PCB
 
@@ -203,7 +207,7 @@ SwitchToTask:
 
     ;; -- load the next task's state
 
-    mov esi, [esp + 20]
+    mov esi, [esp + 36]
     mov [current_process], esi
 
     mov         esp,[esi+TOS]           ;; load the next process's stack
@@ -211,10 +215,14 @@ SwitchToTask:
     mov         cr3,eax
     mov         dword [esi+STATE],RUNNING     ;; make the current task running
 
+    popfd
     pop         ebp
     pop         edi
     pop         esi
+    pop         edx
+    pop         ecx
     pop         ebx
+    pop         eax
     
     sti
     ret                                 ;; this is the next task's `eip`

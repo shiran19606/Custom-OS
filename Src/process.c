@@ -12,9 +12,7 @@ void schedule()
     current_process->status = READY; //now not running anymore, but ready.
     process_t* next_proc = (current_process->next != NULL) ? current_process->next : process_list;
     if (next_proc != NULL)
-    {
         SwitchToTask(next_proc);
-    }
     else
     {
         kprintf("No next task\n");
@@ -47,13 +45,19 @@ void create_process(void (*ent)())
     process_t* new_proc = (process_t*)kmalloc(sizeof(process_t));
     new_proc->cr3 = (uint32_t)current_page_dir;
     new_proc->next = NULL;
-    uint32_t* stack = (uint32_t*)((uint32_t)kmalloc(0x1000) + 0x1000); //the stack pointer should be at the end of the stack, not at the start.
-    new_proc->initial_stack = (uint32_t)stack - 0x1000;
-    PUSH(stack, (uint32_t)ent);
-    PUSH(stack, 0);
-    PUSH(stack, 0);
-    PUSH(stack, 0);
-    PUSH(stack, 0);
+    uint32_t stack_bottom = (uint32_t)kmalloc(0x1000);
+    uint32_t stack_top = stack_bottom + 0x1000;
+    uint32_t* stack = (uint32_t*)stack_top; //the stack pointer should be at the end of the stack, not at the start.
+    new_proc->initial_stack = stack_top;
+    PUSH(stack, (uint32_t)ent);     //eip
+    PUSH(stack, 0);                 //eax
+    PUSH(stack, 0);                 //ebx
+    PUSH(stack, 0);                 //ecx
+    PUSH(stack, 0);                 //edx
+    PUSH(stack, 0);                 //esi
+    PUSH(stack, 0);                 //edi
+    PUSH(stack, 0);                 //ebp
+    PUSH(stack, 0x202);             //eflags
 
     new_proc->stack_top = stack;
     add_process(&process_list, new_proc);
@@ -102,6 +106,7 @@ void wait_ticks(uint32_t amount)
     ticks = 0;
 }
 
+
 void clean_terminated_list()
 {
     while(1)
@@ -112,7 +117,7 @@ void clean_terminated_list()
             process_t* temp = terminated_process_list;
             terminated_process_list = terminated_process_list->next;
             if (temp->initial_stack)
-                kfree((void*)temp->initial_stack);
+                kfree((void*)(temp->initial_stack));
             kfree((void*)temp);
         }
         asm volatile("sti");
