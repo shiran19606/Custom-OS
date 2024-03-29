@@ -56,17 +56,17 @@ void scrollIfNeeded()
     uint8_t attribute = 0x0f;
     uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
     int i = 0;
-    if (cur_y >= 25)
+    if (cur_y == 24)
     {
         for (i = 0;i<80*24;i++)
             videoMemory[i] = videoMemory[i+80]; //in each line, we copy the char in the same location in the line below.
         for (i = 0;i<80;i++)
             videoMemory[24*80 + i] = blankPoint;
         cur_x = 0;
-        cur_y = 24;
+        cur_y = 23;
     }
 
-    if(bby >= 74)
+    if(bby == 74)
     {
         for (i = 0;i<80*49;i++)
             backBuffer[i] = backBuffer[i+80]; //in each line, we copy the char in the same location in the line below.
@@ -127,8 +127,8 @@ void put_char(uint8_t charToPrint)
     }
     else if (charToPrint >= ' ') //check if the char is printable
     {
-        videoMemory[cur_y * 80 + cur_x] = (charToPrint) | (attributes << 8);
-        backBuffer[bby * 80 + bbx] = (charToPrint) | (attributes << 8);
+        videoMemory[cur_y * 80 + cur_x] = ((charToPrint) | (attributes << 8));
+        backBuffer[bby * 80 + bbx] = ((charToPrint) | (attributes << 8));
         cur_x++;
         bbx++;
     }

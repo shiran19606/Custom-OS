@@ -117,15 +117,17 @@ void handle_user_input(const char* input)
 void func1(void)
 {
     int i = 0;
-    while(i++ < 100000)
-        kprintf("A");
+    //while(i++ < 100000)
+    while(1)
+        kprintf("A");    
     terminate_process();
 }
 
 void func2(void)
 {
     int i = 0;
-    while(i++ < 100000)
+    //while(i++ < 100000)
+    while(1)
         kprintf("B");
     terminate_process();
 }
