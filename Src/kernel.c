@@ -117,8 +117,8 @@ void handle_user_input(const char* input)
 void func1(void)
 {
     int i = 0;
-    //while(i++ < 100000)
-    while(1)
+    while(i++ < 100000)
+    //while(1)
         kprintf("A");    
     terminate_process();
 }
@@ -126,8 +126,8 @@ void func1(void)
 void func2(void)
 {
     int i = 0;
-    //while(i++ < 100000)
-    while(1)
+    while(i++ < 100000)
+    //while(1)
         kprintf("B");
     terminate_process();
 }
@@ -170,8 +170,10 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Initialized virtual memory\n");
 
     initialize_allocator();
+    kprintf("initialized heap\n");
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000); //initialize disk driver to use in file system.
     init_multitasking();
+    kprintf("initialized multitasking\n");
     create_process(func1);
     create_process(func2);
     create_process(clean_terminated_list);

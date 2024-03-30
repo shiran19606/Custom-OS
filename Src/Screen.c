@@ -1,7 +1,7 @@
 #include "Screen.h"
 
 uint16_t* videoMemory = (uint16_t*)(0xB8000 + 0xC0000000);
-uint16_t backBuffer[80 * 75] = {(SPACE_ASCII_VALUE | (0x0f << 8))};
+uint16_t backBuffer[COLUMNS_BACKBUFFER * LINES_BACKBUFFER] = {(SPACE_ASCII_VALUE | (0x0f << 8))};
 uint8_t cur_x = 0;
 uint8_t cur_y = 0;
 uint8_t bbx = 0;
@@ -11,24 +11,24 @@ uint8_t numLinesBb = 0;
 
 void scrollUp()
 {
-    if(bby >= 25)
+    if(bby >= LINES_VGA)
     {
         uint8_t attribute = 0x0f;
         uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
-        for (int i = 0;i<80*25;i++)
-            videoMemory[i] = backBuffer[(bby - 25) * 80 + i]; //in each line, we copy the char in the same location in the line above.
+        for (int i = 0;i<COLUMNS_VGA*LINES_BACKBUFFER;i++)
+            videoMemory[i] = backBuffer[(bby - LINES_VGA) * COLUMNS_VGA + i]; //in each line, we copy the char in the same location in the line above.
         bby--;
     }
 }
 
 void scrollDown()
 {
-    if(numLinesBb >= 25 && bby <= numLinesBb)
+    if(numLinesBb >= LINES_VGA && bby <= numLinesBb)
     {
         uint8_t attribute = 0x0f;
         uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
-        for (int i = 0;i<80*25;i++)
-            videoMemory[i] = backBuffer[(bby - cur_y) * 80 + i]; //in each line, we copy the char in the same location in the line below.
+        for (int i = 0;i<COLUMNS_VGA*LINES_VGA;i++)
+            videoMemory[i] = backBuffer[(bby - cur_y) * COLUMNS_VGA + i]; //in each line, we copy the char in the same location in the line below.
         bby++;
     }
 }
@@ -42,7 +42,7 @@ uint8_t getY(){return cur_y;}
 
 void setCursorLocation()
 {
-    uint16_t location = cur_y * 80 + cur_x;
+    uint16_t location = cur_y * COLUMNS_BACKBUFFER + cur_x;
     port_byte_out(VGA_COMMAND_PORT, 14);                  // Tell the VGA board we are setting the high cursor byte.
     port_byte_out(VGA_DATA_PORT, location >> 8); // Send the high cursor byte.
     port_byte_out(VGA_COMMAND_PORT, 15);                  // Tell the VGA board we are setting the low cursor byte.
@@ -56,22 +56,22 @@ void scrollIfNeeded()
     uint8_t attribute = 0x0f;
     uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
     int i = 0;
-    if (cur_y == 24)
+    if (cur_y == 24) //should be 25
     {
-        for (i = 0;i<80*24;i++)
-            videoMemory[i] = videoMemory[i+80]; //in each line, we copy the char in the same location in the line below.
-        for (i = 0;i<80;i++)
-            videoMemory[24*80 + i] = blankPoint;
+        for (i = 0;i < COLUMNS_VGA * LINES_VGA;i++)
+            videoMemory[i] = videoMemory[i+COLUMNS_VGA]; //in each line, we copy the char in the same location in the line below.
+        for (i = 0;i < COLUMNS_VGA;i++)
+            videoMemory[LINES_VGA * COLUMNS_VGA + i] = blankPoint;
         cur_x = 0;
         cur_y = 23;
     }
 
-    if(bby == 74)
+    if(bby == 74) //should be 75
     {
-        for (i = 0;i<80*49;i++)
-            backBuffer[i] = backBuffer[i+80]; //in each line, we copy the char in the same location in the line below.
-        for (i = 0;i<80;i++);
-            backBuffer[80*49 + i] = blankPoint;
+        for (i = 0;i < COLUMNS_BACKBUFFER * LINES_BACKBUFFER;i++)
+            backBuffer[i] = backBuffer[i+COLUMNS_BACKBUFFER]; //in each line, we copy the char in the same location in the line below.
+        for (i = 0;i < COLUMNS_BACKBUFFER;i++);
+            backBuffer[COLUMNS_BACKBUFFER * 49 + i] = blankPoint;
         bbx = 0;
         bby = 49;
     }
@@ -82,15 +82,21 @@ void clearScreen()
     uint8_t attribute = 0x0f;
     uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
 
-    for (int i = 0;i<80*25;i++)
+
+    for (int i = 0;i < COLUMNS_VGA * LINES_VGA;i++)
         videoMemory[i] = blankPoint;
+    for (int i = 0;i < COLUMNS_BACKBUFFER * LINES_BACKBUFFER;i++)
+        backBuffer[i] = blankPoint;
 
     cur_x = 0;
     cur_y = 0;
+    bbx = 0;
+    bby = 0;
+    numLinesBb = 0;
     setCursorLocation();
 }
 
-
+//TODO: add locks to Screen functions to make sure that one process doesnt interrupt the other.
 void put_char(uint8_t charToPrint)
 {   
     uint8_t attributes = 0x0f; //0x0f means black background, white char.
@@ -127,12 +133,12 @@ void put_char(uint8_t charToPrint)
     }
     else if (charToPrint >= ' ') //check if the char is printable
     {
-        videoMemory[cur_y * 80 + cur_x] = ((charToPrint) | (attributes << 8));
-        backBuffer[bby * 80 + bbx] = ((charToPrint) | (attributes << 8));
+        videoMemory[cur_y * COLUMNS_VGA + cur_x] = ((charToPrint) | (attributes << 8));
+        backBuffer[bby * COLUMNS_BACKBUFFER + bbx] = ((charToPrint) | (attributes << 8));
         cur_x++;
         bbx++;
     }
-    if (cur_x >=80)
+    if (cur_x >= COLUMNS_VGA)
     {
         cur_x = 0;
         cur_y++;

@@ -11,7 +11,10 @@
 #define BACKSPACE 0x08
 #define TAB 0x09
 
-#define SWITCH_VALUE 2147483647
+#define LINES_VGA 25
+#define COLUMNS_VGA 80
+#define LINES_BACKBUFFER 75
+#define COLUMNS_BACKBUFFER 80
 
 void scrollUp();
 void scrollDown();
