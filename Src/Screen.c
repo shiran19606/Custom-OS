@@ -8,6 +8,8 @@ uint8_t bbx = 0;
 uint8_t bby = 0;
 uint8_t numLinesBb = 0;
 
+int video_memory_lock = 0;
+
 
 void scrollUp()
 {
@@ -56,17 +58,17 @@ void scrollIfNeeded()
     uint8_t attribute = 0x0f;
     uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
     int i = 0;
-    if (cur_y == 24) //should be 25
+    if (cur_y == 25) //should be 25
     {
         for (i = 0;i < COLUMNS_VGA * LINES_VGA;i++)
             videoMemory[i] = videoMemory[i+COLUMNS_VGA]; //in each line, we copy the char in the same location in the line below.
         for (i = 0;i < COLUMNS_VGA;i++)
             videoMemory[LINES_VGA * COLUMNS_VGA + i] = blankPoint;
         cur_x = 0;
-        cur_y = 23;
+        cur_y = 24;
     }
 
-    if(bby == 74) //should be 75
+    if(bby == 75) //should be 75
     {
         for (i = 0;i < COLUMNS_BACKBUFFER * LINES_BACKBUFFER;i++)
             backBuffer[i] = backBuffer[i+COLUMNS_BACKBUFFER]; //in each line, we copy the char in the same location in the line below.
@@ -100,53 +102,45 @@ void clearScreen()
 void put_char(uint8_t charToPrint)
 {   
     uint8_t attributes = 0x0f; //0x0f means black background, white char.
-    if (charToPrint == BACKSPACE && cur_x) //cur_x means the cur_x is bigger than 0.
+    switch (charToPrint)
     {
-        cur_x--;
-        bbx--;
+        case BACKSPACE:
+            if (cur_x) {cur_x--;bbx--;}
+            else if (!cur_x && cur_y) {cur_x = 79; cur_y--; bbx = 79;bby--;numLinesBb;}
+            break;
+        case TAB:
+            cur_x = (cur_x+8) & ~(8-1); //advance x to the next location divisable by 8.
+            bbx = (bbx+8) & ~(8-1); //advance x to the next location divisable by 8.
+            break;
+        case '\r':
+            cur_x = 0;
+            bbx = 0;
+            break;
+        case '\n':
+            cur_x = 0;
+            cur_y++;
+            bbx = 0;
+            bby++;
+            numLinesBb++;
+            break;
+        default:
+            if (charToPrint >= ' ')
+            {
+                videoMemory[cur_y * COLUMNS_VGA + cur_x] = ((charToPrint) | (attributes << 8));
+                backBuffer[bby * COLUMNS_BACKBUFFER + bbx] = ((charToPrint) | (attributes << 8));
+                cur_x++;
+                bbx++;
+            }
+            if (cur_x >= COLUMNS_VGA)
+            {
+                cur_x = 0;
+                cur_y++;
+                bbx = 0;
+                bby++;
+                numLinesBb++;
+            }
+            break;
     }
-    else if (charToPrint == BACKSPACE && !cur_x && cur_y)
-    {
-        cur_x = 79;
-        cur_y--;
-        bbx = 79;
-        bby--;
-        numLinesBb--;
-    }
-    else if (charToPrint == TAB)
-    {
-        cur_x = (cur_x+8) & ~(8-1); //advance x to the next location divisable by 8.
-        bbx = (bbx+8) & ~(8-1); //advance x to the next location divisable by 8.
-    }
-    else if (charToPrint == '\r')
-    {
-        cur_x = 0;
-        bbx = 0;
-    }
-    else if (charToPrint == '\n')
-    {
-        cur_x = 0;
-        cur_y++;
-        bbx = 0;
-        bby++;
-        numLinesBb++;
-    }
-    else if (charToPrint >= ' ') //check if the char is printable
-    {
-        videoMemory[cur_y * COLUMNS_VGA + cur_x] = ((charToPrint) | (attributes << 8));
-        backBuffer[bby * COLUMNS_BACKBUFFER + bbx] = ((charToPrint) | (attributes << 8));
-        cur_x++;
-        bbx++;
-    }
-    if (cur_x >= COLUMNS_VGA)
-    {
-        cur_x = 0;
-        cur_y++;
-        bbx = 0;
-        bby++;
-        numLinesBb++;
-    }
-
     scrollIfNeeded();
     setCursorLocation();
 }

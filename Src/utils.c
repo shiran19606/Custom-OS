@@ -55,3 +55,27 @@ void port_byte_out(uint16_t port, uint8_t data) {
     // Inline assembly to write to the specified port
     __asm__ __volatile__("outb %b0, %w1" : : "a"(data), "Nd"(port));
 }
+
+inline void acquire(int* lock) {
+  asm volatile(
+    "movl %0, %%eax\n\t"
+    "1:\n\t"
+    "lock bts $0, (%%eax)\n\t"
+    "pause\n\t"
+    "jc 1b\n\t"
+    :
+    : "r" (lock)
+    : "%eax", "cc", "memory"
+  );
+}
+
+
+inline void release(int* lock) {
+  asm volatile(
+    "movl %0, %%eax\n\t"
+    "movl $0, (%%eax)\n\t"
+    :
+    : "r" (lock)
+    : "%eax", "memory"
+  );
+}
