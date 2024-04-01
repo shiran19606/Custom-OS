@@ -8,6 +8,8 @@ uint8_t bbx = 0;
 uint8_t bby = 0;
 uint8_t numLinesBb = 0;
 
+int lock = 0;
+
 void scrollUp()
 {
     if(bby >= LINES_VGA)
@@ -204,6 +206,7 @@ void printNumberHex(uint32_t intNumber)
 }
 
 void kprintf(const char* format, ...) {
+    acquire(&lock);
     // Pointer to traverse the format string
     const char* ptr = format;
 
@@ -258,4 +261,5 @@ void kprintf(const char* format, ...) {
 
         ptr++; // Move to the next character in the format string
     }
+    release(&lock);
 }

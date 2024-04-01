@@ -116,18 +116,18 @@ void handle_user_input(const char* input)
 
 void func1(void)
 {
-    char c = 'A';
-    while(1) {
-        put_char(c);
-    }
+    int i = 0;
+    while(1)
+        kprintf("A");
+    terminate_process();
 }
 
 void func2(void)
 {
-    char c = 'B';
-    while(1) {
-        put_char(c);
-    }
+    int i = 0;
+    while(1)
+        kprintf("B");
+    terminate_process();
 }
 
 void kernel_main(multiboot_info_t* mboot_ptr) 
@@ -174,7 +174,6 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("initialized multitasking\n");
     create_process(func1);
     create_process(func2);
-    create_process(clean_terminated_list);
     init_timer(1193);
 
     //initializing fs to use the current disk contents and not format it.
@@ -184,5 +183,5 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Type 'help' to get the user menu\n");
     kprintf("> ");
     asm volatile("sti");
-    while(1);
+    clean_terminated_list();
 }
