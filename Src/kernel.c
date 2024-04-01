@@ -116,20 +116,18 @@ void handle_user_input(const char* input)
 
 void func1(void)
 {
-    int i = 0;
-    //while(i++ < 100000)
-    while(1)
-        kprintf("A");    
-    terminate_process();
+    char c = 'A';
+    while(1) {
+        put_char(c);
+    }
 }
 
 void func2(void)
 {
-    int i = 0;
-    //while(i++ < 100000)
-    while(1)
-        kprintf("B");
-    terminate_process();
+    char c = 'B';
+    while(1) {
+        put_char(c);
+    }
 }
 
 void kernel_main(multiboot_info_t* mboot_ptr) 

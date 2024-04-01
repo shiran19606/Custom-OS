@@ -8,9 +8,6 @@ uint8_t bbx = 0;
 uint8_t bby = 0;
 uint8_t numLinesBb = 0;
 
-int video_memory_lock = 0;
-
-
 void scrollUp()
 {
     if(bby >= LINES_VGA)
