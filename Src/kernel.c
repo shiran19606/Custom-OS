@@ -121,14 +121,19 @@ void handle_user_input(const char* input)
 void func1(void)
 {
     int i = 0;
+    while (i++ < 10000)
+        kprintf("A");
     terminate_process();
 }
 
 void func2(void)
 {
     int i = 0;
+    while (i++ < 10000)
+        kprintf("B");
     terminate_process();
 }
+
 
 void kernel_main(multiboot_info_t* mboot_ptr) 
 {
@@ -188,5 +193,17 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     
     set_tss_kernel_stack(0x10, get_esp());
     enter_usermode();
-    clean_terminated_list();
+
+    int syscall_num = 1;
+    int arg1 = 42;
+
+    //TODO: this doesnt work now, need to add to idt an entry for int 0x80.
+    asm volatile (
+        "movl %1, %%eax\n\t"   // Move the syscall number (8) into eax
+        "int $0x80\n\t"        // Call interrupt 0x80
+        : "+a" (syscall_num)
+        : "r" (8), "b" (arg1)
+    );
+    //clean_terminated_list();
+    while(1);
 }

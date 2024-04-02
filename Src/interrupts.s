@@ -177,6 +177,7 @@ Timer_Handler:
 TOS     equ         0
 VAS     equ         4
 STATE   equ         12
+RING    equ         20
 
 
 ;;
@@ -188,6 +189,11 @@ PAUSED  equ         2
 SLEEPING    equ     3
 TERMINATED  equ     4
 
+;;
+;; -- Kernel or User process
+;;    ------------------------------
+KERNEL_SPACE    equ 0
+USER_SPACE      equ 3
 
 SwitchToTask:
     cli

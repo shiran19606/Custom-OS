@@ -49,6 +49,7 @@ void create_process(void (*ent)())
     uint32_t stack_top = stack_bottom + 0x1000;
     uint32_t* stack = (uint32_t*)stack_top; //the stack pointer should be at the end of the stack, not at the start.
     new_proc->initial_stack = stack_top;
+    new_proc->ring = USER_SPACE;
     PUSH(stack, (uint32_t)ent);     //eip
     PUSH(stack, 0);                 //eax
     PUSH(stack, 0);                 //ebx
@@ -94,6 +95,7 @@ uint32_t init_multitasking()
     tmp_proc->cr3 = (uint32_t)current_page_dir;
     tmp_proc->status = RUNNING;
     tmp_proc->next = NULL;
+    tmp_proc->ring = KERNEL_SPACE;
     add_process(&process_list, tmp_proc);
 }
 
@@ -104,7 +106,7 @@ void wait_ticks(uint32_t amount)
     ticks = 0;
 }
 
-//TODO: fix a bug here because heap is on supervisor mode, and cant access terminated_process_list.
+//TODO: fix a bug here because heap is on supervisor mode, and cant access terminated_process_list - changed heap to user mode for now.
 void clean_terminated_list()
 {
     while(1)

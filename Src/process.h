@@ -5,11 +5,14 @@
 #include "heap.h"
 #include "vmm.h"
 
-#define RUNNING 0
-#define READY 1
-#define PAUSED 2
-#define SLEEPING 3
-#define TERMINATED 4
+#define RUNNING         0
+#define READY           1
+#define PAUSED          2
+#define SLEEPING        3
+#define TERMINATED      4
+
+#define KERNEL_SPACE    0
+#define USER_SPACE      3
 
 #define PUSH(tos,val) (tos--); ((*(uint32_t*)tos) = (uint32_t)val)
 
@@ -20,6 +23,7 @@ typedef struct process
     struct process* next;
     uint32_t status;
     uint32_t initial_stack;
+    uint32_t ring;
 } process_t;
 
 

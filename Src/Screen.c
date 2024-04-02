@@ -57,7 +57,7 @@ void scrollIfNeeded()
     uint8_t attribute = 0x0f;
     uint16_t blankPoint = SPACE_ASCII_VALUE | (attribute << 8);
     int i = 0;
-    if (cur_y == 25) //should be 25
+    if (cur_y == 25)
     {
         for (i = 0;i < COLUMNS_VGA * LINES_VGA;i++)
             videoMemory[i] = videoMemory[i+COLUMNS_VGA]; //in each line, we copy the char in the same location in the line below.
@@ -67,7 +67,7 @@ void scrollIfNeeded()
         cur_y = 24;
     }
 
-    if(bby == 75) //should be 75
+    if(bby == 75)
     {
         for (i = 0;i < COLUMNS_BACKBUFFER * LINES_BACKBUFFER;i++)
             backBuffer[i] = backBuffer[i+COLUMNS_BACKBUFFER]; //in each line, we copy the char in the same location in the line below.
@@ -97,7 +97,6 @@ void clearScreen()
     setCursorLocation();
 }
 
-//TODO: add locks to Screen functions to make sure that one process doesnt interrupt the other.
 void put_char(uint8_t charToPrint)
 {   
     uint8_t attributes = 0x0f; //0x0f means black background, white char.

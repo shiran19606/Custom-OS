@@ -2,7 +2,7 @@
 
 void* syscalls[MAX_SYSCALLS] = {0};
 
-void syscall_dispatcher(registers_t* regs)
+static void syscall_dispatcher(registers_t* regs)
 {
     static int index = 0;
     asm volatile (

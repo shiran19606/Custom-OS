@@ -84,5 +84,6 @@ void init_idt()
     set_idt_gate(46, (uint32_t)irq14, 0x08, 0x8E);
     set_idt_gate(47, (uint32_t)irq15, 0x08, 0x8E);
 
+    //TODO:Add 0x80 interrupt here. need to set the ring to ring 3 like in the brokenthorn tutorial.
     idt_flush((uint32_t)&ptr);
 }
