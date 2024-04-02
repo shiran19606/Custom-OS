@@ -92,7 +92,6 @@ uint32_t map_page(const void* virtual_address , const void* physical_address, co
         PDE_SET_FRAME(pd_entry, (uint32_t)block);
         SET_ATTRIBUTE(pd_entry, PDE_PRESENT);
         SET_ATTRIBUTE(pd_entry, PDE_WRITEABLE);
-        SET_ATTRIBUTE(pd_entry, PDE_USER);
         void* temp_ptr = (current_page_dir_virtual == 0) ? (void*)block : (void*)pt; //if paging is of, memset will access the physical block. else, it will work with the virtual page.
         memset((void*)temp_ptr, 0, BLOCK_SIZE); //paging is off so we can set the block to 0.
     }

@@ -132,7 +132,7 @@ irq_common_case:
     ; 2. Call C handler
     push esp
     call irq_handler
-    pop ebx
+    add esp, 4
 
     ; 3. Restore state
     pop ebx
@@ -227,6 +227,22 @@ SwitchToTask:
     or eax, 0x200
     push eax
 
+    xor eax, eax
+    mov ebx, dword [esi+RING]
+    cmp ebx, KERNEL_SPACE
+    jne set_user_segments
+    
+    mov ax, 0x10
+    jmp finish
+set_user_segments:
+    mov ax, 0x23
+finish:
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    
     popfd
     pop         ebp
     pop         edi
@@ -243,4 +259,19 @@ SwitchToTask:
 
 get_esp:
     mov eax, esp
+    ret
+
+[GLOBAL syscall_handler]
+
+syscall_handler:
+    cli
+    push dword 0x60
+    push dword 0x80
+    jmp irq_common_case
+
+[GLOBAL syscall_run]
+
+syscall_run:
+    mov eax, [esp+4]
+    int 0x80
     ret

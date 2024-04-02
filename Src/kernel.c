@@ -123,7 +123,7 @@ void func1(void)
     int i = 0;
     while (i++ < 10000)
         kprintf("A");
-    terminate_process();
+    syscall_run(6);
 }
 
 void func2(void)
@@ -131,10 +131,12 @@ void func2(void)
     int i = 0;
     while (i++ < 10000)
         kprintf("B");
-    terminate_process();
+    syscall_run(6);
 }
 
+extern void syscall_run(uint32_t syscall_num);
 
+//TODO: maybe modify input_handler to be a seperate process with ring3 which uses system calls to perform operations.
 void kernel_main(multiboot_info_t* mboot_ptr) 
 {
     const char* str = "Hello World";
@@ -192,18 +194,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     syscall_init();
     
     set_tss_kernel_stack(0x10, get_esp());
-    enter_usermode();
-
-    int syscall_num = 1;
-    int arg1 = 42;
-
-    //TODO: this doesnt work now, need to add to idt an entry for int 0x80.
-    asm volatile (
-        "movl %1, %%eax\n\t"   // Move the syscall number (8) into eax
-        "int $0x80\n\t"        // Call interrupt 0x80
-        : "+a" (syscall_num)
-        : "r" (8), "b" (arg1)
-    );
-    //clean_terminated_list();
-    while(1);
+    
+    asm volatile("sti");
+    clean_terminated_list();
 }

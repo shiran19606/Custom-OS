@@ -3,7 +3,7 @@
 process_t* process_list;
 process_t* current_process;
 
-process_t* terminated_process_list;
+volatile process_t* terminated_process_list;
 
 extern page_directory_t* current_page_dir;
 
@@ -12,7 +12,10 @@ void schedule()
     current_process->status = READY; //now not running anymore, but ready.
     process_t* next_proc = (current_process->next != NULL) ? current_process->next : process_list;
     if (next_proc != NULL)
-        SwitchToTask(next_proc);
+    {
+        if (next_proc != current_process)
+            SwitchToTask(next_proc);
+    }
     else
     {
         kprintf("No next task\n");
@@ -40,6 +43,7 @@ void add_process(process_t** list, process_t* new_process)
     }
 }
 
+//TODO: maybe add an option to create KERNEL_SPACE programs.
 void create_process(void (*ent)())
 {
     process_t* new_proc = (process_t*)kmalloc(sizeof(process_t));
@@ -48,7 +52,7 @@ void create_process(void (*ent)())
     uint32_t stack_bottom = (uint32_t)kmalloc(0x1000);
     uint32_t stack_top = stack_bottom + 0x1000;
     uint32_t* stack = (uint32_t*)stack_top; //the stack pointer should be at the end of the stack, not at the start.
-    new_proc->initial_stack = stack_top;
+    new_proc->initial_stack = stack_bottom;
     new_proc->ring = USER_SPACE;
     PUSH(stack, (uint32_t)ent);     //eip
     PUSH(stack, 0);                 //eax
@@ -66,6 +70,7 @@ void create_process(void (*ent)())
 
 void terminate_process() //terminate the current process.
 {
+    asm volatile("cli");
     process_t* temp = process_list;
     process_t* last = 0;
     while (temp && temp != current_process)
@@ -80,7 +85,9 @@ void terminate_process() //terminate the current process.
     else
         last->next = temp->next;
     add_process(&terminated_process_list, current_process);
+    process_t* temp_ter = terminated_process_list;
     current_process->status = TERMINATED;
+    asm volatile("sti");
     while(1);
 }
 
@@ -99,26 +106,27 @@ uint32_t init_multitasking()
     add_process(&process_list, tmp_proc);
 }
 
-uint32_t ticks = 0;
+volatile uint32_t ticks = 0;
 void wait_ticks(uint32_t amount)
 {
-    while (ticks <= amount) {}
+    while (ticks <= amount);
     ticks = 0;
 }
 
-//TODO: fix a bug here because heap is on supervisor mode, and cant access terminated_process_list - changed heap to user mode for now.
 void clean_terminated_list()
 {
     while(1)
     {
-        while (terminated_process_list)
+        asm volatile("cli");
+        process_t* temp = terminated_process_list;
+        if (temp)
         {
-            process_t* temp = terminated_process_list;
             terminated_process_list = terminated_process_list->next;
             if (temp->initial_stack)
-                kfree((void*)(temp->initial_stack));
-            kfree((void*)temp);
+                kfree((temp->initial_stack));
+            kfree(temp);
         }
+        asm volatile("sti");
         wait_ticks(1);
     }
 }

@@ -2,19 +2,22 @@
 
 void* syscalls[MAX_SYSCALLS] = {0};
 
+//TODO: test dispatcher with functions that take parameters.
 static void syscall_dispatcher(registers_t* regs)
 {
-    static int index = 0;
-    asm volatile (
-        "movl %%eax, %0;" 
-        : "=r" (index)      
-    );
-
-    if (index >= MAX_SYSCALLS)
+    if (regs->eax >= MAX_SYSCALLS)
         asm volatile("cli;hlt");
-    void* func = syscalls[index];
-    kprintf("useresp is %x, esp is %x\n", regs->useresp, regs->esp);
-    return;
+    
+    void* func = syscalls[regs->eax];
+
+    asm volatile(
+        "push %0;"
+        "cld;"
+        "call %1;"
+        "add $4, %%esp"
+        : : "r"(regs->useresp), "r"(func) : "%esp"
+    );
+    asm volatile("mov %%eax, %0" : "=r"(regs->eax));
 }
 
 void syscall_init()

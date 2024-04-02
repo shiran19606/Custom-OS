@@ -14,7 +14,7 @@ void initialize_allocator() {
             kprintf("Not enough memory for heap");
             asm volatile("cli;hlt");
         }
-        if (map_page((void*)start_addr, block, (PTE_PRESENT | PTE_WRITEABLE | PTE_USER)))
+        if (map_page((void*)start_addr, block, (PTE_PRESENT | PTE_WRITEABLE)))
             memset((void*)start_addr, 0, PAGE_SIZE); //clear page
         else
             asm volatile("cli;hlt");
@@ -131,5 +131,4 @@ void kfree(void* ptr) {
             current = current->next;
         }
     }
-
 }
