@@ -30,5 +30,6 @@ uint32_t init_multitasking();
 void clean_terminated_list();
 
 extern void SwitchToTask(process_t* process);
+extern uint32_t get_esp();
 
 #endif

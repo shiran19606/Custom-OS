@@ -7,6 +7,7 @@
 [EXTERN schedule]
 [EXTERN ticks]
 [EXTERN printNumberHex]
+[EXTERN put_char]
 
 ;we will write a macro handler for a case where no error code is pushed, and a macro handler for a case where an error code is pushed.
 ;to see on what cases the error code is pushed, we used the intel manual on interrupts: https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf.
@@ -215,6 +216,11 @@ SwitchToTask:
     mov         cr3,eax
     mov         dword [esi+STATE],RUNNING     ;; make the current task running
 
+    ;;set interrupts
+    pop eax
+    or eax, 0x200
+    push eax
+
     popfd
     pop         ebp
     pop         edi
@@ -223,7 +229,12 @@ SwitchToTask:
     pop         ecx
     pop         ebx
     pop         eax
-    
-    sti
+
     ret                                 ;; this is the next task's `eip`
 
+
+[GLOBAL get_esp]
+
+get_esp:
+    mov eax, esp
+    ret

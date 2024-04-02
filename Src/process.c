@@ -65,7 +65,6 @@ void create_process(void (*ent)())
 
 void terminate_process() //terminate the current process.
 {
-    asm volatile("cli");
     process_t* temp = process_list;
     process_t* last = 0;
     while (temp && temp != current_process)
@@ -81,7 +80,6 @@ void terminate_process() //terminate the current process.
         last->next = temp->next;
     add_process(&terminated_process_list, current_process);
     current_process->status = TERMINATED;
-    asm volatile("sti");
     while(1);
 }
 
@@ -111,7 +109,6 @@ void clean_terminated_list()
 {
     while(1)
     {
-        asm volatile("cli");
         while (terminated_process_list)
         {
             process_t* temp = terminated_process_list;
@@ -120,7 +117,6 @@ void clean_terminated_list()
                 kfree((void*)(temp->initial_stack));
             kfree((void*)temp);
         }
-        asm volatile("sti");
         wait_ticks(1);
     }
 }

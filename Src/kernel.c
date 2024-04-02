@@ -1,4 +1,5 @@
 #include "gdt.h"
+#include "tss.h"
 #include "idt.h"
 #include "Screen.h"
 #include "keyboard.h"
@@ -9,6 +10,8 @@
 #include "ide.h"
 #include "timer.h"
 #include "process.h"
+
+extern void enter_usermode();
 
 extern uint32_t kernel_physical_start;
 extern uint32_t kernel_physical_end;
@@ -135,6 +138,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     const char* str = "Hello World";
     //initialize the descriptor tables
     init_gdt();
+    install_tss(5, 0x10, 0);
     init_idt();
     //clear the monitor from things that were written by GRUB.
     clearScreen();
@@ -182,6 +186,8 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     //start menu.
     kprintf("Type 'help' to get the user menu\n");
     kprintf("> ");
-    asm volatile("sti");
+
+    set_tss_kernel_stack(0x10, get_esp());
+    enter_usermode();
     clean_terminated_list();
 }
