@@ -10,6 +10,7 @@
 #include "ide.h"
 #include "timer.h"
 #include "process.h"
+#include "syscall.h"
 
 extern void enter_usermode();
 
@@ -120,16 +121,12 @@ void handle_user_input(const char* input)
 void func1(void)
 {
     int i = 0;
-    while(1)
-        kprintf("A");
     terminate_process();
 }
 
 void func2(void)
 {
     int i = 0;
-    while(1)
-        kprintf("B");
     terminate_process();
 }
 
@@ -187,6 +184,8 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     kprintf("Type 'help' to get the user menu\n");
     kprintf("> ");
 
+    syscall_init();
+    
     set_tss_kernel_stack(0x10, get_esp());
     enter_usermode();
     clean_terminated_list();

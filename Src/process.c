@@ -104,7 +104,7 @@ void wait_ticks(uint32_t amount)
     ticks = 0;
 }
 
-
+//TODO: fix a bug here because heap is on supervisor mode, and cant access terminated_process_list.
 void clean_terminated_list()
 {
     while(1)
