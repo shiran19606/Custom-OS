@@ -121,16 +121,16 @@ void handle_user_input(const char* input)
 void func1(void)
 {
     int i = 0;
-    while (i++ < 10000)
-        kprintf("A");
+    while (i++ < 1000);
+        //kprintf("A");
     syscall_run(6);
 }
 
 void func2(void)
 {
     int i = 0;
-    while (i++ < 10000)
-        kprintf("B");
+    while (i++ < 1000);
+        //kprintf("B");
     syscall_run(6);
 }
 
@@ -180,8 +180,9 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000); //initialize disk driver to use in file system.
     init_multitasking();
     kprintf("initialized multitasking\n");
-    create_process(func1);
-    create_process(func2);
+    create_process(func1, USER_SPACE);
+    create_process(func2, USER_SPACE);
+    create_process(clean_terminated_list, KERNEL_SPACE);
     init_timer(1193);
 
     //initializing fs to use the current disk contents and not format it.
@@ -195,6 +196,6 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     
     set_tss_kernel_stack(0x10, get_esp());
     
-    asm volatile("sti");
-    clean_terminated_list();
+    terminate_process(); //kill this process. 
+    while(1); //should not be reached, but just in case.
 }

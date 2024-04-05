@@ -8,7 +8,7 @@ uint8_t bbx = 0;
 uint8_t bby = 0;
 uint8_t numLinesBb = 0;
 
-int lock = 0;
+int lock1 = 0;
 
 void scrollUp()
 {
@@ -205,7 +205,7 @@ void printNumberHex(uint32_t intNumber)
 }
 
 void kprintf(const char* format, ...) {
-    acquire(&lock);
+    acquire(&lock1);
     // Pointer to traverse the format string
     const char* ptr = format;
 
@@ -260,5 +260,5 @@ void kprintf(const char* format, ...) {
 
         ptr++; // Move to the next character in the format string
     }
-    release(&lock);
+    release(&lock1);
 }

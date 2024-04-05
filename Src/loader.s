@@ -61,7 +61,7 @@ _start:
     mov esi, 0
     lbl:
         mov edx, esi
-        or edx, 7 ;present, writable user pages.
+        or edx, 0x07 ;present, writable user pages.
         mov dword [edi], edx
         add esi, 4096
         add edi, 4
@@ -70,7 +70,7 @@ _start:
     mov edi, PAGE_DIR_PHYSICAL
     lea edx, [page_table_boot - KERNEL_VIRTUAL]
 
-    or edx, 7 ;present, writable user pages.
+    or edx, 0x07 ;present, writable user pages.
     mov dword [edi], edx
     mov dword [edi + 768 * 4], edx
 

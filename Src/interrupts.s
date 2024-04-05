@@ -147,31 +147,6 @@ irq_common_case:
     sti
     iret
 
-
-Timer_Handler:
-    push        eax
-    push        ebx
-    push        ecx
-    push        edx
-    push        ebp
-    push        esi
-    push        edi
-
-    inc dword [ticks]
-    mov         eax,0x20
-    out         0x20,al
-
-    call schedule
-    
-    pop         edi
-    pop         esi
-    pop         ebp
-    pop         edx
-    pop         ecx
-    pop         ebx
-    pop         eax
-    iret
-
 ;;
 ;; -- Some offsets into the PCB sructure
 ;;    ----------------------------------
@@ -179,7 +154,6 @@ TOS     equ         0
 VAS     equ         4
 STATE   equ         12
 RING    equ         20
-
 
 ;;
 ;; -- These are the different states
@@ -196,17 +170,27 @@ TERMINATED  equ     4
 KERNEL_SPACE    equ 0
 USER_SPACE      equ 3
 
-SwitchToTask:
+Timer_Handler:
     cli
     push        eax
     push        ebx
     push        ecx
     push        edx
+    push        ebp
     push        esi
     push        edi
-    push        ebp
     pushfd
+    
+    inc dword [ticks]
+    mov         eax,0x20
+    out         0x20,al
 
+    push eax
+    call schedule
+    mov ebp, eax
+    pop eax
+    
+    cli
     mov         edi,[current_process]        ;; `edi` = previous tasks PCB
 
     mov         [edi+TOS],esp           ;; save the top of the stack
@@ -215,7 +199,7 @@ SwitchToTask:
 
     ;; -- load the next task's state
 
-    mov esi, [esp + 36]
+    mov esi, ebp
     mov [current_process], esi
 
     mov         esp,[esi+TOS]           ;; load the next process's stack
@@ -223,52 +207,35 @@ SwitchToTask:
     mov         cr3,eax
     mov         dword [esi+STATE],RUNNING     ;; make the current task running
 
-    ;;set interrupts
-    pop eax
-    or eax, 0x200
-    push eax
-
     xor eax, eax
     mov ebx, dword [esi+RING]
     cmp ebx, KERNEL_SPACE
-    jne set_user_segments
-    
-    mov eax, 0x10
-    mov ebx, 0x08
-    jmp finish
-set_user_segments:
+    je is_kernel_mode
+
     mov eax, 0x23
-    mov ebx, 0x1b
+    jmp finish
+is_kernel_mode:
+    mov eax, 0x10
 finish:
-    mov     ds, ax
-    mov     es, ax
-    mov     fs, ax
-    mov     gs, ax
+    mov ds, ax       
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
 
-    ;
-    ; create stack frame
-    ;
-    mov edi, esp
-    push   eax			; SS
-    push   edi		    ; stack
-    push   0x202		; EFLAGS
-    push   ebx			; CS
-    push   entryPoint   ; EIP
-    iretd
+    pop         eax
+    or   eax, 0x200
+    push        eax
 
-;TODO: fix processes not actually switching, and crashing.
-entryPoint:
     popfd
-flags_look:         ;there is a stack problem, should take a look because the eflags register is not always set correctly. maybe make a stack graph.
-    pop         ebp
     pop         edi
     pop         esi
+    pop         ebp
     pop         edx
     pop         ecx
     pop         ebx
     pop         eax
-    ret                                 ;; this is the next task's `eip`
-
+retting:
+    iret
 
 [GLOBAL get_esp]
 

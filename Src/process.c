@@ -7,20 +7,13 @@ volatile process_t* terminated_process_list;
 
 extern page_directory_t* current_page_dir;
 
-void schedule()
+process_t* schedule()
 {
     current_process->status = READY; //now not running anymore, but ready.
     process_t* next_proc = (current_process->next != NULL) ? current_process->next : process_list;
-    if (next_proc != NULL)
-    {
-        if (next_proc != current_process)
-            SwitchToTask(next_proc);
-    }
-    else
-    {
-        kprintf("No next task\n");
+    if (next_proc == NULL)
         asm volatile("cli;hlt");
-    }
+    return next_proc;
 }
 
 void add_process(process_t** list, process_t* new_process)
@@ -45,7 +38,7 @@ void add_process(process_t** list, process_t* new_process)
 
 //TODO: maybe add an option to create KERNEL_SPACE programs.
 //TODO: now, a process'es stack is allocated on the kernel heap, so i had to modify the kernel heap to be mapped as user-pages.
-void create_process(void (*ent)())
+void create_process(void (*ent)(), uint32_t ring)
 {
     process_t* new_proc = (process_t*)kmalloc(sizeof(process_t));
     new_proc->cr3 = (uint32_t)current_page_dir;
@@ -54,15 +47,21 @@ void create_process(void (*ent)())
     uint32_t stack_top = stack_bottom + 0x1000;
     uint32_t* stack = (uint32_t*)stack_top; //the stack pointer should be at the end of the stack, not at the start.
     new_proc->initial_stack = stack_bottom;
-    new_proc->ring = USER_SPACE;
+    new_proc->ring = ring;
+    uint32_t ds = (ring == KERNEL_SPACE) ? 0x10 : 0x23;
+    uint32_t cs = (ring == KERNEL_SPACE) ? 0x08 : 0x1b;
+    PUSH(stack, ds);
+    PUSH(stack, (((uint32_t)(stack))+4));
+    PUSH(stack, 0x202);
+    PUSH(stack, cs);
     PUSH(stack, (uint32_t)ent);     //eip
     PUSH(stack, 0);                 //eax
     PUSH(stack, 0);                 //ebx
     PUSH(stack, 0);                 //ecx
     PUSH(stack, 0);                 //edx
+    PUSH(stack, 0);                 //ebp
     PUSH(stack, 0);                 //esi
     PUSH(stack, 0);                 //edi
-    PUSH(stack, 0);                 //ebp
     PUSH(stack, 0x202);             //eflags
 
     new_proc->stack_top = stack;
@@ -118,16 +117,16 @@ void clean_terminated_list()
 {
     while(1)
     {
-        asm volatile("cli");
-        process_t* temp = terminated_process_list;
+        volatile process_t* temp = terminated_process_list;
         if (temp)
         {
+            asm volatile("cli");
             terminated_process_list = terminated_process_list->next;
             if (temp->initial_stack)
                 kfree((temp->initial_stack));
             kfree(temp);
+            asm volatile("sti");
         }
-        asm volatile("sti");
         wait_ticks(1);
     }
 }
