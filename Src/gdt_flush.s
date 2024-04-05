@@ -40,6 +40,7 @@ flush_tss:
 [GLOBAL enter_usermode]
 [EXTERN printNumberHex]
 [EXTERN put_char]
+
 enter_usermode:
     cli
     mov ax, (4 * 8) | 3 ;4th element in gdt, with ring 3   

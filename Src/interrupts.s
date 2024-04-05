@@ -8,6 +8,7 @@
 [EXTERN ticks]
 [EXTERN printNumberHex]
 [EXTERN put_char]
+[EXTERN enter_usermode]
 
 ;we will write a macro handler for a case where no error code is pushed, and a macro handler for a case where an error code is pushed.
 ;to see on what cases the error code is pushed, we used the intel manual on interrupts: https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf.
@@ -232,18 +233,33 @@ SwitchToTask:
     cmp ebx, KERNEL_SPACE
     jne set_user_segments
     
-    mov ax, 0x10
+    mov eax, 0x10
+    mov ebx, 0x08
     jmp finish
 set_user_segments:
-    mov ax, 0x23
+    mov eax, 0x23
+    mov ebx, 0x1b
 finish:
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
+    mov     ds, ax
+    mov     es, ax
+    mov     fs, ax
+    mov     gs, ax
 
-    
+    ;
+    ; create stack frame
+    ;
+    mov edi, esp
+    push   eax			; SS
+    push   edi		    ; stack
+    push   0x202		; EFLAGS
+    push   ebx			; CS
+    push   entryPoint   ; EIP
+    iretd
+
+;TODO: fix processes not actually switching, and crashing.
+entryPoint:
     popfd
+flags_look:         ;there is a stack problem, should take a look because the eflags register is not always set correctly. maybe make a stack graph.
     pop         ebp
     pop         edi
     pop         esi
@@ -251,7 +267,6 @@ finish:
     pop         ecx
     pop         ebx
     pop         eax
-
     ret                                 ;; this is the next task's `eip`
 
 
