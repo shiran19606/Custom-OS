@@ -13,6 +13,7 @@
 #include "syscall.h"
 
 extern void enter_usermode();
+extern uint32_t syscall_run(uint32_t syscall_num, ...);
 
 extern uint32_t kernel_physical_start;
 extern uint32_t kernel_physical_end;
@@ -87,7 +88,7 @@ void handle_user_input(const char* input)
             kprintf("%s\n", buffer2);
         if (strcmp(buffer1, "cat") == 0)
         {
-            openedFile = openFile(buffer2);
+            openedFile = syscall_run(0, buffer2);
             if (openedFile)
             {
                 char* buffer_to_read = (char*)readFromFile(openedFile);
@@ -100,7 +101,7 @@ void handle_user_input(const char* input)
         }
         if (strcmp(buffer1, "edit") == 0)
         {
-            openedFile = openFile(buffer2);
+            openedFile = syscall_run(0, buffer2);
             if (openedFile)
             {
                 waiting_for_input = 1;
@@ -118,24 +119,22 @@ void handle_user_input(const char* input)
     kprintf("> ");
 }
 
-extern void syscall_run(uint32_t syscall_num, ...);
-
 //TODO:modify functions to use system calls instead of kprintf
 void func1(void)
 {
     int i = 0;
-    while (i++ < 1000);
+    while (i++ < 10000);
         //kprintf("A");
-    syscall_run(0, "File1");
+    MyFile* result_file = syscall_run(0, "file2");;
+    kprintf("result_file inode is %d\n", result_file->inodeNumber);
     syscall_run(6);
 }
 
 void func2(void)
 {
     int i = 0;
-    while (i++ < 1000);
+    while (i++ < 10000);
         //kprintf("B");
-    syscall_run(0, "file2");
     syscall_run(6);
 }
 

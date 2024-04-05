@@ -3,7 +3,7 @@
 void* syscalls[MAX_SYSCALLS] = {0};
 
 //TODO: test dispatcher with functions that take parameters.
-static void syscall_dispatcher(registers_t* regs)
+static void* syscall_dispatcher(registers_t* regs)
 {
     if (regs->eax >= MAX_SYSCALLS)
         asm volatile("cli;hlt");
@@ -17,6 +17,7 @@ static void syscall_dispatcher(registers_t* regs)
         "add $4, %%esp"
         : : "r"(*(uint32_t*)(regs->useresp+8)), "r"(func) : "%esp"
     );
+
     asm volatile("mov %%eax, %0" : "=r"(regs->eax));
 }
 

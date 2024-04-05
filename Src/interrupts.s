@@ -17,8 +17,8 @@
     global isr%1
     isr%1:
         cli
-        push 0 ;if the ISR doesnt push an error code, we push a dummy error code before calling the isr_handler function
-        push %1 ; push the interrupt number
+        push dword 0 ;if the ISR doesnt push an error code, we push a dummy error code before calling the isr_handler function
+        push dword %1 ; push the interrupt number
         jmp isr_common_case
 %endmacro
 
@@ -28,7 +28,7 @@
     isr%1:
         cli
         ;no need to push an error code because on this kind of interrupts the error code is pushed before calling the macro handler.
-        push %1 ; push the interrupt number
+        push dword %1 ; push the interrupt number
         jmp isr_common_case
 %endmacro
 
@@ -98,8 +98,8 @@ isr_common_case: ;we jump to this common case no matter if we had an error code 
     global irq%1
     irq%1:
         cli
-        push byte 0 
-        push byte %2
+        push dword 0 
+        push dword %2
         jmp irq_common_case
 %endmacro
 
@@ -133,7 +133,7 @@ irq_common_case:
     ; 2. Call C handler
     push esp
     call irq_handler
-    add esp, 4
+    pop esp
 
     ; 3. Restore state
     pop ebx
@@ -144,6 +144,7 @@ irq_common_case:
     
     popad
     add esp, 8
+    
     sti
     iret
 

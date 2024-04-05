@@ -23,14 +23,17 @@ void isr_handler(registers_t* regs) //according to interrupts.s calling the isr_
 
 void irq_handler(registers_t* regs)
 {
+    uint32_t return_val = 0;
     if (handlers[regs->int_no] != 0)
     {
         isr_t handler = handlers[regs->int_no];
-        handler(regs);
+        return_val = handler(regs);
     }
 
     if (regs->int_no >= 40)
         port_byte_out(0xA0, 0x20);
     port_byte_out(0x20, 0x20);
 
+    regs->eax = return_val;
+    return regs->eax;
 }
