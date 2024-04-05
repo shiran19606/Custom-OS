@@ -67,7 +67,7 @@ ISR_NOERRCODE 30
 ISR_NOERRCODE 31
 
 isr_common_case: ;we jump to this common case no matter if we had an error code pushed or a dummy error code, because the common case has nothing to do with the error code but only with calling the isr_handler function.
-    pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+    pushad                   ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
 
     mov ax, ds               ; Lower 16-bits of eax = ds.
     push eax                 ; save the data segment descriptor
@@ -88,7 +88,7 @@ isr_common_case: ;we jump to this common case no matter if we had an error code 
     mov fs, ax
     mov gs, ax
 
-    popa                     ; Pops edi,esi,ebp...
+    popad                    ; Pops edi,esi,ebp...
     add esp, 8     ; Cleans up the pushed error code and pushed ISR number
     sti            ; re-enable interrupts after we disabled them in the macros
     iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
@@ -121,7 +121,7 @@ IRQ 15, 47
 
 irq_common_case:
     ; 1. Save CPU state
-    pusha
+    pushad
     mov ax, ds
     push eax
     mov ax, 0x10
@@ -142,7 +142,7 @@ irq_common_case:
     mov fs, bx
     mov gs, bx
     
-    popa
+    popad
     add esp, 8
     sti
     iret

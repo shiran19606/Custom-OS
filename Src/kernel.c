@@ -118,12 +118,15 @@ void handle_user_input(const char* input)
     kprintf("> ");
 }
 
+extern void syscall_run(uint32_t syscall_num, ...);
+
 //TODO:modify functions to use system calls instead of kprintf
 void func1(void)
 {
     int i = 0;
     while (i++ < 1000);
         //kprintf("A");
+    syscall_run(0, "File1");
     syscall_run(6);
 }
 
@@ -132,10 +135,9 @@ void func2(void)
     int i = 0;
     while (i++ < 1000);
         //kprintf("B");
+    syscall_run(0, "file2");
     syscall_run(6);
 }
-
-extern void syscall_run(uint32_t syscall_num);
 
 //TODO: maybe modify input_handler to be a seperate process with ring3 which uses system calls to perform operations.
 void kernel_main(multiboot_info_t* mboot_ptr) 

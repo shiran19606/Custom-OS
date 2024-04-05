@@ -15,7 +15,7 @@ static void syscall_dispatcher(registers_t* regs)
         "cld;"
         "call %1;"
         "add $4, %%esp"
-        : : "r"(regs->useresp), "r"(func) : "%esp"
+        : : "r"(*(uint32_t*)(regs->useresp+8)), "r"(func) : "%esp"
     );
     asm volatile("mov %%eax, %0" : "=r"(regs->eax));
 }
