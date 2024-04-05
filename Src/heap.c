@@ -3,6 +3,7 @@
 
 block_header* free_list = NULL;
 
+//TODO: find a solution to the heap being a user heap, as explained in the commit why it is a user heap.
 void initialize_allocator() {
     // Initialize the free list with the entire memory space
     uint32_t num_pages = MEMORY_SIZE / PAGE_SIZE;

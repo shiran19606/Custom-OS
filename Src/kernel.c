@@ -118,6 +118,7 @@ void handle_user_input(const char* input)
     kprintf("> ");
 }
 
+//TODO:modify functions to use system calls instead of kprintf
 void func1(void)
 {
     int i = 0;

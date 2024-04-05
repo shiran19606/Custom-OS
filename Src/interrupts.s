@@ -253,6 +253,7 @@ syscall_handler:
 
 [GLOBAL syscall_run]
 
+;TODO: find a way to call a syscall with an unknown amount of parameters.
 syscall_run:
     mov eax, [esp+4]
     int 0x80

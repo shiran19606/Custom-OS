@@ -39,7 +39,6 @@ static void page_fault(registers_t* regs)
         kprintf("page fault user-mode at address %x\n", address);
     if (reserved)
         kprintf("page fault reserved page at address %x\n", address);
-    asm volatile("cli;hlt");
 }
 
 void init_paging(page_directory_t* dir_physical_address)
