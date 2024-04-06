@@ -80,14 +80,14 @@ void handle_user_input(const char* input)
             waiting_for_input = 0;
             syscall_run(FS_CLOSE, openedFile);
             openedFile = 0;
-            syscall_run(PRINT, "> ");
+            kprintf("> ");
             kfree((void*)input);
             syscall_run(PROC_EXIT);
         }
         else if (strcmp(buffer1, "ls") == 0)
             syscall_run(FS_LIST, buffer2);
         else if (strcmp(buffer1, "echo") == 0)
-            syscall_run(PRINT, "%s\n", buffer2);
+            kprintf("%s\n", buffer2);
         else if (strcmp(buffer1, "cat") == 0)
         {
             uint32_t file_pointer = syscall_run(FS_OPEN, buffer2);

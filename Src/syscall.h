@@ -17,10 +17,9 @@
 #define FS_LIST     6
 #define PROC_CREATE 7
 #define PROC_EXIT   8
-#define PRINT       9
-#define CLEAR_VGA   10
+#define CLEAR_VGA   9
 
-#define MAX_SYSCALLS 11
+#define MAX_SYSCALLS 10
 
 void syscall_init();
 

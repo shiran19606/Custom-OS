@@ -79,12 +79,6 @@ uint32_t proc_create(void* params)
     return create_process(ent, ring, argc, argv);
 }
 
-uint32_t write_screen(void* params)
-{
-    char* format = *(char**)params;
-    kprintf(format);
-}
-
 uint32_t proc_stop(void* params)
 {
     terminate_process();
@@ -100,16 +94,15 @@ uint32_t clear_screen(void* params)
 
 void syscall_init()
 {
-    syscalls[0] = create_file;
-    syscalls[1] = open_file;
-    syscalls[2] = close_file;
-    syscalls[3] = read_file;
-    syscalls[4] = write_file;
-    syscalls[5] = create_dir;
-    syscalls[6] = list_dir;
-    syscalls[7] = proc_create;
-    syscalls[8] = proc_stop;
-    syscalls[9] = write_screen;
-    syscalls[10] = clear_screen;
+    syscalls[FS_CREATE      ] = create_file;
+    syscalls[FS_OPEN        ] = open_file;
+    syscalls[FS_CLOSE       ] = close_file;
+    syscalls[FS_READ        ] = read_file;
+    syscalls[FS_WRITE       ] = write_file;
+    syscalls[FS_MKDIR       ] = create_dir;
+    syscalls[FS_LIST        ] = list_dir;
+    syscalls[PROC_CREATE    ] = proc_create;
+    syscalls[PROC_EXIT      ] = proc_stop;
+    syscalls[CLEAR_VGA      ] = clear_screen;
     register_handler(SYSCALL_INT, syscall_dispatcher);
 }
