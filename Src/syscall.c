@@ -2,7 +2,6 @@
 
 void* syscalls[MAX_SYSCALLS] = {0};
 
-//TODO: test dispatcher with functions that take parameters.
 static uint32_t syscall_dispatcher(registers_t* regs)
 {
     if (!regs || regs->eax >= MAX_SYSCALLS)
@@ -82,7 +81,7 @@ uint32_t proc_create(void* params)
 uint32_t proc_stop(void* params)
 {
     terminate_process();
-    return 0;
+    return 0; //shouldnt be reached, but just in case.
 }
 
 uint32_t clear_screen(void* params)

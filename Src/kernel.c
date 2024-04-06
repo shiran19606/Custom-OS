@@ -126,7 +126,7 @@ void handle_user_input(const char* input)
     syscall_run(PROC_EXIT);
 }
 
-//TODO:modify functions to use system calls instead of kprintf
+
 void func1(void)
 {
     int i = 0;
@@ -141,7 +141,6 @@ void func2(void)
     syscall_run(PROC_EXIT);
 }
 
-//TODO: maybe modify input_handler to be a seperate process with ring3 which uses system calls to perform operations.
 void kernel_main(multiboot_info_t* mboot_ptr) 
 {
     const char* str = "Hello World";

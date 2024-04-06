@@ -36,31 +36,3 @@ flush_tss:
     mov ax, (5* 8) | 0
     ltr ax
     ret
-
-[GLOBAL enter_usermode]
-[EXTERN printNumberHex]
-[EXTERN put_char]
-
-enter_usermode:
-    cli
-    mov ax, (4 * 8) | 3 ;4th element in gdt, with ring 3   
-    mov ds, ax       
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    
-    mov eax, esp
-    push (4 * 8) | 3 ;4th element in gdt, with ring 3   
-    push eax
-
-    pushfd
-    pop eax
-    or eax, 0x200
-    push eax
-
-    push (3 * 8) | 3 ;3rd element in gdt, with ring 3   
-    lea eax, [label_here]
-    push eax
-    iretd
-label_here:
-    ret
