@@ -87,7 +87,7 @@ void handle_user_input(const char* input)
         else if (strcmp(buffer1, "ls") == 0)
             syscall_run(FS_LIST, buffer2);
         else if (strcmp(buffer1, "echo") == 0)
-            kprintf("%s\n", buffer2);
+            syscall_run(PRINT, "%s\n", buffer2);
         else if (strcmp(buffer1, "cat") == 0)
         {
             uint32_t file_pointer = syscall_run(FS_OPEN, buffer2);
