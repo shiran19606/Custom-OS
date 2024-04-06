@@ -90,11 +90,10 @@ void handle_user_input(const char* input)
             kprintf("%s\n", buffer2);
         else if (strcmp(buffer1, "cat") == 0)
         {
-            uint32_t file_pointer = syscall_run(FS_OPEN, buffer2);
-            openedFile = file_pointer;
+            openedFile = (MyFile*)(syscall_run(FS_OPEN, buffer2));
             if (openedFile)
             {
-                char* buffer_to_read = syscall_run(FS_READ, openedFile);
+                char* buffer_to_read = (char*)(syscall_run(FS_READ, openedFile));
                 if (buffer_to_read)
                 {
                     kprintf("%s\n", buffer_to_read);
@@ -104,8 +103,7 @@ void handle_user_input(const char* input)
         }
         else if (strcmp(buffer1, "edit") == 0)
         {
-            uint32_t file_pointer = syscall_run(FS_OPEN, buffer2);
-            openedFile = file_pointer;
+            openedFile = (MyFile*)(syscall_run(FS_OPEN, buffer2));
             if (openedFile)
             {
                 waiting_for_input = 1;
