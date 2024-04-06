@@ -28,7 +28,7 @@ static void page_fault(registers_t* regs)
     {
         kprintf("page fault present at address %x\n", address);
         void* block = (void*)allocate_block();
-        if (block != 0xFFFFFFFF && map_page((void*)address, block, (PTE_PRESENT | PTE_WRITEABLE))) //if we were able to map the page to a frame, set the frame to 0. otherwise hlt the system
+        if (block != 0xFFFFFFFF && map_page((void*)address, block, (PTE_PRESENT | PTE_WRITEABLE | PTE_USER))) //if we were able to map the page to a frame, set the frame to 0. otherwise hlt the system
             memset((void*)address, 0, BLOCK_SIZE);
         else
             asm volatile("cli;hlt");
@@ -39,6 +39,7 @@ static void page_fault(registers_t* regs)
         kprintf("page fault user-mode at address %x\n", address);
     if (reserved)
         kprintf("page fault reserved page at address %x\n", address);
+    asm volatile("cli;hlt");
 }
 
 void init_paging(page_directory_t* dir_physical_address)

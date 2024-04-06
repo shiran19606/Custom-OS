@@ -199,17 +199,17 @@ uint8_t* getInodeContent(Inode* inode)
 	return blocks;
 }
 
-void createFile(const char* filename)
+uint32_t createFile(const char* filename)
 {
 	createFileOrDirectory(filename, 0);
 }
 
-void createDirectory(const char* dirname)
+uint32_t createDirectory(const char* dirname)
 {
 	createFileOrDirectory(dirname, 1);
 }
 
-void createFileOrDirectory(const char* filename, int isDir)
+uint32_t createFileOrDirectory(const char* filename, int isDir)
 {
 	asm volatile("cli");
 	if (filename[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
@@ -242,8 +242,7 @@ void createFileOrDirectory(const char* filename, int isDir)
 	if (working_dir == 0)
 	{
 		kprintf("Error: Path to create the file in is not valid\n");
-		asm volatile("sti");
-		return;
+		return 1;
 	}
 	read_inode(working_dir, root);
 
@@ -274,10 +273,10 @@ void createFileOrDirectory(const char* filename, int isDir)
 	writeData(root, (const char*)newEntry, (numEntries+1)*(sizeof(directoryEntry)));
 	write_inode(working_dir, root);
 	kfree((void*)newEntry);
-	asm volatile("sti");
+	return 0;
 }
 
-void writeToFile(MyFile* fileToWrite, const char* data)
+uint32_t writeToFile(MyFile* fileToWrite, const char* data)
 {
 	asm volatile("cli");
 	Inode inode;
@@ -285,15 +284,14 @@ void writeToFile(MyFile* fileToWrite, const char* data)
 	if (inode.isDir)
 	{
 		kprintf("Cant Write to a directory\n");
-		asm volatile("sti");
-		return;
+		return 1;
 	}
 	writeData(&inode, data, strlen(data));
 	write_inode(fileToWrite->inodeNumber, &inode);
-	asm volatile("sti");
+	return 0;
 }
 
-char* readFromFile(MyFile* fileToRead)
+uint8_t* readFromFile(MyFile* fileToRead)
 {
 	asm volatile("cli");
 	Inode inode;
@@ -301,11 +299,9 @@ char* readFromFile(MyFile* fileToRead)
 	if (inode.isDir)
 	{
 		kprintf("Cant read from a directory\n");
-		asm volatile("sti");
 		return NULL;
 	}
-	asm volatile("sti");
-	return (char*)getInodeContent(&inode);
+	return getInodeContent(&inode);
 }
 
 MyFile* openFile(char* filename)
@@ -344,19 +340,18 @@ MyFile* openFile(char* filename)
 
 	MyFile* file = (MyFile*)kmalloc(sizeof(MyFile));
 	file->inodeNumber = indexOfFileInode;
-	asm volatile("sti");
 	return file;
 }
 
-void closeFile(MyFile* file1)
+uint32_t closeFile(MyFile* file1)
 {
 	asm volatile("cli");
 	if (file1)
-		kfree((void*)file1);
-	asm volatile("sti");
+		kfree(file1);
+	return 0;
 }
 
-void listDir(char* path)
+uint32_t listDir(char* path)
 {
 	asm volatile("cli");
 	if (path[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
@@ -380,14 +375,14 @@ void listDir(char* path)
 	if (working_dir == 0)
 	{
 		kprintf("Error: cant list directory\n");
-		return;
+		return 1;
 	}
 	read_inode(working_dir, &inode2);
 
 	if (!inode2.isDir)
 	{
 		kprintf("cant ls a file\n");
-		return;
+		return 1;
 	}
 
 	//add to parent directory.
@@ -403,7 +398,7 @@ void listDir(char* path)
 	}
 	kprintf("\n");
 	kfree((void*)newEntry);
-	asm volatile("sti");
+	return 0;
 }
 
 

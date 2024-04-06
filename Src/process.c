@@ -38,7 +38,7 @@ void add_process(process_t** list, process_t* new_process)
 
 //TODO: maybe add an option to create KERNEL_SPACE programs.
 //TODO: now, a process'es stack is allocated on the kernel heap, so i had to modify the kernel heap to be mapped as user-pages.
-void create_process(void (*ent)(), uint32_t ring)
+uint32_t create_process(void (*ent)(), uint32_t ring, int argc, char** argv)
 {
     process_t* new_proc = (process_t*)kmalloc(sizeof(process_t));
     new_proc->cr3 = (uint32_t)current_page_dir;
@@ -50,6 +50,10 @@ void create_process(void (*ent)(), uint32_t ring)
     new_proc->ring = ring;
     uint32_t ds = (ring == KERNEL_SPACE) ? 0x10 : 0x23;
     uint32_t cs = (ring == KERNEL_SPACE) ? 0x08 : 0x1b;
+    for (int index = 0;index<argc;index++)
+    {
+        PUSH(stack, argv[index]);
+    }
     PUSH(stack, ds);
     PUSH(stack, (((uint32_t)(stack))+4));
     PUSH(stack, 0x202);
@@ -66,6 +70,7 @@ void create_process(void (*ent)(), uint32_t ring)
 
     new_proc->stack_top = stack;
     add_process(&process_list, new_proc);
+    return 0;
 }
 
 void terminate_process() //terminate the current process.

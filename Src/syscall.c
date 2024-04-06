@@ -3,9 +3,9 @@
 void* syscalls[MAX_SYSCALLS] = {0};
 
 //TODO: test dispatcher with functions that take parameters.
-static void* syscall_dispatcher(registers_t* regs)
+static uint32_t syscall_dispatcher(registers_t* regs)
 {
-    if (regs->eax >= MAX_SYSCALLS)
+    if (!regs || regs->eax >= MAX_SYSCALLS)
         asm volatile("cli;hlt");
     
     void* func = syscalls[regs->eax];
@@ -17,20 +17,24 @@ static void* syscall_dispatcher(registers_t* regs)
         "add $4, %%esp"
         : : "r"(*(uint32_t*)(regs->useresp+8)), "r"(func) : "%esp"
     );
-
-    asm volatile("mov %%eax, %0" : "=r"(regs->eax));
+    
+    uint32_t result;
+    asm volatile("movl %%eax, %0" : "=r" (result));
+    return result;
 }
 
 void syscall_init()
 {
-    syscalls[0] = openFile;
-    syscalls[1] = closeFile;
-    syscalls[2] = readFromFile;
-    syscalls[3] = writeToFile;
-    syscalls[4] = listDir;
-    syscalls[5] = create_process;
-    syscalls[6] = terminate_process;
-    syscalls[7] = kprintf;
-    syscalls[8] = clearScreen;
+    syscalls[0] = createFile;
+    syscalls[1] = openFile;
+    syscalls[2] = closeFile;
+    syscalls[3] = readFromFile;
+    syscalls[4] = writeToFile;
+    syscalls[5] = createDirectory;
+    syscalls[6] = listDir;
+    syscalls[7] = create_process;
+    syscalls[8] = terminate_process;
+    syscalls[9] = kprintf;
+    syscalls[10] = clearScreen;
     register_handler(SYSCALL_INT, syscall_dispatcher);
 }

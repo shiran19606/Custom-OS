@@ -64,10 +64,11 @@ void print_user_menu()
 
 void handle_user_input(const char* input)
 {
+    //the input is heap-allocated, so transfer it to the stack.
     if (!waiting_for_input && strcmp(input, "help") == 0)
         print_user_menu();
     else if (!waiting_for_input && strcmp(input, "clear") == 0)
-        clearScreen();
+        syscall_run(CLEAR_VGA);
     else
     {
         uint8_t buffer1[256] = {0};
@@ -75,23 +76,25 @@ void handle_user_input(const char* input)
         split_by_space(input, buffer1, buffer2);
         if (waiting_for_input && openedFile)
         {
-            writeToFile(openedFile, input);
+            syscall_run(FS_WRITE, openedFile, input);
             waiting_for_input = 0;
-            closeFile(openedFile);
+            syscall_run(FS_CLOSE, openedFile);
             openedFile = 0;
-            kprintf("> ");
-            return;
+            syscall_run(PRINT, "> ");
+            kfree((void*)input);
+            syscall_run(PROC_EXIT);
         }
-        if (strcmp(buffer1, "ls") == 0)
-            listDir(buffer2);
-        if (strcmp(buffer1, "echo") == 0)
+        else if (strcmp(buffer1, "ls") == 0)
+            syscall_run(FS_LIST, buffer2);
+        else if (strcmp(buffer1, "echo") == 0)
             kprintf("%s\n", buffer2);
-        if (strcmp(buffer1, "cat") == 0)
+        else if (strcmp(buffer1, "cat") == 0)
         {
-            openedFile = syscall_run(0, buffer2);
+            uint32_t file_pointer = syscall_run(FS_OPEN, buffer2);
+            openedFile = file_pointer;
             if (openedFile)
             {
-                char* buffer_to_read = (char*)readFromFile(openedFile);
+                char* buffer_to_read = syscall_run(FS_READ, openedFile);
                 if (buffer_to_read)
                 {
                     kprintf("%s\n", buffer_to_read);
@@ -99,24 +102,30 @@ void handle_user_input(const char* input)
                 }
             }
         }
-        if (strcmp(buffer1, "edit") == 0)
+        else if (strcmp(buffer1, "edit") == 0)
         {
-            openedFile = syscall_run(0, buffer2);
+            uint32_t file_pointer = syscall_run(FS_OPEN, buffer2);
+            openedFile = file_pointer;
             if (openedFile)
             {
                 waiting_for_input = 1;
-                return;
+                kfree((void*)input);
+                syscall_run(PROC_EXIT);
             }
         }
-        if (strcmp(buffer1, "touch") == 0 || strcmp(buffer1, "mkdir") == 0)
-            createFileOrDirectory(buffer2, buffer1[0] != 't'); //if buffer1[0] is not t it means we are creating a directory, so put isDir as true.
+        else if (strcmp(buffer1, "touch") == 0)
+            syscall_run(FS_CREATE, buffer2);
+        else if (strcmp(buffer1, "mkdir") == 0)
+            syscall_run(FS_MKDIR, buffer2);
         if (openedFile)
         {
-            closeFile(openedFile);
+            syscall_run(FS_CLOSE, openedFile);
             openedFile = 0;
         }
     }
+    kfree((void*)input);
     kprintf("> ");
+    syscall_run(PROC_EXIT);
 }
 
 //TODO:modify functions to use system calls instead of kprintf
@@ -124,18 +133,14 @@ void func1(void)
 {
     int i = 0;
     while (i++ < 10000);
-        //kprintf("A");
-    MyFile* result_file = syscall_run(0, "file2");;
-    kprintf("result_file inode is %d\n", result_file->inodeNumber);
-    syscall_run(6);
+    syscall_run(PROC_EXIT);
 }
 
 void func2(void)
 {
     int i = 0;
     while (i++ < 10000);
-        //kprintf("B");
-    syscall_run(6);
+    syscall_run(PROC_EXIT);
 }
 
 //TODO: maybe modify input_handler to be a seperate process with ring3 which uses system calls to perform operations.
@@ -182,9 +187,9 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000); //initialize disk driver to use in file system.
     init_multitasking();
     kprintf("initialized multitasking\n");
-    create_process(func1, USER_SPACE);
-    create_process(func2, USER_SPACE);
-    create_process(clean_terminated_list, KERNEL_SPACE);
+    create_process(func1, USER_SPACE, 0, 0);
+    create_process(func2, USER_SPACE, 0, 0);
+    create_process(clean_terminated_list, KERNEL_SPACE, 0, 0);
     init_timer(1193);
 
     //initializing fs to use the current disk contents and not format it.

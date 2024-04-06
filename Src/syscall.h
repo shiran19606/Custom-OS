@@ -8,17 +8,19 @@
 
 #define SYSCALL_INT 0x80
 
-#define FS_OPEN     0
-#define FS_CLOSE    1
-#define FS_READ     2
-#define FS_write    3
-#define FS_LIST     4
-#define PROC_CREATE 5
-#define PROC_EXIT   6
-#define PRINT       7
-#define CLEAR_VGA   8
+#define FS_CREATE   0
+#define FS_OPEN     1
+#define FS_CLOSE    2
+#define FS_READ     3
+#define FS_WRITE    4
+#define FS_MKDIR    5
+#define FS_LIST     6
+#define PROC_CREATE 7
+#define PROC_EXIT   8
+#define PRINT       9
+#define CLEAR_VGA   10
 
-#define MAX_SYSCALLS 9
+#define MAX_SYSCALLS 11
 
 void syscall_init();
 
