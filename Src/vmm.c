@@ -42,6 +42,18 @@ static void page_fault(registers_t* regs)
     asm volatile("cli;hlt");
 }
 
+void map_kernel_to_pd(page_directory_t* pd)
+{
+    page_directory_t* kernel_pd = &PAGE_DIR_VIRTUAL;
+    page_directory_t* pd_physical = virtual_to_physical(pd);
+    set_page_directory(virtual_to_physical(kernel_pd));
+    memcpy(pd, kernel_pd, sizeof(page_directory_t));
+    page_dir_entry_t* last_page_table = &(pd->pages[ENTRIES_IN_PAGE_DIR-1]);
+    SET_ATTRIBUTE(last_page_table, PDE_PRESENT | PDE_WRITEABLE | PDE_USER);
+    PDE_SET_FRAME(last_page_table, pd_physical); //the last entry in the virtual pd is the physical pd - implementation of recrusive paging.
+}
+
+
 void init_paging(page_directory_t* dir_physical_address)
 {
     //set cr3 register to hold dir_physical address;

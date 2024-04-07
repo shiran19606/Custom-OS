@@ -4,6 +4,7 @@
 #include "utils.h"
 #include "heap.h"
 #include "vmm.h"
+#include "page_frame_allocator.h"
 
 #define RUNNING         0
 #define READY           1

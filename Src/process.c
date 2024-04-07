@@ -6,6 +6,8 @@ process_t* current_process;
 volatile process_t* terminated_process_list;
 
 extern page_directory_t* current_page_dir;
+extern uint32_t PAGE_DIR_VIRTUAL;
+extern uint32_t PAGE_DIR_PHYSICAL;
 
 process_t* schedule()
 {
@@ -40,7 +42,16 @@ void add_process(process_t** list, process_t* new_process)
 uint32_t create_process(void (*ent)(), uint32_t ring, int argc, char** argv)
 {
     process_t* new_proc = (process_t*)kmalloc(sizeof(process_t));
-    new_proc->cr3 = (uint32_t)current_page_dir;
+    if (ring)
+    {
+        page_directory_t* allocated_page = (page_directory_t*)page_allocate();
+        map_kernel_to_pd(allocated_page);
+        new_proc->cr3 = (uint32_t)(virtual_to_physical(allocated_page));
+    }
+    else
+    {
+        new_proc->cr3 = (uint32_t)(&PAGE_DIR_PHYSICAL);
+    }
     new_proc->next = NULL;
     uint32_t stack_bottom = (uint32_t)kmalloc(0x1000);
     uint32_t stack_top = stack_bottom + 0x1000;

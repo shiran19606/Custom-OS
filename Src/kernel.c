@@ -7,6 +7,7 @@
 #include "multiboot.h"
 #include "pmm.h"
 #include "vmm.h"
+#include "page_frame_allocator.h"
 #include "ide.h"
 #include "timer.h"
 #include "process.h"
@@ -181,6 +182,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 
     initialize_allocator();
     kprintf("initialized heap\n");
+    init_pfa();
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000); //initialize disk driver to use in file system.
     init_multitasking();
     kprintf("initialized multitasking\n");

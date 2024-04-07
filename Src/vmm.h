@@ -85,6 +85,10 @@ typedef struct page_directory
 #define CLEAR_ATTRIBUTE(addr, attr) (*(uint32_t*)addr &= ~(attr))
 
 
+//help function for a process creation, map the kernel to its virtual address space.
+void map_kernel_to_pd(page_directory_t* pd);
+
+
 /*
 this function is responsible to initialize paging by setting the paging bit in cr0 register. it is also responsible to set up the page fault handler.
 */

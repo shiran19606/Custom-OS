@@ -10,7 +10,7 @@ LD=/usr/local/i386elfgcc/bin/i386-elf-ld
 SRC_DIR = ./Src
 BUILD_DIR = ./Build
 
-OBJECTS = $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/tss.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o $(BUILD_DIR)/Screen.o $(BUILD_DIR)/keyboard.o	$(BUILD_DIR)/heap.o $(BUILD_DIR)/utils.o $(BUILD_DIR)/fs.o $(BUILD_DIR)/pmm.o $(BUILD_DIR)/vmm.o $(BUILD_DIR)/paging.o $(BUILD_DIR)/ide.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/process.o $(BUILD_DIR)/syscall.o
+OBJECTS = $(BUILD_DIR)/loader.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/gdt.o $(BUILD_DIR)/tss.o $(BUILD_DIR)/gdt_flush.o $(BUILD_DIR)/idt.o $(BUILD_DIR)/interrupts.o $(BUILD_DIR)/isr.o $(BUILD_DIR)/Screen.o $(BUILD_DIR)/keyboard.o	$(BUILD_DIR)/heap.o $(BUILD_DIR)/utils.o $(BUILD_DIR)/fs.o $(BUILD_DIR)/pmm.o $(BUILD_DIR)/vmm.o $(BUILD_DIR)/paging.o $(BUILD_DIR)/ide.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/process.o $(BUILD_DIR)/syscall.o $(BUILD_DIR)/page_frame_allocator.o
 
 # First rule is the one executed when no parameters are fed to the Makefile
 all: run
