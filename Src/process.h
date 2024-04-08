@@ -5,6 +5,7 @@
 #include "heap.h"
 #include "vmm.h"
 #include "page_frame_allocator.h"
+#include <stdarg.h>
 
 #define RUNNING         0
 #define READY           1
@@ -29,7 +30,7 @@ typedef struct process
 
 
 void add_process(process_t** list, process_t* new_process);
-uint32_t create_process(void (*ent)(), uint32_t ring, int argc, char* argv[]);
+uint32_t create_process(void (*ent)(), uint32_t ring, int argc, ...);
 void terminate_process();
 uint32_t init_multitasking();
 void clean_terminated_list();

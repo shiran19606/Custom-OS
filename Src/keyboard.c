@@ -166,7 +166,7 @@ void printLetter(uint8_t scancode) {
             memcpy(tmp_buffer, buffer, 257);
             memset(buffer, 0, 257);
             buffer_index = 0;
-            create_process(handle_user_input, USER_SPACE, 1, &tmp_buffer);
+            create_process(handle_user_input, USER_SPACE, 1, tmp_buffer);
             break;
         case 0x3A: // capslock
             caps = (caps + 1) % 2;

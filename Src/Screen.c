@@ -204,7 +204,6 @@ void printNumberHex(uint32_t intNumber)
     }
 }
 
-//TODO:modify kprintf to be a function that makes sure the user released the lock before context switching, or make sure that the user finished printing before context switching (turn off interrupts).
 void kprintf(const char* format, ...) {
     acquire(&lock1);
     // Pointer to traverse the format string
