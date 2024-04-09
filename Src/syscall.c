@@ -80,7 +80,8 @@ uint32_t proc_create(void* params)
 
 uint32_t proc_stop(void* params)
 {
-    terminate_process();
+    uint32_t exit_code = *(uint32_t*)params;
+    terminate_process(exit_code);
     return 0; //shouldnt be reached, but just in case.
 }
 

@@ -13,7 +13,6 @@
 #include "process.h"
 #include "syscall.h"
 
-extern void enter_usermode();
 extern uint32_t syscall_run(uint32_t syscall_num, ...);
 
 extern uint32_t kernel_physical_start;
@@ -83,7 +82,7 @@ void handle_user_input(const char* input)
             openedFile = 0;
             kprintf("> ");
             kfree((void*)input);
-            syscall_run(PROC_EXIT);
+            syscall_run(PROC_EXIT, 1);
         }
         else if (strcmp(buffer1, "ls") == 0)
             syscall_run(FS_LIST, buffer2);
@@ -109,7 +108,7 @@ void handle_user_input(const char* input)
             {
                 waiting_for_input = 1;
                 kfree((void*)input);
-                syscall_run(PROC_EXIT);
+                syscall_run(PROC_EXIT, 1);
             }
         }
         else if (strcmp(buffer1, "touch") == 0)
@@ -124,7 +123,7 @@ void handle_user_input(const char* input)
     }
     kfree((void*)input);
     kprintf("> ");
-    syscall_run(PROC_EXIT);
+    syscall_run(PROC_EXIT, 0);
 }
 
 
@@ -132,14 +131,14 @@ void func1(void)
 {
     int i = 0;
     while (i++ < 10000);
-    syscall_run(PROC_EXIT);
+    syscall_run(PROC_EXIT, 0);
 }
 
 void func2(void)
 {
     int i = 0;
     while (i++ < 10000);
-    syscall_run(PROC_EXIT);
+    syscall_run(PROC_EXIT, 0);
 }
 
 void kernel_main(multiboot_info_t* mboot_ptr) 
@@ -202,6 +201,6 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     
     set_tss_kernel_stack(0x10, get_esp());
     
-    terminate_process(); //kill this process. 
+    terminate_process(0); //kill this process. 
     while(1); //should not be reached, but just in case.
 }

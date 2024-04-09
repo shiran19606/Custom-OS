@@ -31,7 +31,7 @@ typedef struct process
 
 void add_process(process_t** list, process_t* new_process);
 uint32_t create_process(void (*ent)(), uint32_t ring, int argc, ...);
-void terminate_process();
+void terminate_process(uint32_t exit_code);
 uint32_t init_multitasking();
 void clean_terminated_list();
 

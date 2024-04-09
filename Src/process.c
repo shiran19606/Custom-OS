@@ -99,7 +99,7 @@ uint32_t create_process(void (*ent)(), uint32_t ring, int argc, ...)
     return 0;
 }
 
-void terminate_process() //terminate the current process.
+void terminate_process(uint32_t exit_code) //terminate the current process.
 {
     //stop interrupts to not have a context switch during process termination.
     asm volatile("cli");
@@ -120,6 +120,7 @@ void terminate_process() //terminate the current process.
     current_process->status = TERMINATED;
     
     //allow interrupts again.
+    asm volatile("movl %0, %%eax" :: "r" (exit_code));
     asm volatile("sti");
     while(1);
 }
