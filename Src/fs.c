@@ -136,7 +136,7 @@ uint32_t allocateInode()
 }
 
 // Function to write data to inode blocks
-void writeData(Inode* inode, const char* data, uint32_t dataSize) {
+int writeData(Inode* inode, const char* data, int dataSize) {
 	// Clear existing blocks assigned to the inode
 	uint32_t* block_bitmap = get_block_bitmap();
 	for (int i = 0; i < inode->numOfBlocksUsed; ++i) {
@@ -153,7 +153,7 @@ void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 	if (requiredBlocks > POINTERS_PER_INODE)
 	{
 		kprintf("Error: Data too large to fit within the inode's capacity.\n");
-		return;
+		return -1;
 	}
 
 	// Allocate new blocks to the inode for data storage
@@ -162,7 +162,7 @@ void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 		if (kfreeBlockIndex == -1) 
 		{
 			kprintf("Error: No free blocks available for writing data.\n");
-			return;
+			return -1;
 		}
 		setBit((uint32_t*)block_bitmap, (uint32_t)kfreeBlockIndex); // Set the bit in the block bitmap
 		inode->blocks[i] = (uint32_t)sb->blocksAddress + kfreeBlockIndex * FS_BLOCK_SIZE; // Assign block number to the inode
@@ -182,6 +182,7 @@ void writeData(Inode* inode, const char* data, uint32_t dataSize) {
 	// Update inode details
 	inode->fileSize = dataSize;
 	inode->numOfBlocksUsed = requiredBlocks;
+	return dataSize;
 }
 
 
@@ -279,6 +280,7 @@ uint32_t createFileOrDirectory(const char* filename, int isDir)
 
 int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len)
 {
+	int size_read = -1;
 	Inode inode;
 	read_inode(fileToWrite->inodeNumber, &inode);
 	if (inode.isDir)
@@ -303,13 +305,13 @@ int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len)
 	{
 		uint8_t* data2 = getInodeContent(&inode);
 		memcpy(data2 + fileToWrite->offset, data, len); //this is good practice because even though the file doesnt have enough blocks, the getInodeContent allocates 3 Full Blocks on the heap so surely this is ok.
-		writeData(&inode, data2, strlen(data2));
+		size_read = writeData(&inode, data2, strlen(data2));
 		fileToWrite->offset = inode.fileSize;
 		write_inode(fileToWrite->inodeNumber, &inode);
 		kfree((void*)data2);
 	}
 	fileToWrite->offset = 0;
-	return 0;
+	return size_read;
 }
 
 int readFromFile(MyFile* fileToRead, uint8_t* buffer, uint32_t len)
@@ -322,9 +324,13 @@ int readFromFile(MyFile* fileToRead, uint8_t* buffer, uint32_t len)
 		return NULL;
 	}
 	uint8_t* buffer2 = getInodeContent(&inode);
+	if (fileToRead->offset == fileToRead->fileSize)
+		return 0; //EOF
+	if (sizeof(buffer) < len)
+		return -1; //buffer too small.
 	memcpy(buffer, buffer2 + fileToRead->offset, len);
 	kfree((void*)buffer2);
-	return 1;
+	return strlen(buffer);
 }
 
 MyFile* openFile(char* filename)
@@ -426,26 +432,33 @@ uint32_t listDir(char* path)
 int Open(const char* filename, FILE* file_descriptor, int flags)
 {
 	MyFile* file1 = openFile(filename);
-	if (!file1)
+	if (!file1 && file_descriptor->flags & O_CREATE)
 	{
 		createFile(filename);
 		file1 = openFile(filename);
 	}
 	file_descriptor->flags = flags;
 	file_descriptor->fs_data = (void*)file1;
+	file1->flags = flags;
 	return 0;
 }
 
 int Read(void* file, void* buffer, int count)
 {
 	MyFile* file1 = (MyFile*)file;
-	return readFromFile(file1, buffer, count);
+	if (file1->flags & (O_RDONLY | O_RDWR))
+		return readFromFile(file1, buffer, count);
+	else
+		return -1;
 }
 
 int Write(void* file, void* buffer, int count)
 {
 	MyFile* file1 = (MyFile*)file;
-	return writeToFile(file1, buffer, count);
+	if (file1->flags & (O_WRONLY | O_RDWR))
+		return writeToFile(file1, buffer, count);
+	else
+		return -1;
 }
 
 int Close(void* file)

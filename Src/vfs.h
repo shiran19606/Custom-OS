@@ -7,6 +7,11 @@
 #define MAX_FILES 16
 #define MAX_FILESYSTEMS 4
 
+#define O_RDONLY 00000000
+#define O_WRONLY 00000001
+#define O_RDWR   00000002
+#define O_CREATE 00000100
+
 typedef struct FILE
 {
     uint32_t file_id;

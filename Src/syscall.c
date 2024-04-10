@@ -25,13 +25,15 @@ static uint32_t syscall_dispatcher(registers_t* regs)
 int create_file(void* params)
 {
     char* filename = *(char**)params;
-    return vfs_open_file(filename, 0);
+    return vfs_open_file(filename, (O_RDONLY | O_CREATE));
 }
 
 int open_file(void* params)
 {
     char* filename = *(char**)params;
-    return vfs_open_file(filename, 0);
+    params += sizeof(char**);
+    int flags = *(int*)params;
+    return vfs_open_file(filename, flags);
 }
 
 int close_file(void* params)

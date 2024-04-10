@@ -50,6 +50,7 @@ typedef struct Block
 
 typedef struct MyFile
 {
+	uint32_t flags;
 	uint32_t inodeNumber;
 	uint32_t offset;
 	uint32_t fileSize;
