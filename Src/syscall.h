@@ -3,7 +3,7 @@
 
 #include "utils.h"
 #include "isr.h"
-#include "fs.h"
+#include "vfs.h"
 #include "process.h"
 
 #define SYSCALL_INT 0x80

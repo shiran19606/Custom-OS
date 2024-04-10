@@ -4,6 +4,8 @@ SuperBlock current_sb;
 SuperBlock* sb;
 uint8_t drive_num;
 
+FILESYSTEM my_fs;
+
 //read the inode bitmap from physical disk
 uint32_t* get_inode_bitmap()
 {
@@ -211,7 +213,6 @@ uint32_t createDirectory(const char* dirname)
 
 uint32_t createFileOrDirectory(const char* filename, int isDir)
 {
-	asm volatile("cli");
 	if (filename[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		filename++;
 	char buff[MAX_FILENAME_LENGTH] = { 0 };
@@ -276,9 +277,8 @@ uint32_t createFileOrDirectory(const char* filename, int isDir)
 	return 0;
 }
 
-uint32_t writeToFile(MyFile* fileToWrite, const char* data)
+int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len)
 {
-	asm volatile("cli");
 	Inode inode;
 	read_inode(fileToWrite->inodeNumber, &inode);
 	if (inode.isDir)
@@ -286,14 +286,34 @@ uint32_t writeToFile(MyFile* fileToWrite, const char* data)
 		kprintf("Cant Write to a directory\n");
 		return 1;
 	}
-	writeData(&inode, data, strlen(data));
-	write_inode(fileToWrite->inodeNumber, &inode);
+	if (fileToWrite->offset + len > POINTERS_PER_INODE * FS_BLOCK_SIZE)
+	{
+		kprintf("CONTENT TOO BIG\n");
+		return 1;
+	}
+	if (fileToWrite->offset + len <= fileToWrite->fileSize)
+	{
+		uint32_t block = fileToWrite->offset / FS_BLOCK_SIZE;
+		uint32_t offset_in_block = fileToWrite->offset % FS_BLOCK_SIZE;
+		uint32_t location_to_write = inode.blocks[block] + offset_in_block;
+		ide_access(drive_num, location_to_write, len, data, ATA_WRITE);
+		fileToWrite->offset += len;
+	}
+	else
+	{
+		uint8_t* data2 = getInodeContent(&inode);
+		memcpy(data2 + fileToWrite->offset, data, len); //this is good practice because even though the file doesnt have enough blocks, the getInodeContent allocates 3 Full Blocks on the heap so surely this is ok.
+		writeData(&inode, data2, strlen(data2));
+		fileToWrite->offset = inode.fileSize;
+		write_inode(fileToWrite->inodeNumber, &inode);
+		kfree((void*)data2);
+	}
+	fileToWrite->offset = 0;
 	return 0;
 }
 
-uint8_t* readFromFile(MyFile* fileToRead)
+int readFromFile(MyFile* fileToRead, uint8_t* buffer, uint32_t len)
 {
-	asm volatile("cli");
 	Inode inode;
 	read_inode(fileToRead->inodeNumber, &inode);
 	if (inode.isDir)
@@ -301,12 +321,14 @@ uint8_t* readFromFile(MyFile* fileToRead)
 		kprintf("Cant read from a directory\n");
 		return NULL;
 	}
-	return getInodeContent(&inode);
+	uint8_t* buffer2 = getInodeContent(&inode);
+	memcpy(buffer, buffer2 + fileToRead->offset, len);
+	kfree((void*)buffer2);
+	return 1;
 }
 
 MyFile* openFile(char* filename)
 {
-	asm volatile("cli");
 	if (filename[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		filename++;
 	
@@ -340,12 +362,13 @@ MyFile* openFile(char* filename)
 
 	MyFile* file = (MyFile*)kmalloc(sizeof(MyFile));
 	file->inodeNumber = indexOfFileInode;
+	file->offset = 0;
+	file->fileSize = 0;
 	return file;
 }
 
 uint32_t closeFile(MyFile* file1)
 {
-	asm volatile("cli");
 	if (file1)
 		kfree(file1);
 	return 0;
@@ -353,7 +376,6 @@ uint32_t closeFile(MyFile* file1)
 
 uint32_t listDir(char* path)
 {
-	asm volatile("cli");
 	if (path[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		path++;
 
@@ -401,6 +423,41 @@ uint32_t listDir(char* path)
 	return 0;
 }
 
+int Open(const char* filename, FILE* file_descriptor, int flags)
+{
+	MyFile* file1 = openFile(filename);
+	if (!file1)
+	{
+		createFile(filename);
+		file1 = openFile(filename);
+	}
+	file_descriptor->flags = flags;
+	file_descriptor->fs_data = (void*)file1;
+	return 0;
+}
+
+int Read(void* file, void* buffer, int count)
+{
+	MyFile* file1 = (MyFile*)file;
+	return readFromFile(file1, buffer, count);
+}
+
+int Write(void* file, void* buffer, int count)
+{
+	MyFile* file1 = (MyFile*)file;
+	return writeToFile(file1, buffer, count);
+}
+
+int Close(void* file)
+{
+	MyFile* file1 = (MyFile*)file;
+	return closeFile(file1);
+}
+
+int Mkdir(const char* path, int flags)
+{
+	return createDirectory(path);
+}
 
 void format_fs()
 {
@@ -427,10 +484,18 @@ void format_fs()
 
 void init_fs(uint8_t format_disk)
 {
+	my_fs.open = Open;
+	my_fs.close = Close;
+	my_fs.read = Read;
+	my_fs.write = Write;
+	my_fs.mkdir = Mkdir;
+
 	drive_num = PRIMARY_SLAVE;
 	sb = &current_sb;
 	ide_access(drive_num, 0, SUPERBLOCK_SIZE, sb, ATA_READ); //read superblock information from disk
 
 	if (sb->magicNumber != FS_MAGIC_NUMBER || format_disk)
 		format_fs();
+
+	add_fs(&my_fs);
 }

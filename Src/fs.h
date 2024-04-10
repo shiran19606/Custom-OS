@@ -5,6 +5,7 @@
 #include "vmm.h"
 #include "heap.h"
 #include "ide.h"
+#include "vfs.h"
 
 #define MAX_FILENAME_LENGTH 28
 
@@ -50,6 +51,8 @@ typedef struct Block
 typedef struct MyFile
 {
 	uint32_t inodeNumber;
+	uint32_t offset;
+	uint32_t fileSize;
 } MyFile;
 
 typedef struct dirEntry //in a directory, each file in the directory will have a dirEntry.
@@ -66,8 +69,8 @@ uint8_t* getInodeContent(Inode* inode);
 //user functions
 uint32_t createFile(const char* filename);
 uint32_t createDirectory(const char* dirname);
-uint32_t writeToFile(MyFile* fileToWrite, const char* data);
-uint8_t* readFromFile(MyFile* fileToRead);
+int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len);
+int readFromFile(MyFile* fileToRead, uint8_t* buffer, uint32_t len);
 MyFile* openFile(char* filename);
 uint32_t closeFile(MyFile* file1);
 uint32_t listDir(char* path);

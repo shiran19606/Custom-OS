@@ -22,45 +22,51 @@ static uint32_t syscall_dispatcher(registers_t* regs)
     return result;
 }
 
-uint32_t create_file(void* params)
+int create_file(void* params)
 {
     char* filename = *(char**)params;
-    return createFile(filename);
+    return vfs_open_file(filename, 0);
 }
 
-uint32_t open_file(void* params)
+int open_file(void* params)
 {
     char* filename = *(char**)params;
-    return openFile(filename);
+    return vfs_open_file(filename, 0);
 }
 
-uint32_t close_file(void* params)
+int close_file(void* params)
 {
-    MyFile* file_descriptor = *(MyFile**)params;
-    return closeFile(file_descriptor);
+    int fd = *(int*)params;
+    return vfs_close_file(fd);
 }
 
-uint32_t read_file(void* params)
+int read_file(void* params)
 {
-    MyFile* file_descriptor = *(MyFile**)params;
-    return readFromFile(file_descriptor);
+    int fd = *(int*)params;
+    params += sizeof(int*);
+    char* buffer = *(char**)params;
+    params += sizeof(char**);
+    int count = *(int*)params;
+    return vfs_read_file(fd, buffer, count);
 }
 
-uint32_t write_file(void* params)
+int write_file(void* params)
 {
-    MyFile* file_descriptor = *(MyFile**)params;
-    params += sizeof(MyFile*);
-    const char* input = *(char**)params;
-    return writeToFile(file_descriptor, input);
+    int fd = *(int*)params;
+    params += sizeof(int*);
+    char* buffer = *(char**)params;
+    params += sizeof(char**);
+    int count = *(int*)params;
+    return vfs_write_file(fd, buffer, count);
 }
 
-uint32_t create_dir(void* params)
+int create_dir(void* params)
 {
     char* dirname = *(char**)params;
-    return createDirectory(dirname);
+    return vfs_mkdir(dirname, 0);
 }
 
-uint32_t list_dir(void* params)
+int list_dir(void* params)
 {
     char* dirname = *(char**)params;
     return listDir(dirname);

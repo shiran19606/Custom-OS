@@ -11,6 +11,7 @@
 #include "ide.h"
 #include "timer.h"
 #include "process.h"
+#include "vfs.h"
 #include "syscall.h"
 
 extern uint32_t syscall_run(uint32_t syscall_num, ...);
@@ -28,7 +29,7 @@ extern uint32_t* pmm_bitmap;
 extern uint32_t* bitmap_end;
 
 uint8_t waiting_for_input = 0;
-MyFile* openedFile = 0;
+int openedFile = 0;
 
 void split_by_space(const char* string_to_split, char* buffer1, char* buffer2)
 {
@@ -74,12 +75,12 @@ void handle_user_input(const char* input)
         uint8_t buffer1[256] = {0};
         uint8_t buffer2[256] = {0};
         split_by_space(input, buffer1, buffer2);
-        if (waiting_for_input && openedFile)
+        if (waiting_for_input && openedFile != -1)
         {
-            syscall_run(FS_WRITE, openedFile, input);
+            syscall_run(FS_WRITE, openedFile, input, strlen(input));
             waiting_for_input = 0;
             syscall_run(FS_CLOSE, openedFile);
-            openedFile = 0;
+            openedFile = -1;
             kprintf("> ");
             kfree((void*)input);
             syscall_run(PROC_EXIT, 1);
@@ -90,21 +91,18 @@ void handle_user_input(const char* input)
             kprintf("%s\n", buffer2);
         else if (strcmp(buffer1, "cat") == 0)
         {
-            openedFile = (MyFile*)(syscall_run(FS_OPEN, buffer2));
-            if (openedFile)
+            int result = (syscall_run(FS_OPEN, buffer2));
+            if (result != -1)
             {
-                char* buffer_to_read = (char*)(syscall_run(FS_READ, openedFile));
-                if (buffer_to_read)
-                {
-                    kprintf("%s\n", buffer_to_read);
-                    kfree((void*)buffer_to_read);
-                }
+                char buffer_to_read[10] = {0};
+                syscall_run(FS_READ, result, buffer_to_read, 10);
+                kprintf("%s\n", buffer_to_read);
             }
         }
         else if (strcmp(buffer1, "edit") == 0)
         {
-            openedFile = (MyFile*)(syscall_run(FS_OPEN, buffer2));
-            if (openedFile)
+            openedFile = syscall_run(FS_OPEN, buffer2);
+            if (openedFile != -1)
             {
                 waiting_for_input = 1;
                 kfree((void*)input);
@@ -115,10 +113,10 @@ void handle_user_input(const char* input)
             syscall_run(FS_CREATE, buffer2);
         else if (strcmp(buffer1, "mkdir") == 0)
             syscall_run(FS_MKDIR, buffer2);
-        if (openedFile)
+        if (openedFile != -1)
         {
             syscall_run(FS_CLOSE, openedFile);
-            openedFile = 0;
+            openedFile = -1;
         }
     }
     kfree((void*)input);
@@ -191,6 +189,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     init_timer(1193);
 
     //initializing fs to use the current disk contents and not format it.
+    init_vfs();
     init_fs(FS_DONT_FORMAT_DISK);
 
     //start menu.
