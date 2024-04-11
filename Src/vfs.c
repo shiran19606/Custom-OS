@@ -56,6 +56,10 @@ int vfs_open_file(const char* filename, int flags)
     int result = fs->open(filename, file, flags);
     if (result == 0)
         return fd;
+
+    //open error.
+    file->file_id = 0;
+    file->flags = 0;
     return -1;
 }
 
@@ -74,7 +78,10 @@ int vfs_write_file(int fd, void* buffer, int count)
         return -1;
     FILE* file = &(fs_files[fd]);
     FILESYSTEM* fs = file_systems[file->file_system_driver];
-    return fs->write(file->fs_data, buffer, count);
+    int result = fs->write(file->fs_data, buffer, count);
+    if (result != -1)
+        file->size = result;
+    return result;
 }
 
 int vfs_close_file(int fd)

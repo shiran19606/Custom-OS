@@ -7,10 +7,14 @@
 #define MAX_FILES 16
 #define MAX_FILESYSTEMS 4
 
-#define O_RDONLY 00000000
-#define O_WRONLY 00000001
-#define O_RDWR   00000002
+#define O_RDONLY 00000001
+#define O_WRONLY 00000002
+#define O_RDWR   00000003
 #define O_CREATE 00000100
+#define O_APPEND 00001000
+
+#define FS_DIR   1
+#define FS_FILE  0
 
 typedef struct FILE
 {

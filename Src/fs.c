@@ -300,17 +300,20 @@ int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len)
 		uint32_t location_to_write = inode.blocks[block] + offset_in_block;
 		ide_access(drive_num, location_to_write, len, data, ATA_WRITE);
 		fileToWrite->offset += len;
+		size_read = fileToWrite->fileSize;
 	}
 	else
 	{
 		uint8_t* data2 = getInodeContent(&inode);
-		memcpy(data2 + fileToWrite->offset, data, len); //this is good practice because even though the file doesnt have enough blocks, the getInodeContent allocates 3 Full Blocks on the heap so surely this is ok.
+		if (fileToWrite->fileSize == 0) //if the file was truncated.
+			memset(data2, 0, sizeof(Block) * POINTERS_PER_INODE);
+		memcpy(data2 + fileToWrite->offset, data, len);
 		size_read = writeData(&inode, data2, strlen(data2));
 		fileToWrite->offset = inode.fileSize;
+		fileToWrite->fileSize = inode.fileSize;
 		write_inode(fileToWrite->inodeNumber, &inode);
 		kfree((void*)data2);
 	}
-	fileToWrite->offset = 0;
 	return size_read;
 }
 
@@ -326,8 +329,6 @@ int readFromFile(MyFile* fileToRead, uint8_t* buffer, uint32_t len)
 	uint8_t* buffer2 = getInodeContent(&inode);
 	if (fileToRead->offset == fileToRead->fileSize)
 		return 0; //EOF
-	if (sizeof(buffer) < len)
-		return -1; //buffer too small.
 	memcpy(buffer, buffer2 + fileToRead->offset, len);
 	kfree((void*)buffer2);
 	return strlen(buffer);
@@ -353,23 +354,17 @@ MyFile* openFile(char* filename)
 	read_inode(working_dir, &inode2);
 	uint32_t indexOfFileInode = get_inode_from_name_and_dir(&inode2, tmp);
 	if (indexOfFileInode == 0)
-	{
-		kprintf("Error: cant open file %s\n", tmp);
 		return NULL;
-	}
 
 	Inode inode_tmp;
 	read_inode(indexOfFileInode, &inode_tmp);
 	if (inode_tmp.isDir)
-	{
-		kprintf("Cant open a directory\n");
-		return NULL;
-	}
+		return FS_DIR;
 
 	MyFile* file = (MyFile*)kmalloc(sizeof(MyFile));
 	file->inodeNumber = indexOfFileInode;
 	file->offset = 0;
-	file->fileSize = 0;
+	file->fileSize = inode_tmp.fileSize;
 	return file;
 }
 
@@ -432,14 +427,25 @@ uint32_t listDir(char* path)
 int Open(const char* filename, FILE* file_descriptor, int flags)
 {
 	MyFile* file1 = openFile(filename);
+	if (file1 == FS_DIR)
+	{
+		kprintf("Cant open a directory\n");
+		return -1;
+	}
 	if (!file1 && file_descriptor->flags & O_CREATE)
 	{
 		createFile(filename);
 		file1 = openFile(filename);
 	}
+	else if (!file1)
+	{
+		kprintf("%s does not exist\n", filename);
+		return -1;
+	}
 	file_descriptor->flags = flags;
 	file_descriptor->fs_data = (void*)file1;
 	file1->flags = flags;
+	file_descriptor->size = file1->fileSize;
 	return 0;
 }
 
@@ -448,17 +454,20 @@ int Read(void* file, void* buffer, int count)
 	MyFile* file1 = (MyFile*)file;
 	if (file1->flags & (O_RDONLY | O_RDWR))
 		return readFromFile(file1, buffer, count);
-	else
-		return -1;
+	return -1;
 }
 
 int Write(void* file, void* buffer, int count)
 {
 	MyFile* file1 = (MyFile*)file;
 	if (file1->flags & (O_WRONLY | O_RDWR))
+	{
+		if ((file1->flags & O_APPEND) != O_APPEND) //if the append flag is not present, truncated the contents of the file.
+			file1->fileSize = 0;
+		file1->offset = file1->fileSize;  //we have two cases. we either truncated the file (so no contents) or we opened with append flag and then the offset is the size cause writing to the end of the file.
 		return writeToFile(file1, buffer, count);
-	else
-		return -1;
+	}
+	return -1;
 }
 
 int Close(void* file)
