@@ -42,6 +42,16 @@ int close_file(void* params)
     return vfs_close_file(fd);
 }
 
+int seek_file(void* params)
+{
+    int fd = *(int*)params;
+    params += sizeof(int*);
+    int offset = *(int*)params;
+    params += sizeof(int*);
+    int whence = *(int*)params;
+    return vfs_seek_file(fd, offset, whence);
+}
+
 int read_file(void* params)
 {
     int fd = *(int*)params;
@@ -105,6 +115,7 @@ void syscall_init()
     syscalls[FS_CREATE      ] = create_file;
     syscalls[FS_OPEN        ] = open_file;
     syscalls[FS_CLOSE       ] = close_file;
+    syscalls[FS_SEEK        ] = seek_file;
     syscalls[FS_READ        ] = read_file;
     syscalls[FS_WRITE       ] = write_file;
     syscalls[FS_MKDIR       ] = create_dir;

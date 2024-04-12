@@ -79,6 +79,9 @@ void handle_user_input(const char* input)
         {
             syscall_run(FS_WRITE, openedFile, input, strlen(input));
             waiting_for_input = 0;
+            syscall_run(FS_SEEK, openedFile, 0, SEEK_SET);
+            syscall_run(FS_READ, openedFile, buffer1, 30);
+            kprintf("Read the data %s\n", buffer1);
             syscall_run(FS_CLOSE, openedFile);
             openedFile = -1;
             kprintf("> ");
@@ -101,7 +104,7 @@ void handle_user_input(const char* input)
         }
         else if (strcmp(buffer1, "edit") == 0)
         {
-            openedFile = syscall_run(FS_OPEN, buffer2, O_WRONLY);
+            openedFile = syscall_run(FS_OPEN, buffer2, O_RDWR | O_APPEND);
             if (openedFile != -1)
             {
                 waiting_for_input = 1;

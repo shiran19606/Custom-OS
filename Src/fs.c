@@ -476,6 +476,41 @@ int Close(void* file)
 	return closeFile(file1);
 }
 
+int Seek(void* file, int offset, int whence)
+{
+	MyFile* file1 = (MyFile*)file;
+	switch (whence)
+	{
+	case SEEK_SET:
+		file1->offset = offset;
+		break;
+	case SEEK_CUR:
+		file1->offset += offset;
+		break;
+	case SEEK_END:
+		file1->offset = file1->fileSize - 1 + offset;
+		break;
+	default:
+		return -1;
+		break;
+	}
+	if (file1->offset >= file1->fileSize)
+	{
+		void* new_content = kmalloc(file1->offset);
+		memset(new_content, 0, file1->offset);
+		Inode inode;
+		read_inode(file1->inodeNumber, &inode);
+		void* old_content = getInodeContent(&inode);
+		memcpy(new_content, old_content, file1->fileSize);
+		memset(new_content + file1->fileSize, 0, file1->offset + 1 - file1->fileSize);
+		writeData(&inode, new_content, file1->fileSize);
+		write_inode(file1->inodeNumber, &inode);
+		kfree(new_content);
+		kfree(old_content);	
+	}
+	return 0;
+}
+
 int Mkdir(const char* path, int flags)
 {
 	return createDirectory(path);
@@ -508,6 +543,7 @@ void init_fs(uint8_t format_disk)
 {
 	my_fs.open = Open;
 	my_fs.close = Close;
+	my_fs.seek = Seek;
 	my_fs.read = Read;
 	my_fs.write = Write;
 	my_fs.mkdir = Mkdir;

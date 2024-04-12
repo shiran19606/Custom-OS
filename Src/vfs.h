@@ -16,6 +16,10 @@
 #define FS_DIR   1
 #define FS_FILE  0
 
+#define SEEK_SET 0
+#define SEEK_CUR 1
+#define SEEK_END 2
+
 typedef struct FILE
 {
     uint32_t file_id;
@@ -29,6 +33,7 @@ typedef int (*open)(const char* filename, FILE* file_descriptor, int flags);
 typedef int (*read)(void* file, void* buffer, int count);
 typedef int (*write)(void* file, void* buffer, int count);
 typedef int (*close)(void* file);
+typedef int (*seek)(void* file, int offset, int whence);
 typedef int (*mkdir)(const char* path, int flags);
 
 typedef struct FILESYSTEM
@@ -38,6 +43,7 @@ typedef struct FILESYSTEM
     read read;
     write write;
     close close;
+    seek seek;
     mkdir mkdir;
 } FILESYSTEM;
 
@@ -45,6 +51,7 @@ int vfs_open_file(const char* filename, int flags);
 int vfs_read_file(int fd, void* buffer, int count);
 int vfs_write_file(int fd, void* buffer, int count);
 int vfs_close_file(int fd);
+int vfs_seek_file(int fd, int offset, int whence);
 int vfs_mkdir(const char* path, int flags);
 
 uint8_t add_fs(FILESYSTEM* fs);
