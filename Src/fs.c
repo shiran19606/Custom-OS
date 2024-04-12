@@ -286,12 +286,12 @@ int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len)
 	if (inode.isDir)
 	{
 		kprintf("Cant Write to a directory\n");
-		return 1;
+		return -1;
 	}
 	if (fileToWrite->offset + len > POINTERS_PER_INODE * FS_BLOCK_SIZE)
 	{
 		kprintf("CONTENT TOO BIG\n");
-		return 1;
+		return -1;
 	}
 	if (fileToWrite->offset + len <= fileToWrite->fileSize)
 	{
