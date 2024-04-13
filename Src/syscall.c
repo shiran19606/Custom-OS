@@ -2,7 +2,7 @@
 
 void* syscalls[MAX_SYSCALLS] = {0};
 
-static int syscall_dispatcher(registers_t* regs)
+static uint32_t syscall_dispatcher(registers_t* regs)
 {
     if (!regs || regs->eax >= MAX_SYSCALLS)
         asm volatile("cli;hlt");
@@ -17,7 +17,7 @@ static int syscall_dispatcher(registers_t* regs)
         : : "r"((uint32_t*)(regs->useresp+8)), "r"(func) : "%esp"
     );
     
-    int result;
+    uint32_t result;
     asm volatile("movl %%eax, %0" : "=r" (result));
     return result;
 }
@@ -96,11 +96,11 @@ uint32_t proc_create(void* params)
     return create_process(ent, ring, argc, argv);
 }
 
-int proc_stop(void* params)
+uint32_t proc_stop(void* params)
 {
     uint32_t exit_code = *(uint32_t*)params;
     terminate_process(exit_code);
-    while(1);
+    return 0; //shouldnt be reached, but just in case.
 }
 
 uint32_t clear_screen(void* params)

@@ -120,6 +120,7 @@ void terminate_process(uint32_t exit_code) //terminate the current process.
     current_process->status = TERMINATED;
     
     //allow interrupts again.
+    asm volatile("movl %0, %%eax" :: "r" (exit_code));
     asm volatile("sti");
     while(1);
 }
