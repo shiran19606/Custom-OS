@@ -130,6 +130,20 @@ void handle_user_input(const char* input)
 
 void func1(void)
 {
+    char buffer[30] = {0};
+    int result = syscall_run(FS_OPEN, "file5", O_RDWR);
+    int seek = syscall_run(FS_SEEK, result, 2, SEEK_END);
+    int written = syscall_run(FS_WRITE, result, "Contents", strlen("Contents"));
+    seek = syscall_run(FS_SEEK, result, 0, SEEK_SET);
+    int read = syscall_run(FS_READ, result, buffer, 30);
+    for (int i = 0;i<read;i++)
+    {
+        if (buffer[i])
+            kprintf("%c", buffer[i]);
+        else
+            kprintf("A");
+    }
+    syscall_run(FS_CLOSE, result);
     int i = 0;
     while (i++ < 10000);
     syscall_run(PROC_EXIT, 0);

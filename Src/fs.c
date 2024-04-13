@@ -308,7 +308,7 @@ int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len)
 		if (fileToWrite->fileSize == 0) //if the file was truncated.
 			memset(data2, 0, sizeof(Block) * POINTERS_PER_INODE);
 		memcpy(data2 + fileToWrite->offset, data, len);
-		size_read = writeData(&inode, data2, strlen(data2));
+		size_read = writeData(&inode, data2, inode.fileSize + len);
 		fileToWrite->offset = inode.fileSize;
 		fileToWrite->fileSize = inode.fileSize;
 		write_inode(fileToWrite->inodeNumber, &inode);
@@ -328,10 +328,12 @@ int readFromFile(MyFile* fileToRead, uint8_t* buffer, uint32_t len)
 	}
 	uint8_t* buffer2 = getInodeContent(&inode);
 	if (fileToRead->offset == fileToRead->fileSize)
-		return 0; //EOF
+		return -1; //EOF
+	if (len > (fileToRead->fileSize - fileToRead->offset))
+		len = fileToRead->fileSize - fileToRead->offset;
 	memcpy(buffer, buffer2 + fileToRead->offset, len);
 	kfree((void*)buffer2);
-	return strlen(buffer);
+	return len;
 }
 
 MyFile* openFile(char* filename)
@@ -442,6 +444,12 @@ int Open(const char* filename, FILE* file_descriptor, int flags)
 		kprintf("%s does not exist\n", filename);
 		return -1;
 	}
+	
+	//if we reached here, it means the file was opened successfuly.
+	if ((file_descriptor->flags & O_APPEND) != O_APPEND) //if the append flag is not present, truncated the contents of the file.
+		file1->fileSize = 0;
+	file1->offset = file1->fileSize;  //we have two cases. we either truncated the file (so no contents) or we opened with append flag and then the offset is the size cause writing to the end of the file.
+
 	file_descriptor->flags = flags;
 	file_descriptor->fs_data = (void*)file1;
 	file1->flags = flags;
@@ -461,12 +469,7 @@ int Write(void* file, void* buffer, int count)
 {
 	MyFile* file1 = (MyFile*)file;
 	if (file1->flags & (O_WRONLY | O_RDWR))
-	{
-		if ((file1->flags & O_APPEND) != O_APPEND) //if the append flag is not present, truncated the contents of the file.
-			file1->fileSize = 0;
-		file1->offset = file1->fileSize;  //we have two cases. we either truncated the file (so no contents) or we opened with append flag and then the offset is the size cause writing to the end of the file.
 		return writeToFile(file1, buffer, count);
-	}
 	return -1;
 }
 
@@ -488,7 +491,7 @@ int Seek(void* file, int offset, int whence)
 		file1->offset += offset;
 		break;
 	case SEEK_END:
-		file1->offset = file1->fileSize - 1 + offset;
+		file1->offset = file1->fileSize + offset;
 		break;
 	default:
 		return -1;
