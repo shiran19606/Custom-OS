@@ -202,17 +202,17 @@ uint8_t* getInodeContent(Inode* inode)
 	return blocks;
 }
 
-uint32_t createFile(const char* filename)
+int createFile(const char* filename)
 {
 	createFileOrDirectory(filename, 0);
 }
 
-uint32_t createDirectory(const char* dirname)
+int createDirectory(const char* dirname)
 {
 	createFileOrDirectory(dirname, 1);
 }
 
-uint32_t createFileOrDirectory(const char* filename, int isDir)
+int createFileOrDirectory(const char* filename, int isDir)
 {
 	if (filename[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		filename++;
@@ -368,14 +368,14 @@ MyFile* openFile(char* filename)
 	return file;
 }
 
-uint32_t closeFile(MyFile* file1)
+int closeFile(MyFile* file1)
 {
 	if (file1)
 		kfree(file1);
 	return 0;
 }
 
-uint32_t listDir(char* path)
+int listDir(char* path)
 {
 	if (path[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		path++;
@@ -398,14 +398,14 @@ uint32_t listDir(char* path)
 	if (working_dir == 0)
 	{
 		kprintf("Error: cant list directory\n");
-		return 1;
+		return -1;
 	}
 	read_inode(working_dir, &inode2);
 
 	if (!inode2.isDir)
 	{
 		kprintf("cant ls a file\n");
-		return 1;
+		return -1;
 	}
 
 	//add to parent directory.
@@ -432,12 +432,12 @@ int Open(const char* filename, FILE* file_descriptor, int flags)
 		kprintf("Cant open a directory\n");
 		return -1;
 	}
-	if (!file1 && file_descriptor->flags & O_CREATE)
+	if (file1 == NULL && (file_descriptor->flags & O_CREATE) == O_CREATE)
 	{
 		createFile(filename);
 		file1 = openFile(filename);
 	}
-	else if (!file1)
+	else if (file1 == NULL)
 	{
 		kprintf("%s does not exist\n", filename);
 		return -1;
@@ -503,7 +503,8 @@ int Seek(void* file, int offset, int whence)
 		void* old_content = getInodeContent(&inode);
 		memcpy(new_content, old_content, file1->fileSize);
 		memset(new_content + file1->fileSize, 0, file1->offset + 1 - file1->fileSize);
-		writeData(&inode, new_content, file1->fileSize);
+		writeData(&inode, new_content, file1->offset);
+		file1->fileSize = file1->offset;
 		write_inode(file1->inodeNumber, &inode);
 		kfree(new_content);
 		kfree(old_content);	

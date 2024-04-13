@@ -64,17 +64,17 @@ typedef struct dirEntry //in a directory, each file in the directory will have a
 
 
 //helper functions.
-uint32_t createFileOrDirectory(const char* filename, int isDir);
+int createFileOrDirectory(const char* filename, int isDir);
 uint8_t* getInodeContent(Inode* inode);
 
 //user functions
-uint32_t createFile(const char* filename);
-uint32_t createDirectory(const char* dirname);
+int createFile(const char* filename);
+int createDirectory(const char* dirname);
 int writeToFile(MyFile* fileToWrite, const char* data, uint32_t len);
 int readFromFile(MyFile* fileToRead, uint8_t* buffer, uint32_t len);
 MyFile* openFile(char* filename);
-uint32_t closeFile(MyFile* file1);
-uint32_t listDir(char* path);
+int closeFile(MyFile* file1);
+int listDir(char* path);
 
 //init functions
 void init_fs(uint8_t format_disk);

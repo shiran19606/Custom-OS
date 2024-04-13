@@ -29,7 +29,7 @@ extern uint32_t* pmm_bitmap;
 extern uint32_t* bitmap_end;
 
 uint8_t waiting_for_input = 0;
-int openedFile = 0;
+int openedFile = -1;
 
 void split_by_space(const char* string_to_split, char* buffer1, char* buffer2)
 {
