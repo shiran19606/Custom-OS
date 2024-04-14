@@ -45,7 +45,7 @@ int vfs_open_file(const char* filename, int flags)
 {
     int8_t fd = get_file_descriptor(0);
     if (fd == -1)
-        return -1;
+        return 1;
     FILE* file = &(fs_files[fd]);
     file->flags = flags;
     file->size = 0;
@@ -95,15 +95,6 @@ int vfs_close_file(int fd)
     FILESYSTEM* fs = file_systems[file->file_system_driver];
     file->file_system_driver = 0;
     return fs->close(file->fs_data);
-}
-
-int vfs_seek_file(int fd, int offset, int whence)
-{
-    if (fd < 0 || fd >= MAX_FILES)
-        return -1;
-    FILE* file = &(fs_files[fd]);
-    FILESYSTEM* fs = file_systems[file->file_system_driver];
-    return fs->seek(file->fs_data, offset, whence);
 }
 
 int vfs_mkdir(const char* path, int flags)

@@ -2,7 +2,7 @@
 
 void* syscalls[MAX_SYSCALLS] = {0};
 
-static int syscall_dispatcher(registers_t* regs)
+static uint32_t syscall_dispatcher(registers_t* regs)
 {
     if (!regs || regs->eax >= MAX_SYSCALLS)
         asm volatile("cli;hlt");
@@ -17,7 +17,7 @@ static int syscall_dispatcher(registers_t* regs)
         : : "r"((uint32_t*)(regs->useresp+8)), "r"(func) : "%esp"
     );
     
-    int result;
+    uint32_t result;
     asm volatile("movl %%eax, %0" : "=r" (result));
     return result;
 }
@@ -40,16 +40,6 @@ int close_file(void* params)
 {
     int fd = *(int*)params;
     return vfs_close_file(fd);
-}
-
-int seek_file(void* params)
-{
-    int fd = *(int*)params;
-    params += sizeof(int*);
-    int offset = *(int*)params;
-    params += sizeof(int*);
-    int whence = *(int*)params;
-    return vfs_seek_file(fd, offset, whence);
 }
 
 int read_file(void* params)
@@ -96,11 +86,11 @@ uint32_t proc_create(void* params)
     return create_process(ent, ring, argc, argv);
 }
 
-int proc_stop(void* params)
+uint32_t proc_stop(void* params)
 {
     uint32_t exit_code = *(uint32_t*)params;
     terminate_process(exit_code);
-    while(1);
+    return 0; //shouldnt be reached, but just in case.
 }
 
 uint32_t clear_screen(void* params)
@@ -115,7 +105,6 @@ void syscall_init()
     syscalls[FS_CREATE      ] = create_file;
     syscalls[FS_OPEN        ] = open_file;
     syscalls[FS_CLOSE       ] = close_file;
-    syscalls[FS_SEEK        ] = seek_file;
     syscalls[FS_READ        ] = read_file;
     syscalls[FS_WRITE       ] = write_file;
     syscalls[FS_MKDIR       ] = create_dir;
