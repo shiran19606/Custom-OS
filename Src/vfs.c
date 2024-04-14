@@ -45,7 +45,7 @@ int vfs_open_file(const char* filename, int flags)
 {
     int8_t fd = get_file_descriptor(0);
     if (fd == -1)
-        return 1;
+        return -1;
     FILE* file = &(fs_files[fd]);
     file->flags = flags;
     file->size = 0;
