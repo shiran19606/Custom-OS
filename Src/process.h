@@ -22,11 +22,18 @@ typedef struct process
 {
     uint32_t stack_top;
     uint32_t cr3;
-    struct process* next;
+    volatile struct process* next;
     uint32_t status;
     uint32_t initial_stack;
     uint32_t ring;
 } process_t;
+
+typedef struct registers1
+{
+   uint32_t eax1;                  // Data segment selector
+   uint32_t eflags1, edi, esi, ebp, edx, ecx, ebx, eax; // Pushed by pusha.
+   uint32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically.
+}registers1_t;
 
 
 void add_process(process_t** list, process_t* new_process);
@@ -35,7 +42,6 @@ void terminate_process(uint32_t exit_code);
 uint32_t init_multitasking();
 void clean_terminated_list();
 
-extern void SwitchToTask(process_t* process);
 extern uint32_t get_esp();
 
 #endif

@@ -63,6 +63,13 @@ void print_user_menu()
     kprintf("edit - edit the contents of a file, by overwriting the current file content\n");
 }
 
+void exit(int exit_code)
+{
+    syscall_run(PROC_EXIT, exit_code);
+    while(1);//after the process is removed from the process list, it runs while(1) until a system call switches the processes.
+    //TODO: add support for yield or something like that to not wait.
+}
+
 void handle_user_input(const char* input)
 {
     //the input is heap-allocated, so transfer it to the stack.
@@ -83,7 +90,7 @@ void handle_user_input(const char* input)
             openedFile = -1;
             kprintf("> ");
             kfree((void*)input);
-            syscall_run(PROC_EXIT, 1);
+            exit(0);
         }
         else if (strcmp(buffer1, "ls") == 0)
             syscall_run(FS_LIST, buffer2);
@@ -101,12 +108,12 @@ void handle_user_input(const char* input)
         }
         else if (strcmp(buffer1, "edit") == 0)
         {
-            openedFile = syscall_run(FS_OPEN, buffer2, O_WRONLY);
+            openedFile = syscall_run(FS_OPEN, buffer2, O_WRONLY | O_CREATE);
             if (openedFile != -1)
             {
                 waiting_for_input = 1;
                 kfree((void*)input);
-                syscall_run(PROC_EXIT, 1);
+                exit(0);
             }
         }
         else if (strcmp(buffer1, "touch") == 0)
@@ -121,22 +128,30 @@ void handle_user_input(const char* input)
     }
     kfree((void*)input);
     kprintf("> ");
-    syscall_run(PROC_EXIT, 0);
+    exit(0);
 }
 
 
 void func1(void)
 {
-    int i = 0;
-    while (i++ < 10000);
-    syscall_run(PROC_EXIT, 0);
+
+    int result = syscall_run(FS_OPEN, "file9",  O_CREATE | O_RDWR);
+    if (result != -1)
+    {
+        int written = syscall_run(FS_WRITE, result, "Damn", 4);
+        int seek = syscall_run(FS_SEEK, result, 0, SEEK_SET);
+        char buffer[20] = {0};
+        int read = syscall_run(FS_READ, result, buffer, 20);
+        kprintf("Read %d %s\n", read, buffer);
+        syscall_run(FS_CLOSE, result);
+    }
+    while(1);
+    exit(0);
 }
 
 void func2(void)
 {
-    int i = 0;
-    while (i++ < 10000);
-    syscall_run(PROC_EXIT, 0);
+    exit(0);
 }
 
 void kernel_main(multiboot_info_t* mboot_ptr) 
@@ -183,23 +198,25 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     ide_initialize(0x1F0, 0x3F6, 0x170, 0x376, 0x000); //initialize disk driver to use in file system.
     init_multitasking();
     kprintf("initialized multitasking\n");
-    create_process(func1, USER_SPACE, 0, 0);
-    create_process(func2, USER_SPACE, 0, 0);
-    create_process(clean_terminated_list, KERNEL_SPACE, 0, 0);
-    init_timer(1193);
 
     //initializing fs to use the current disk contents and not format it.
     init_vfs();
     init_fs(FS_DONT_FORMAT_DISK);
+
+    create_process(func1, USER_SPACE, 0, 0);
+    create_process(func2, USER_SPACE, 0, 0);
+    create_process(clean_terminated_list, KERNEL_SPACE, 0, 0);
+
 
     //start menu.
     kprintf("Type 'help' to get the user menu\n");
     kprintf("> ");
 
     syscall_init();
-    
     set_tss_kernel_stack(0x10, get_esp());
     
-    terminate_process(0); //kill this process. 
-    while(1); //should not be reached, but just in case.
+    init_timer(1193);
+
+    terminate_process(0); //kill this process.
+    while(1);
 }

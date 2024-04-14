@@ -1,7 +1,7 @@
 #include "process.h"
 
-process_t* process_list;
-process_t* current_process;
+volatile process_t* process_list;
+volatile process_t* current_process;
 
 volatile process_t* terminated_process_list;
 
@@ -10,10 +10,10 @@ extern uint32_t PAGE_DIR_VIRTUAL;
 extern uint32_t PAGE_DIR_PHYSICAL;
 
 //function called by assembly code in interrupts.s, responsible for finding the next process, and return it.
-process_t* schedule()
+process_t* schedule(registers1_t* regs)
 {
     current_process->status = READY; //now not running anymore, but ready.
-    process_t* next_proc = (current_process->next != NULL) ? current_process->next : process_list;
+    volatile process_t* next_proc = (current_process->next != NULL) ? current_process->next : process_list;
     if (next_proc == NULL)
         asm volatile("cli;hlt");
     return next_proc;
@@ -103,6 +103,7 @@ void terminate_process(uint32_t exit_code) //terminate the current process.
 {
     //stop interrupts to not have a context switch during process termination.
     asm volatile("cli");
+    kprintf("Stopping process %x\n", current_process);
     process_t* temp = process_list;
     process_t* last = 0;
     while (temp && temp != current_process)
@@ -120,15 +121,14 @@ void terminate_process(uint32_t exit_code) //terminate the current process.
     current_process->status = TERMINATED;
     
     //allow interrupts again.
-    asm volatile("movl %0, %%eax" :: "r" (exit_code));
     asm volatile("sti");
-    while(1);
 }
 
 uint32_t init_multitasking()
 {
     process_list = 0;
     current_process = 0;
+    terminated_process_list = 0;
 
     process_t* tmp_proc = (process_t*)kmalloc(sizeof(process_t));
     tmp_proc->stack_top = 0;
@@ -152,10 +152,10 @@ void clean_terminated_list()
 {
     while(1)
     {
-        volatile process_t* temp = terminated_process_list;
-        if (temp)
+        if (terminated_process_list)
         {
             asm volatile("cli");
+            process_t* temp = terminated_process_list;
             terminated_process_list = terminated_process_list->next;
 
             //all processes have theyre stack on the kernel heap, except for the main process whos stack is created in loader.s. for that main process, proc->initial_stack is set to 0.
