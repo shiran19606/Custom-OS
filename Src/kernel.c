@@ -64,10 +64,9 @@ void print_user_menu()
 }
 
 void exit(int exit_code)
-{
+{   
     syscall_run(PROC_EXIT, exit_code);
-    while(1);//after the process is removed from the process list, it runs while(1) until a system call switches the processes.
-    //TODO: add support for yield or something like that to not wait.
+    while(1);
 }
 
 void handle_user_input(const char* input)
@@ -134,24 +133,26 @@ void handle_user_input(const char* input)
 
 void func1(void)
 {
-
+    /*   
     int result = syscall_run(FS_OPEN, "file9",  O_CREATE | O_RDWR);
     if (result != -1)
     {
         int written = syscall_run(FS_WRITE, result, "Damn", 4);
+        kprintf("Written\n");
         int seek = syscall_run(FS_SEEK, result, 0, SEEK_SET);
+        kprintf("Seek\n");
         char buffer[20] = {0};
         int read = syscall_run(FS_READ, result, buffer, 20);
         kprintf("Read %d %s\n", read, buffer);
         syscall_run(FS_CLOSE, result);
     }
-    while(1);
-    exit(0);
+    */
+    exit(1);
 }
 
 void func2(void)
 {
-    exit(0);
+    exit(2);
 }
 
 void kernel_main(multiboot_info_t* mboot_ptr) 
@@ -218,5 +219,6 @@ void kernel_main(multiboot_info_t* mboot_ptr)
     init_timer(1193);
 
     terminate_process(0); //kill this process.
+    asm volatile("sti");
     while(1);
 }

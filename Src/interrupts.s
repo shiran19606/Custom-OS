@@ -7,6 +7,7 @@
 [EXTERN ticks]
 [EXTERN printNumberHex]
 [EXTERN put_char]
+[EXTERN TSS]
 
 
 ;we will write a macro handler for a case where no error code is pushed, and a macro handler for a case where an error code is pushed.
@@ -172,25 +173,27 @@ USER_SPACE      equ 3
 
 Timer_Handler:
     cli
-    push        eax
-    push        ebx
-    push        ecx
-    push        edx
-    push        ebp
-    push        esi
-    push        edi
-    pushfd
-    
-    inc dword [ticks]
+    push dword 0
+    push dword 32
+    pushad
+
+    inc         dword [ticks]
     mov         eax,0x20
     out         0x20,al
 
-    push eax
-    push esp
-    call schedule
-    pop esp
-    mov ebp, eax
-    pop eax
+    mov         ax, ds
+    push        eax
+    mov         ax, 0x10
+    mov         ds, ax
+    mov         es, ax
+    mov         fs, ax
+    mov         gs, ax
+
+    push        esp
+    cld
+    call        schedule
+    pop         esp
+    mov         ebp, eax
     
     cli
     mov         edi,[current_process]        ;; `edi` = previous tasks PCB
@@ -201,43 +204,29 @@ Timer_Handler:
 
     ;; -- load the next task's state
 
-    mov esi, ebp
-    mov [current_process], esi
+    mov         esi, ebp
+    mov         [current_process], esi
 
     mov         esp,[esi+TOS]           ;; load the next process's stack
     mov         eax,[esi+VAS]
     mov         cr3,eax
     mov         dword [esi+STATE],RUNNING     ;; make the current task running
 
-    xor eax, eax
-    mov ebx, dword [esi+RING]
-    cmp ebx, KERNEL_SPACE
-    je is_kernel_mode
+    mov         ebx, TSS
+    mov         eax, [esi+24]
+    mov         [ebx+4], eax
 
-    mov eax, 0x23
-    jmp finish
-is_kernel_mode:
-    mov eax, 0x10
-finish:
-    mov ds, ax       
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
+    
+    pop         eax     ;pop ds value.
+    mov         ds, ax       
+    mov         es, ax
+    mov         fs, ax
+    mov         gs, ax
 
-    pop         eax
-    or   eax, 0x200
-    push        eax
-
-    popfd
-    pop         edi
-    pop         esi
-    pop         ebp
-    pop         edx
-    pop         ecx
-    pop         ebx
-    pop         eax
+    popad
+    add esp, 8
 retting:
-    iret
+    iretd
 
 [GLOBAL get_esp]
 

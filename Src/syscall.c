@@ -90,9 +90,8 @@ uint32_t proc_create(void* params)
 
 int proc_stop(void* params)
 {
-    uint32_t exit_code = *(uint32_t*)params;
-    terminate_process(exit_code);
-    return 0;
+    int exit_code = *(int*)params;
+    return terminate_process(exit_code);
 }
 
 uint32_t clear_screen(void* params)
