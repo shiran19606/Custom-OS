@@ -18,6 +18,8 @@ return value: None.
 */
 static void page_fault(registers_t* regs)
 {
+    kprintf("SUCKS");
+    asm volatile("cli;hlt");
     uint32_t address;
     asm volatile("movl %%cr2, %0" :"r=" (address)); //cr2 register stores the address that caused the page fault.
     uint8_t present = !(regs->err_code & PTE_PRESENT);

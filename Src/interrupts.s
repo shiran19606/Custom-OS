@@ -207,11 +207,12 @@ Timer_Handler:
     mov         esi, ebp
     mov         [current_process], esi
 
-    mov         esp,[esi+TOS]           ;; load the next process's stack
-    mov         eax,[esi+VAS]
-    mov         cr3,eax
+    mov         esp, [esi+TOS]           ;; load the next process's stack
+    mov         eax, [esi+VAS]
+    mov         cr3, eax
     mov         dword [esi+STATE],RUNNING     ;; make the current task running
 
+    ;update TSS with ESP0
     mov         ebx, TSS
     mov         eax, [esi+24]
     mov         [ebx+4], eax

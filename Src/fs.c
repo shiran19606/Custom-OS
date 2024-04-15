@@ -189,15 +189,18 @@ int writeData(Inode* inode, const char* data, int dataSize) {
 //in this function, the caller is responsible to kfree the memory allocated by kmalloc.
 uint8_t* getInodeContent(Inode* inode)
 {
-	uint8_t* blocks = (uint8_t*)kmalloc(sizeof(Block) * POINTERS_PER_INODE); //3 blocks in each inode
-	memset((void*)blocks, 0, sizeof(Block) * POINTERS_PER_INODE);
+	uint8_t* blocks = (uint8_t*)kmalloc((sizeof(Block) * POINTERS_PER_INODE)); //3 blocks in each inode
+	memset((void*)blocks, 0, (sizeof(Block) * POINTERS_PER_INODE));
 	int j = 0;
 	uint32_t size = inode->fileSize;
-	for (int i = 0; i < inode->numOfBlocksUsed; i++)
+	if (size != 0)
 	{
-		uint32_t size_to_read = (size > FS_BLOCK_SIZE) ? FS_BLOCK_SIZE : size;
-		ide_access(drive_num, inode->blocks[i], size_to_read, blocks + (i * FS_BLOCK_SIZE), ATA_READ);
-		size_to_read -= FS_BLOCK_SIZE;
+		for (int i = 0; i < inode->numOfBlocksUsed; i++)
+		{
+			uint32_t size_to_read = (size > FS_BLOCK_SIZE) ? FS_BLOCK_SIZE : size;
+			ide_access(drive_num, inode->blocks[i], size_to_read, blocks + (i * FS_BLOCK_SIZE), ATA_READ);
+			size_to_read -= FS_BLOCK_SIZE;
+		}
 	}
 	return blocks;
 }
@@ -387,15 +390,17 @@ int listDir(char* path)
 
 	//this code here is used to create a string to call get_working_dir with. if the user entered Dir1 to list the directory Dir1, the get_working_dir terminates the string by '/' so it expects to see '/' at the end, so we add a '/' to a tmp string.
 	uint32_t size_path = strlen(path);
-	char* str = (char*)kmalloc(size_path + 2);
-	memcpy(str, path, size_path);
-	str[size_path] = '/';
-	str[size_path + 1] = 0;
-
 	uint32_t working_dir = 1;
-	if (strcmp(str, "/") != 0)
-		working_dir = get_working_dir(&inode2, str);
-	kfree((void*)str);
+	if (size_path) //if size_path it means we are not in the root dir.
+	{
+		char* str = (char*)kmalloc(size_path + 2);
+		memcpy(str, path, size_path);
+		str[size_path] = '/';
+		str[size_path + 1] = 0;
+		if (strcmp(str, "/") != 0)
+			working_dir = get_working_dir(&inode2, str);
+		kfree((void*)str);
+	}
 
 	if (working_dir == 0)
 	{
@@ -411,18 +416,18 @@ int listDir(char* path)
 	}
 
 	//add to parent directory.
-	uint8_t* ptr = getInodeContent(&inode2); 
-	uint8_t* newEntry = ptr;
+	uint8_t* block_to_use = getInodeContent(&inode2); 
+	directoryEntry* ptr = block_to_use;
 
 	kprintf("Listing directory at path: /%s\n", path);
-	
-	while (ptr && ((directoryEntry*)ptr)->inodeNumber)
+	while(ptr && ((int)(ptr->inodeNumber) > 0))
 	{
-		kprintf("%s ", ((directoryEntry*)ptr)->filename);
-		ptr += sizeof(directoryEntry);
+		kprintf("%s ", ptr->inodeNumber);
+		ptr++;
 	}
+
 	kprintf("\n");
-	kfree((void*)newEntry);
+	kfree((void*)(block_to_use));
 	return 0;
 }
 

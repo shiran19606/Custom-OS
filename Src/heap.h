@@ -8,6 +8,7 @@
 
 // Define the block header structure
 typedef struct block_header {
+    uint32_t block_start;
     uint32_t size;
     struct block_header* next;
 } block_header;

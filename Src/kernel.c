@@ -202,7 +202,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 
     //initializing fs to use the current disk contents and not format it.
     init_vfs();
-    init_fs(FS_DONT_FORMAT_DISK);
+    init_fs(FS_FORMAT_DISK);
 
     create_process(func1, USER_SPACE, 0, 0);
     create_process(func2, USER_SPACE, 0, 0);

@@ -24,11 +24,11 @@ uint32_t strcmp(const char* str1, const char* str2)
 void memset(void* dst, uint32_t val, uint32_t size)
 {
     //in case the value is not one byte, we make sure it is.
-    val = (val & 0xFF);
+    uint8_t val1 = (val & 0xFF);
     char* dest = (char*)dst;
 
     for (uint32_t i = 0; i < size; i++) {
-        dest[i] = val;
+        dest[i] = val1;
     }
 }
 
