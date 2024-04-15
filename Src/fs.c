@@ -385,8 +385,10 @@ int listDir(char* path)
 	if (path[0] == '/') //if the path starts with / means the path starts from root, which is automatically so we dont need that char.
 		path++;
 
+
 	Inode inode2;
 	read_inode(1, &inode2);
+
 
 	//this code here is used to create a string to call get_working_dir with. if the user entered Dir1 to list the directory Dir1, the get_working_dir terminates the string by '/' so it expects to see '/' at the end, so we add a '/' to a tmp string.
 	uint32_t size_path = strlen(path);
@@ -402,6 +404,7 @@ int listDir(char* path)
 		kfree((void*)str);
 	}
 
+
 	if (working_dir == 0)
 	{
 		kprintf("Error: cant list directory\n");
@@ -409,15 +412,18 @@ int listDir(char* path)
 	}
 	read_inode(working_dir, &inode2);
 
+
 	if (!inode2.isDir)
 	{
 		kprintf("cant ls a file\n");
 		return -1;
 	}
 
+
 	//add to parent directory.
 	uint8_t* block_to_use = getInodeContent(&inode2); 
 	directoryEntry* ptr = block_to_use;
+
 
 	kprintf("Listing directory at path: /%s\n", path);
 	while(ptr && ((int)(ptr->inodeNumber) > 0))
@@ -426,8 +432,10 @@ int listDir(char* path)
 		ptr++;
 	}
 
+
 	kprintf("\n");
 	kfree((void*)(block_to_use));
+	kprintf("END\n");
 	return 0;
 }
 

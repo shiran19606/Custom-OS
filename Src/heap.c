@@ -88,7 +88,7 @@ void* kmalloc(uint32_t size)
             }
 
             release(&heap_lock);
-            return ((char*)block + sizeof(block_header));
+            return block->block_start;
         }
 
         prev_block = block;
@@ -100,7 +100,7 @@ void* kmalloc(uint32_t size)
         block->next = NULL;
         block->block_start = (uint32_t)block + sizeof(block_header);
         release(&heap_lock);
-        return ((char*)block + sizeof(block_header));
+        return block->block_start;
     }
     else
     {
@@ -152,7 +152,7 @@ void kfree(void* ptr)
     {
         if ((current->block_start + current->size) == (uint32_t)(current->next))
         {
-            current->size += (current->next->size + sizeof(block_header));
+            current->size = current->size + current->next->size + sizeof(block_header);
             current->next = current->next->next;
             current = free_list;
         }

@@ -71,7 +71,6 @@ void exit(int exit_code)
 
 void handle_user_input(const char* input)
 {
-    //the input is heap-allocated, so transfer it to the stack.
     if (!waiting_for_input && strcmp(input, "help") == 0)
         print_user_menu();
     else if (!waiting_for_input && strcmp(input, "clear") == 0)
@@ -202,7 +201,7 @@ void kernel_main(multiboot_info_t* mboot_ptr)
 
     //initializing fs to use the current disk contents and not format it.
     init_vfs();
-    init_fs(FS_FORMAT_DISK);
+    init_fs(FS_DONT_FORMAT_DISK);
 
     create_process(func1, USER_SPACE, 0, 0);
     create_process(func2, USER_SPACE, 0, 0);
