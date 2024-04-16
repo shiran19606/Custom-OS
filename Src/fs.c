@@ -435,7 +435,6 @@ int listDir(char* path)
 
 	kprintf("\n");
 	kfree((void*)(block_to_use));
-	kprintf("END\n");
 	return 0;
 }
 

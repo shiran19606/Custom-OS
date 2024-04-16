@@ -132,7 +132,7 @@ void handle_user_input(const char* input)
 
 void func1(void)
 {
-    /*   
+    /*
     int result = syscall_run(FS_OPEN, "file9",  O_CREATE | O_RDWR);
     if (result != -1)
     {

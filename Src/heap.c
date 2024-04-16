@@ -2,9 +2,7 @@
 
 
 block_header* free_list = NULL;
-int heap_lock = 0;
 
-//TODO: find a solution to the heap being a user heap, as explained in the commit why it is a user heap.
 void initialize_allocator() {
     // Initialize the free list with the entire memory space
     uint32_t num_pages = MEMORY_SIZE / PAGE_SIZE;
@@ -25,7 +23,6 @@ void initialize_allocator() {
     block_header* initial_block = (block_header*)KHEAP_START;
     initial_block->size = (MEMORY_SIZE - sizeof(block_header));
     initial_block->next = NULL;
-    initial_block->block_start = KHEAP_START + sizeof(block_header);
     free_list = initial_block;
 }
 
@@ -59,9 +56,8 @@ void swapNodes(block_header** head_ref, block_header* nodeX, block_header* nodeY
 }
 
 // Custom malloc function, that takes the size of the wanted memory and returns a pointer to the block allocated.
-void* kmalloc(uint32_t size) 
-{
-    acquire(&heap_lock);
+void* kmalloc(uint32_t size) {
+
     block_header* block = free_list;
     block_header* prev_block = NULL;
     // Find a suitable block in the free list
@@ -75,8 +71,6 @@ void* kmalloc(uint32_t size)
                 new_block->next = block->next;
                 block->next = new_block;
                 block->size = size;
-                block->block_start = ((char*)block + sizeof(block_header));
-                new_block->block_start = ((char*)new_block + sizeof(block_header));
             }
 
             // Remove the allocated block from the free list
@@ -86,9 +80,7 @@ void* kmalloc(uint32_t size)
             else {
                 prev_block->next = block->next;
             }
-
-            release(&heap_lock);
-            return block->block_start;
+            return ((char*)block + sizeof(block_header));
         }
 
         prev_block = block;
@@ -98,66 +90,46 @@ void* kmalloc(uint32_t size)
     {
         block->size = size;
         block->next = NULL;
-        block->block_start = (uint32_t)block + sizeof(block_header);
-        release(&heap_lock);
-        return block->block_start;
+        return ((char*)block + sizeof(block_header));
     }
     else
     {
-        release(&heap_lock);
         return 0;
-    }
-}
-
-void insert_sorted(block_header** head_ref, block_header* new_node)
-{
-    block_header* current;
-    block_header* head = *head_ref;
-    /* Special case for the head end */
-    if (head == NULL || (head)->block_start >= new_node->block_start) 
-    {
-        new_node->next = head;
-        *head_ref = new_node;
-    }
-    else 
-    {
-        current = head;
-        while (current->next != NULL && current->next->block_start < new_node->block_start) {
-            current = current->next;
-        }
-        new_node->next = current->next;
-        current->next = new_node;
     }
 }
 
 
 // Custom free function
-void kfree(void* ptr) 
-{
+void kfree(void* ptr) {
     if (!ptr) {
         return; // Null pointer
     }
 
-    acquire(&heap_lock);
-
     // Get the block header by moving back the pointer
     block_header* block_to_free = (block_header*)(((uint32_t)ptr) - sizeof(block_header));
-    block_header* current = free_list;
     // Insert the block back into the free list
-    insert_sorted(&free_list, block_to_free);
+    block_to_free->next = free_list;
+    free_list = block_to_free;
 
     // Coalesce adjacent free blocks
-    current = free_list;
-    while (current != NULL && current->next != NULL)
-    {
-        if ((current->block_start + current->size) == (uint32_t)(current->next))
-        {
-            current->size = current->size + current->next->size + sizeof(block_header);
+    block_header* current = free_list;
+    while (current != NULL && current->next != NULL) {
+        // Check if the next block is logically adjacent
+        if (((char*)current) - current->next->size - sizeof(block_header) == (char*)current->next) {
+            // Merge adjacent blocks
+            block_header* temp = current->next;
+            swapNodes(&free_list, current, current->next);
+            current = temp;
+        }
+        if (((char*)current) + current->size + sizeof(block_header) == (char*)current->next) {
+            // Merge adjacent blocks
+            current->size += sizeof(block_header) + current->next->size;
             current->next = current->next->next;
             current = free_list;
         }
-        else
+        else {
             current = current->next;
+        }
     }
-    release(&heap_lock);
+
 }
