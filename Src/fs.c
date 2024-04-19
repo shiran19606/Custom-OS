@@ -26,7 +26,7 @@ void set_inode_bitmap(uint32_t* bitmap)
 	ide_access(drive_num, sb->inodeBitmap, (sb->inodesCount / BITS_PER_BYTE), (uint32_t)bitmap, ATA_WRITE);
 }
 
-void set_blcok_bitmap(uint32_t* bitmap)
+void set_block_bitmap(uint32_t* bitmap)
 {
 	ide_access(drive_num, sb->blockBitmap, (sb->blocksCount / BITS_PER_BYTE), (uint32_t)bitmap, ATA_WRITE);
 }
@@ -167,7 +167,7 @@ int writeData(Inode* inode, const char* data, int dataSize) {
 		setBit((uint32_t*)block_bitmap, (uint32_t)kfreeBlockIndex); // Set the bit in the block bitmap
 		inode->blocks[i] = (uint32_t)sb->blocksAddress + kfreeBlockIndex * FS_BLOCK_SIZE; // Assign block number to the inode
 	}
-	set_blcok_bitmap(block_bitmap);
+	set_block_bitmap(block_bitmap);
 	kfree((void*)block_bitmap);
 
 	int blockIndex = 0;
