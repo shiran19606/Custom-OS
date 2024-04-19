@@ -428,10 +428,9 @@ int listDir(char* path)
 	kprintf("Listing directory at path: /%s\n", path);
 	while(ptr && ((int)(ptr->inodeNumber) > 0))
 	{
-		kprintf("%s ", ptr->inodeNumber);
+		kprintf("%s ", ptr->filename);
 		ptr++;
 	}
-
 
 	kprintf("\n");
 	kfree((void*)(block_to_use));

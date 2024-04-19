@@ -75,18 +75,22 @@ uint32_t create_process(void (*ent)(), uint32_t ring, int argc, ...)
     uint32_t ss = (ring == KERNEL_SPACE) ? 0x10 : 0x23;
     uint32_t cs = (ring == KERNEL_SPACE) ? 0x08 : 0x1b;
 
-    void** arr = (void*)kmalloc(argc * sizeof(void*));
-    for (int index = 0;index<argc;index++)
+    if (argc)
     {
-        void* ptr = va_arg(args, void*);
-        arr[index] = ptr;
+        void** arr = (void*)kmalloc(argc * sizeof(void*));
+        for (int index = 0;index<argc;index++)
+        {
+            void* ptr = va_arg(args, void*);
+            arr[index] = ptr;
+        }
+        for (int index = argc-1;index>=0;index--)
+        {
+            PUSH(stack, arr[index]);
+        }
+        kfree((void*)arr);
     }
-    for (int index = argc-1;index>=0;index--)
-    {
-        PUSH(stack, arr[index]);
-    }
+    
     PUSH(stack, 0); //when we enter some function, whose parameteres were pushed above, the function expects to see a eip to return to. we dont have one (and dont need one as this is the main task and when it finishes the process is done), so we put 0 in there.
-    kfree((void*)arr);
     registers_t* context = (uint32_t*)((uint32_t)new_proc->kernel_stack_top - sizeof(registers_t));
     context->eip = ent;
     context->esp = new_proc->kernel_stack_top;

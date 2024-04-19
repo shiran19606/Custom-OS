@@ -7,7 +7,7 @@
 [EXTERN ticks]
 [EXTERN printNumberHex]
 [EXTERN put_char]
-[EXTERN TSS]
+[EXTERN set_tss_kernel_stack]
 
 
 ;we will write a macro handler for a case where no error code is pushed, and a macro handler for a case where an error code is pushed.
@@ -212,10 +212,12 @@ Timer_Handler:
     mov         cr3, eax
     mov         dword [esi+STATE],RUNNING     ;; make the current task running
 
-    ;update TSS with ESP0
-    mov         ebx, TSS
     mov         eax, [esi+24]
-    mov         [ebx+4], eax
+    push        eax
+    push        dword 0x10
+    call        set_tss_kernel_stack
+    pop         eax
+    pop         eax
 
     
     pop         eax     ;pop ds value.
