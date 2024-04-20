@@ -31,7 +31,7 @@
 00000000000i[      ]   SB16 support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7024225dd010. after alignment, vector=0x7024225de000
+00000000000i[MEM0  ] allocated memory at 0x7d9cf87dd010. after alignment, vector=0x7d9cf87de000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Apr 19 22:02:46 2024 (time0=1713553366)
+00000000000i[CMOS  ] Setting initial clock to: Sat Apr 20 11:42:15 2024 (time0=1713602535)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -137,994 +137,413 @@
 00000000000i[PLUGIN] reset of 'extfpuirq' plugin device by virtual method
 00000000000i[PLUGIN] reset of 'parallel' plugin device by virtual method
 00000000000i[PLUGIN] reset of 'serial' plugin device by virtual method
-00000000000i[GDBST ] addr 000000000000fff0 len 1
-00000000000i[GDBST ] addr 000000000000fff0 len 1
-00000000000i[GDBST ] addr 000000000000ffc0 len 40
-00000000000i[GDBST ] addr 000000000000fff0 len 8
-00000000000i[GDBST ] addr 000000000000fff0 len 7
-00000000000i[GDBST ] addr 00000000c0104498 len 1
-00000000000i[GDBST ] addr 00000000c0103ab1 len 1
-00000000000i[GDBST ] addr 00000000c010424e len 1
-00000000000i[GDBST ] addr 00000000c01042d6 len 1
-00000000000i[GDBST ] addr 00000000c010405e len 1
-00000000000i[GDBST ] addr 00000000c010408c len 1
-00000000000i[GDBST ] addr 00000000c01040c3 len 1
-00000000000i[GDBST ] addr 00000000c0103f7b len 1
-00000000000i[GDBST ] addr 00000000c0103e00 len 1
-00000000000i[GDBST ] addr 00000000c0103bba len 1
-00000000000i[GDBST ] addr 00000000c0103c09 len 1
-00000000000i[GDBST ] addr 00000000c0103c42 len 1
-00000000000i[GDBST ] addr 00000000c010365c len 1
-00000000000i[GDBST ] addr 00000000c0103a09 len 1
-00000000000i[GDBST ] addr 00000000c0103510 len 1
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103510
-00000000000i[GDBST ] Setting breakpoint at 00000000c010365c
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103a09
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103ab1
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103bba
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103c09
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103c42
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103e00
-00000000000i[GDBST ] Setting breakpoint at 00000000c0103f7b
-00000000000i[GDBST ] Setting breakpoint at 00000000c010405e
-00000000000i[GDBST ] Setting breakpoint at 00000000c010408c
-00000000000i[GDBST ] Setting breakpoint at 00000000c01040c3
-00000000000i[GDBST ] Setting breakpoint at 00000000c010424e
-00000000000i[GDBST ] Setting breakpoint at 00000000c01042d6
-00000000000i[GDBST ] Setting breakpoint at 00000000c0104498
 00000004661i[BIOS  ] $Revision: 12579 $ $Date: 2014-12-26 11:31:39 +0100 (Fr, 26. Dez 2014) $
-00000317539i[KBD   ] reset-disable command received
-00000318826i[BIOS  ] Starting rombios32
-00000319264i[BIOS  ] Shutdown flag 0
-00000319847i[BIOS  ] ram_size=0x02000000
-00000320268i[BIOS  ] ram_end=32MB
-00000332368i[BIOS  ] Found 1 cpu(s)
-00000346572i[BIOS  ] bios_table_addr: 0x000fa498 end=0x000fcc00
-00000674367i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001002296i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
-00001002315i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
-00001002334i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
-00001002353i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
-00001002363i[P2ISA ] write: ELCR2 = 0x0a
-00001003133i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
-00001010814i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001013093i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001015211i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001015436i[PIDE  ] new BM-DMA address: 0xc000
-00001016052i[BIOS  ] region 4: 0x0000c000
-00001018086i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001018318i[ACPI  ] new irq line = 11
-00001018330i[ACPI  ] new irq line = 9
-00001018355i[ACPI  ] new PM base address: 0xb000
-00001018369i[ACPI  ] new SM base address: 0xb100
-00001018397i[PCI   ] setting SMRAM control register to 0x4a
-00001182490i[CPU0  ] Enter to System Management Mode
-00001182501i[CPU0  ] RSM: Resuming from System Management Mode
-00001346522i[PCI   ] setting SMRAM control register to 0x0a
-00001361388i[BIOS  ] MP table addr=0x000fa570 MPC table addr=0x000fa4a0 size=0xc8
-00001363210i[BIOS  ] SMBIOS table addr=0x000fa580
-00001365391i[BIOS  ] ACPI tables: RSDP addr=0x000fa6a0 ACPI DATA addr=0x01ff0000 size=0xf72
-00001368603i[BIOS  ] Firmware waking vector 0x1ff00cc
-00001370398i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001371121i[BIOS  ] bios_table_cur_addr: 0x000fa6c4
-00001498738i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
-00001498809i[BXVGA ] VBE known Display Interface b0c0
-00001498841i[BXVGA ] VBE known Display Interface b0c5
-00001501766i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00001890409i[BIOS  ] ata0-1: PCHS=20/16/63 translation=none LCHS=20/16/63
-00002116341i[XGUI  ] charmap update. Font Height is 16
-01287661731i[BIOS  ] Booting from 07c0:0000
-01287768426i[BIOS  ] int13_harddisk: function 41, unmapped device for ELDL=81
-01287772106i[BIOS  ] int13_harddisk: function 08, unmapped device for ELDL=81
-01287775771i[BIOS  ] *** int 15h function AX=00c0, BX=0000 not yet supported!
-01295103957e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295103963e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295103969e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295103975e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295103981e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295103987e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295103993e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295103999e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104005e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104011e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104017e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104023e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104029e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104035e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104041e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104047e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104053e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104059e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104065e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104071e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104077e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104083e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104089e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104095e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104101e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104107e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104113e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104119e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104125e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104131e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104137e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104143e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104149e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104155e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104161e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104167e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104173e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104179e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104185e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104191e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104197e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104203e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104209e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104215e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104221e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104227e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104233e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104239e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104245e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104251e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104257e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104263e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104269e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104275e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104281e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104287e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104293e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104299e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104305e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104311e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104317e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104323e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104329e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104335e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104341e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104347e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104353e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104359e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104365e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104371e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104377e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104383e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104389e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104395e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104401e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104407e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104413e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104419e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104425e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104431e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104437e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104443e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104449e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104455e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104461e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104467e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104473e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104479e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104485e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104491e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104497e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104503e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104509e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104515e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104521e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104527e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104533e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104539e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104545e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104551e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104557e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104563e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104569e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104575e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104581e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104587e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104593e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104599e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104605e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104611e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104617e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104623e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104629e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104635e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104641e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104647e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104653e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104659e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104665e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104671e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104677e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104683e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104689e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104695e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104701e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104707e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104713e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295104719e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105106e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105112e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105118e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105124e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105130e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105136e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105142e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105148e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105154e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105160e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105166e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105172e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105178e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105184e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105190e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105196e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105202e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105208e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105214e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105220e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105226e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105232e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105238e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105244e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105250e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105256e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105262e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105268e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105274e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105280e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105286e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105292e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105298e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105304e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105310e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105316e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105322e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105328e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105334e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105340e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105346e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105352e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105358e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105364e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105370e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105376e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105382e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105388e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105394e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105400e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105406e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105412e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105418e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105424e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105430e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105436e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105442e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105448e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105454e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105460e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105466e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105472e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105478e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105484e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105490e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105496e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105502e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105508e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105514e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105520e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105526e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105532e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105538e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105544e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105550e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105556e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105562e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105568e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105574e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105580e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105586e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105592e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105598e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105604e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105610e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105616e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105622e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105628e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105634e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105640e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105646e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105652e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105658e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105664e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105670e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105676e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105682e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105688e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105694e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105700e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105706e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105712e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105718e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105724e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105730e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105736e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105742e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105748e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105754e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105760e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105766e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105772e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105778e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105784e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105790e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105796e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105802e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105808e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105814e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105820e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105826e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105832e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105838e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105844e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105850e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105856e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105862e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295105868e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
-01295106142i[HD    ] disk ata1-0 not present, aborting
-01315697002i[GDBST ] found breakpoint at c010424e
-01315697002i[GDBST ] stopped with ac1
-01315697002i[GDBST ] reg 8 set to 00000000c010424e
-01315697002i[GDBST ] reg 41 set to 00000000ffffffff
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697002i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697002i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697002i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697002i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697002i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697002i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697002i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697002i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697002i[GDBST ] addr 0000000070000f40 len 40
-01315697002i[GDBST ] addr 0000000070000f80 len 40
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697002i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697002i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697002i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697002i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697002i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697002i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697002i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697002i[GDBST ] stepping
-01315697003i[GDBST ] stopped with ac2
-01315697003i[GDBST ] addr 0000000070000f40 len 40
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697003i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697003i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697003i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697003i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697003i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697003i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697003i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697003i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697003i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697003i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697003i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697003i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697003i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697003i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697003i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697003i[GDBST ] stepping
-01315697004i[GDBST ] stopped with ac2
-01315697004i[GDBST ] addr 0000000070000f40 len 40
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697004i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697004i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697004i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697004i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697004i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697004i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697004i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697004i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697004i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697004i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697004i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697004i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697004i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697004i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697004i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697004i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697004i[GDBST ] stepping
-01315697005i[GDBST ] stopped with ac2
-01315697005i[GDBST ] addr 0000000070000f40 len 40
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697005i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697005i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697005i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697005i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697005i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697005i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697005i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697005i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697005i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697005i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697005i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697005i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697005i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697005i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697005i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697005i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697005i[GDBST ] stepping
-01315697006i[GDBST ] stopped with ac2
-01315697006i[GDBST ] addr 0000000070000f40 len 40
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697006i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697006i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697006i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697006i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697006i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697006i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697006i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697006i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697006i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697006i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697006i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697006i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697006i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697006i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697006i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697006i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697006i[GDBST ] stepping
-01315697007i[GDBST ] stopped with ac2
-01315697007i[GDBST ] addr 0000000070000f40 len 40
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697007i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697007i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697007i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697007i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697007i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697007i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697007i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697007i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697007i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697007i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697007i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697007i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697007i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697007i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697007i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697007i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697007i[GDBST ] stepping
-01315697008i[GDBST ] stopped with ac2
-01315697008i[GDBST ] addr 0000000070000f40 len 40
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697008i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697008i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697008i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697008i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697008i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697008i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697008i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697008i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697008i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697008i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697008i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697008i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697008i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697008i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697008i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697008i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697008i[GDBST ] stepping
-01315697009i[GDBST ] stopped with ac2
-01315697009i[GDBST ] addr 0000000070000f40 len 40
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697009i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697009i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697009i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697009i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697009i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697009i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697009i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697009i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697009i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697009i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697009i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697009i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697009i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697009i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697009i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697009i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697009i[GDBST ] stepping
-01315697010i[GDBST ] stopped with ac2
-01315697010i[GDBST ] addr 0000000070000f40 len 40
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697010i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697010i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697010i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697010i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697010i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697010i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697010i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697010i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697010i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697010i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697010i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697010i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697010i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697010i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697010i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697010i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697010i[GDBST ] stepping
-01315697011i[GDBST ] stopped with ac2
-01315697011i[GDBST ] addr 0000000070000f40 len 40
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697011i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697011i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697011i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697011i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697011i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697011i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697011i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697011i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697011i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697011i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697011i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697011i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697011i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697011i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697011i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697011i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697011i[GDBST ] stepping
-01315697012i[GDBST ] stopped with ac2
-01315697012i[GDBST ] addr 0000000070000f40 len 40
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697012i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697012i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697012i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697012i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697012i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697012i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697012i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697012i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697012i[GDBST ] addr 00000000c0105d04 len 1
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697012i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697012i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697012i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697012i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697012i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697012i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697012i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697012i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697012i[GDBST ] Setting breakpoint at 00000000c0105d04
-01315697014i[GDBST ] found breakpoint at c0105d04
-01315697014i[GDBST ] stopped with ac1
-01315697014i[GDBST ] reg 8 set to 00000000c0105d04
-01315697014i[GDBST ] reg 41 set to 00000000ffffffff
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697014i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697014i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697014i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697014i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697014i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697014i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697014i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697014i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697014i[GDBST ] Removing breakpoint at 00000000c0105d04
-01315697014i[GDBST ] addr 0000000070000f00 len 40
-01315697014i[GDBST ] addr 0000000070000f40 len 40
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697014i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697014i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697014i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697014i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697014i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697014i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697014i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697014i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697014i[GDBST ] stepping
-01315697015i[GDBST ] stopped with ac2
-01315697015i[GDBST ] Setting breakpoint at 00000000c0105d04
-01315697015i[GDBST ] stepping
-01315697016i[GDBST ] stopped with ac2
-01315697016i[GDBST ] stepping
-01315697017i[GDBST ] stopped with ac2
-01315697017i[GDBST ] addr 0000000070000f00 len 40
-01315697017i[GDBST ] stepping
-01315697018i[GDBST ] stopped with ac2
-01315697018i[GDBST ] stepping
-01315697019i[GDBST ] stopped with ac2
-01315697019i[GDBST ] stepping
-01315697020i[GDBST ] stopped with ac2
-01315697020i[GDBST ] stepping
-01315697021i[GDBST ] stopped with ac2
-01315697021i[GDBST ] stepping
-01315697022i[GDBST ] stopped with ac2
-01315697022i[GDBST ] stepping
-01315697023i[GDBST ] stopped with ac2
-01315697023i[GDBST ] stepping
-01315697024i[GDBST ] stopped with ac2
-01315697024i[GDBST ] stepping
-01315697025i[GDBST ] stopped with ac2
-01315697025i[GDBST ] stepping
-01315697026i[GDBST ] stopped with ac2
-01315697026i[GDBST ] addr 0000000070000f00 len 40
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697026i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697026i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697026i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697026i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697026i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697026i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697026i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697026i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697026i[GDBST ] Removing breakpoint at 00000000c0105d04
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697026i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697026i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697026i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697026i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697026i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697026i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697026i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697026i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697026i[GDBST ] Setting breakpoint at 00000000c0105d04
-01315697026i[GDBST ] stepping
-01315697027i[GDBST ] stopped with ac2
-01315697027i[GDBST ] stepping
-01315697028i[GDBST ] stopped with ac2
-01315697028i[GDBST ] addr 0000000070000f00 len 40
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697028i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697028i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697028i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697028i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697028i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697028i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697028i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697028i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697028i[GDBST ] Removing breakpoint at 00000000c0105d04
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697028i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697028i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697028i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697028i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697028i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697028i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697028i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697028i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697028i[GDBST ] Setting breakpoint at 00000000c0105d04
-01315697028i[GDBST ] stepping
-01315697029i[GDBST ] stopped with ac2
-01315697029i[GDBST ] stepping
-01315697030i[GDBST ] stopped with ac2
-01315697030i[GDBST ] addr 0000000070000f00 len 40
-01315697030i[GDBST ] stepping
-01315697031i[GDBST ] stopped with ac2
-01315697031i[GDBST ] stepping
-01315697032i[GDBST ] stopped with ac2
-01315697032i[GDBST ] addr 0000000070000f00 len 40
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697032i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697032i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697032i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697032i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697032i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697032i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697032i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697032i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697032i[GDBST ] Removing breakpoint at 00000000c0105d04
-01315697032i[GDBST ] addr 00000000c0111e64 len 4
-01315697032i[GDBST ] addr 00000000c0111e64 len 4
-01315697032i[GDBST ] addr 00000000e000113d len 4
-01315697032i[GDBST ] addr 00000000c0111e64 len 4
-01315697032i[GDBST ] addr 00000000e000113d len 4
-01315697032i[GDBST ] addr 00000000e00030bc len 4
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697032i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697032i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697032i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697032i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697032i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697032i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697032i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697032i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697032i[GDBST ] Setting breakpoint at 00000000c0105d04
-01315697032i[GDBST ] stepping
-01315697033i[GDBST ] stopped with ac2
-01315697033i[GDBST ] stepping
-01315697034i[GDBST ] stopped with ac2
-01315697034i[GDBST ] stepping
-01315697035i[GDBST ] stopped with ac2
-01315697035i[GDBST ] addr 0000000070000f00 len 40
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103510
-01315697035i[GDBST ] Removing breakpoint at 00000000c010365c
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315697035i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315697035i[GDBST ] Removing breakpoint at 00000000c010405e
-01315697035i[GDBST ] Removing breakpoint at 00000000c010408c
-01315697035i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315697035i[GDBST ] Removing breakpoint at 00000000c010424e
-01315697035i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315697035i[GDBST ] Removing breakpoint at 00000000c0104498
-01315697035i[GDBST ] Removing breakpoint at 00000000c0105d04
-01315697035i[GDBST ] addr 00000000c0111e64 len 4
-01315697035i[GDBST ] addr 00000000e000113d len 4
-01315697035i[GDBST ] addr 00000000e00030bc len 4
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103510
-01315697035i[GDBST ] Setting breakpoint at 00000000c010365c
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103a09
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103ab1
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103bba
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103c09
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103c42
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103e00
-01315697035i[GDBST ] Setting breakpoint at 00000000c0103f7b
-01315697035i[GDBST ] Setting breakpoint at 00000000c010405e
-01315697035i[GDBST ] Setting breakpoint at 00000000c010408c
-01315697035i[GDBST ] Setting breakpoint at 00000000c01040c3
-01315697035i[GDBST ] Setting breakpoint at 00000000c010424e
-01315697035i[GDBST ] Setting breakpoint at 00000000c01042d6
-01315697035i[GDBST ] Setting breakpoint at 00000000c0104498
-01315697035i[GDBST ] Setting breakpoint at 00000000c0105d04
-01315697035i[GDBST ] stepping
-01315697036i[GDBST ] stopped with ac2
-01315697036i[GDBST ] stepping
-01315697037i[GDBST ] stopped with ac2
-01315697037i[GDBST ] addr 0000000070000f00 len 40
-01315697037i[GDBST ] stepping
-01315697038i[GDBST ] stopped with ac2
-01315697038i[GDBST ] stepping
-01315697039i[GDBST ] stopped with ac2
-01315697039i[GDBST ] stepping
-01315697040i[GDBST ] stopped with ac2
-01315697040i[GDBST ] stepping
-01315697041i[GDBST ] stopped with ac2
-01315697041i[GDBST ] addr 0000000070000ec0 len 40
-01315697041i[GDBST ] addr 0000000070000f00 len 40
-01315697041i[GDBST ] addr 00000000c0105d98 len 1
-01315697041i[GDBST ] Setting breakpoint at 00000000c0105d98
-01315698197i[GDBST ] found breakpoint at c0105d98
-01315698197i[GDBST ] stopped with ac1
-01315698197i[GDBST ] reg 8 set to 00000000c0105d98
-01315698197i[GDBST ] reg 41 set to 00000000ffffffff
-01315698197i[GDBST ] addr 0000000070000f00 len 40
-01315698197i[GDBST ] Removing breakpoint at 00000000c0105d98
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103510
-01315698197i[GDBST ] Removing breakpoint at 00000000c010365c
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103a09
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103ab1
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103bba
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103c09
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103c42
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103e00
-01315698197i[GDBST ] Removing breakpoint at 00000000c0103f7b
-01315698197i[GDBST ] Removing breakpoint at 00000000c010405e
-01315698197i[GDBST ] Removing breakpoint at 00000000c010408c
-01315698197i[GDBST ] Removing breakpoint at 00000000c01040c3
-01315698197i[GDBST ] Removing breakpoint at 00000000c010424e
-01315698197i[GDBST ] Removing breakpoint at 00000000c01042d6
-01315698197i[GDBST ] Removing breakpoint at 00000000c0104498
-01315698197i[GDBST ] Removing breakpoint at 00000000c0105d04
-01315698197i[GDBST ] addr 00000000c0111e64 len 4
-01315698197i[GDBST ] addr 00000000e000113d len 4
-01315698197i[GDBST ] addr 00000000e00030bc len 4
-01315698197p[GDBST ] >>PANIC<< Debugger asked us to quit
-01315698197i[CPU0  ] CPU is in protected mode (active)
-01315698197i[CPU0  ] CS.mode = 32 bit
-01315698197i[CPU0  ] SS.mode = 32 bit
-01315698197i[CPU0  ] EFER   = 0x00000000
-01315698197i[CPU0  ] | EAX=00000003  EBX=00000000  ECX=00000000  EDX=000001f7
-01315698197i[CPU0  ] | ESP=70000ecc  EBP=70000f14  ESI=00000000  EDI=00000010
-01315698197i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
-01315698197i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-01315698197i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-01315698197i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01315698197i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01315698197i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01315698197i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01315698197i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01315698197i[CPU0  ] | EIP=c0105d98 (c0105d98)
-01315698197i[CPU0  ] | CR0=0xe0000011 CR2=0x00000000
-01315698197i[CPU0  ] | CR3=0x0023a000 CR4=0x00000000
-01315698197i[CPU0  ] 0xc0105d98>> mov edx, esi : 89F2
-01315698197i[CMOS  ] Last time is 1713554681 (Fri Apr 19 22:24:41 2024)
-01315698197i[XGUI  ] Exit
-01315698197i[      ] restoring default signal behavior
-01315698197i[SIM   ] quit_sim called with exit code 1
+00000317061i[KBD   ] reset-disable command received
+00000318310i[BIOS  ] Starting rombios32
+00000318748i[BIOS  ] Shutdown flag 0
+00000319331i[BIOS  ] ram_size=0x02000000
+00000319752i[BIOS  ] ram_end=32MB
+00000331852i[BIOS  ] Found 1 cpu(s)
+00000346056i[BIOS  ] bios_table_addr: 0x000fa498 end=0x000fcc00
+00000673851i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001001780i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+00001001799i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+00001001818i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+00001001837i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+00001001847i[P2ISA ] write: ELCR2 = 0x0a
+00001002617i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+00001010298i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001012577i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001014695i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001014920i[PIDE  ] new BM-DMA address: 0xc000
+00001015536i[BIOS  ] region 4: 0x0000c000
+00001017570i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001017802i[ACPI  ] new irq line = 11
+00001017814i[ACPI  ] new irq line = 9
+00001017839i[ACPI  ] new PM base address: 0xb000
+00001017853i[ACPI  ] new SM base address: 0xb100
+00001017881i[PCI   ] setting SMRAM control register to 0x4a
+00001181974i[CPU0  ] Enter to System Management Mode
+00001181985i[CPU0  ] RSM: Resuming from System Management Mode
+00001346006i[PCI   ] setting SMRAM control register to 0x0a
+00001360872i[BIOS  ] MP table addr=0x000fa570 MPC table addr=0x000fa4a0 size=0xc8
+00001362694i[BIOS  ] SMBIOS table addr=0x000fa580
+00001364875i[BIOS  ] ACPI tables: RSDP addr=0x000fa6a0 ACPI DATA addr=0x01ff0000 size=0xf72
+00001368087i[BIOS  ] Firmware waking vector 0x1ff00cc
+00001369882i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001370605i[BIOS  ] bios_table_cur_addr: 0x000fa6c4
+00001498222i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+00001498293i[BXVGA ] VBE known Display Interface b0c0
+00001498325i[BXVGA ] VBE known Display Interface b0c5
+00001501250i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00001889893i[BIOS  ] ata0-1: PCHS=20/16/63 translation=none LCHS=20/16/63
+00071909873i[XGUI  ] charmap update. Font Height is 16
+03707880535i[BIOS  ] Booting from 07c0:0000
+03707987230i[BIOS  ] int13_harddisk: function 41, unmapped device for ELDL=81
+03707990910i[BIOS  ] int13_harddisk: function 08, unmapped device for ELDL=81
+03707994575i[BIOS  ] *** int 15h function AX=00c0, BX=0000 not yet supported!
+03715322669e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322675e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322681e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322687e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322693e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322699e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322705e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322711e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322717e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322723e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322729e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322735e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322741e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322747e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322753e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322759e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322765e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322771e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322777e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322783e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322789e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322795e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322801e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322807e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322813e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322819e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322825e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322831e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322837e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322843e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322849e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322855e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322861e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322867e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322873e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322879e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322885e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322891e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322897e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322903e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322909e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322915e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322921e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322927e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322933e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322939e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322945e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322951e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322957e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322963e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322969e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322975e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322981e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322987e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322993e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715322999e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323005e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323011e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323017e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323023e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323029e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323035e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323041e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323047e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323053e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323059e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323065e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323071e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323077e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323083e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323089e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323095e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323101e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323107e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323113e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323119e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323125e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323131e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323137e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323143e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323149e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323155e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323161e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323167e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323173e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323179e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323185e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323191e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323197e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323203e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323209e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323215e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323221e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323227e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323233e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323239e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323245e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323251e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323257e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323263e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323269e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323275e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323281e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323287e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323293e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323299e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323305e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323311e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323317e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323323e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323329e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323335e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323341e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323347e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323353e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323359e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323365e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323371e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323377e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323383e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323389e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323395e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323401e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323407e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323413e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323419e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323425e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323431e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323818e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323824e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323830e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323836e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323842e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323848e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323854e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323860e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323866e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323872e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323878e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323884e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323890e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323896e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323902e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323908e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323914e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323920e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323926e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323932e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323938e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323944e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323950e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323956e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323962e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323968e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323974e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323980e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323986e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323992e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715323998e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324004e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324010e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324016e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324022e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324028e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324034e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324040e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324046e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324052e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324058e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324064e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324070e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324076e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324082e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324088e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324094e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324100e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324106e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324112e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324118e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324124e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324130e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324136e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324142e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324148e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324154e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324160e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324166e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324172e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324178e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324184e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324190e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324196e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324202e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324208e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324214e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324220e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324226e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324232e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324238e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324244e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324250e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324256e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324262e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324268e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324274e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324280e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324286e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324292e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324298e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324304e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324310e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324316e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324322e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324328e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324334e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324340e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324346e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324352e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324358e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324364e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324370e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324376e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324382e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324388e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324394e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324400e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324406e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324412e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324418e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324424e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324430e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324436e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324442e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324448e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324454e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324460e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324466e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324472e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324478e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324484e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324490e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324496e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324502e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324508e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324514e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324520e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324526e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324532e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324538e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324544e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324550e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324556e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324562e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324568e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324574e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324580e[DEV   ] read from port 0x0002 with len 4 returns 0xffffffff
+03715324854i[HD    ] disk ata1-0 not present, aborting
+05391964158i[CPU0  ] CPU is in protected mode (active)
+05391964158i[CPU0  ] CS.mode = 32 bit
+05391964158i[CPU0  ] SS.mode = 32 bit
+05391964158i[CPU0  ] EFER   = 0x00000000
+05391964158i[CPU0  ] | EAX=0000001f  EBX=0000079f  ECX=00000a1e  EDX=0000031f
+05391964158i[CPU0  ] | ESP=70000000  EBP=7000001c  ESI=c0107498  EDI=c0107862
+05391964158i[CPU0  ] | IOPL=0 id vip vif ac vm RF nt of df if tf sf zf af PF cf
+05391964158i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+05391964158i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+05391964158i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+05391964158i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+05391964158i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+05391964158i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+05391964158i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+05391964158i[CPU0  ] | EIP=c01033d0 (c01033d0)
+05391964158i[CPU0  ] | CR0=0xe0000011 CR2=0x6ffffffc
+05391964158i[CPU0  ] | CR3=0x0023a000 CR4=0x00000000
+05391964158i[CPU0  ] 0xc01033d0>> push ebp : 55
+05391964158e[CPU0  ] exception(): 3rd (14) exception with no resolution, shutdown status is 00h, resetting
+05391964158i[SYS   ] bx_pc_system_c::Reset(HARDWARE) called
+05391964158i[CPU0  ] cpu hardware reset
+05391964158i[APIC0 ] allocate APIC id=0 (MMIO enabled) to 0x0000fee00000
+05391964158i[CPU0  ] CPUID[0x00000000]: 00000005 756e6547 6c65746e 49656e69
+05391964158i[CPU0  ] CPUID[0x00000001]: 00000633 00010800 00000008 1fcbfbff
+05391964158i[CPU0  ] CPUID[0x00000002]: 00410601 00000000 00000000 00000000
+05391964158i[CPU0  ] CPUID[0x00000003]: 00000000 00000000 00000000 00000000
+05391964158i[CPU0  ] CPUID[0x00000004]: 00000000 00000000 00000000 00000000
+05391964158i[CPU0  ] CPUID[0x00000005]: 00000040 00000040 00000003 00000020
+05391964158i[PLUGIN] reset of 'pci' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'pci2isa' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'cmos' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'dma' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'pic' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'pit' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'vga' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'floppy' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'acpi' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'ioapic' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'keyboard' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'harddrv' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'pci_ide' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'unmapped' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'biosdev' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'speaker' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'extfpuirq' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'parallel' plugin device by virtual method
+05391964158i[PLUGIN] reset of 'serial' plugin device by virtual method
+05391968820i[BIOS  ] $Revision: 12579 $ $Date: 2014-12-26 11:31:39 +0100 (Fr, 26. Dez 2014) $
+05392281311i[KBD   ] reset-disable command received
+05392282560i[BIOS  ] Starting rombios32
+05392282998i[BIOS  ] Shutdown flag 0
+05392283581i[BIOS  ] ram_size=0x02000000
+05392284002i[BIOS  ] ram_end=32MB
+05393090882i[BIOS  ] Found 1 cpu(s)
+05393105086i[BIOS  ] bios_table_addr: 0x000fa498 end=0x000fcc00
+05393432881i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+05393760810i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+05393760829i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+05393760848i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+05393760867i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+05393760877i[P2ISA ] write: ELCR2 = 0x0a
+05393761647i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+05393769328i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+05393771607i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+05393773725i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+05393774566i[BIOS  ] region 4: 0x0000c000
+05393776600i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+05393776832i[ACPI  ] new irq line = 11
+05393776844i[ACPI  ] new irq line = 9
+05393776911i[PCI   ] setting SMRAM control register to 0x4a
+05393941004i[CPU0  ] Enter to System Management Mode
+05393941015i[CPU0  ] RSM: Resuming from System Management Mode
+05394105036i[PCI   ] setting SMRAM control register to 0x0a
+05394119902i[BIOS  ] MP table addr=0x000fa570 MPC table addr=0x000fa4a0 size=0xc8
+05394121724i[BIOS  ] SMBIOS table addr=0x000fa580
+05394123905i[BIOS  ] ACPI tables: RSDP addr=0x000fa6a0 ACPI DATA addr=0x01ff0000 size=0xf72
+05394127117i[BIOS  ] Firmware waking vector 0x1ff00cc
+05394128912i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+05394129635i[BIOS  ] bios_table_cur_addr: 0x000fa6c4
+05394257252i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+05394257323i[BXVGA ] VBE known Display Interface b0c0
+05394257355i[BXVGA ] VBE known Display Interface b0c5
+05394260280i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+05394648900i[BIOS  ] ata0-1: PCHS=20/16/63 translation=none LCHS=20/16/63
+05540712868i[XGUI  ] charmap update. Font Height is 16
+06243618000p[XGUI  ] >>PANIC<< POWER button turned off.
+06243618000i[CPU0  ] CPU is in real mode (halted)
+06243618000i[CPU0  ] CS.mode = 16 bit
+06243618000i[CPU0  ] SS.mode = 16 bit
+06243618000i[CPU0  ] EFER   = 0x00000000
+06243618000i[CPU0  ] | EAX=0000341f  EBX=0000000d  ECX=0009e080  EDX=00000000
+06243618000i[CPU0  ] | ESP=0000ff9c  EBP=0000ffb0  ESI=000e0000  EDI=0000ffac
+06243618000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df IF tf sf ZF af PF cf
+06243618000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+06243618000i[CPU0  ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
+06243618000i[CPU0  ] |  DS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+06243618000i[CPU0  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+06243618000i[CPU0  ] |  ES:0080( 0005| 0|  0) 00000800 0000ffff 0 0
+06243618000i[CPU0  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+06243618000i[CPU0  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+06243618000i[CPU0  ] | EIP=00000863 (00000863)
+06243618000i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
+06243618000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+06243618000i[CPU0  ] 0x00000863>> mov ax, word ptr ds:0x046c : A16C04
+06243618000i[CMOS  ] Last time is 1713608778 (Sat Apr 20 13:26:18 2024)
+06243618000i[XGUI  ] Exit
+06243618000i[      ] restoring default signal behavior
+06243618000i[SIM   ] quit_sim called with exit code 1
